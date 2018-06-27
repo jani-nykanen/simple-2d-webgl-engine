@@ -3,6 +3,12 @@
  * @author Jani Nykänen
  */
 
+// Global constants
+FLIP_NONE = 0;
+FLIP_H = 1;
+FLIP_V = 2;
+FLIP_H_V = 3;
+
 
 // Graphics object
 graph = {};
@@ -91,6 +97,8 @@ graph.rectangle = {
 };
 // White texture
 graph.texWhite = null;
+// Previous bitmap
+graph.prevBitmap = null;
 
 
 /**
@@ -112,13 +120,10 @@ graph.create_rect_mesh = function() {
     ]
 
     const UVS = [
-        0.0, 1.0,
-        1.0, 1.0,
-        1.0, 0.0,
-
-        1.0, 0.0,
         0.0, 0.0,
-        0.0, 1.0,
+        1.0, 0.0,
+        1.0, 1.0,
+        0.0, 1.0
     ];
 
     // Create buffers
@@ -287,4 +292,34 @@ graph.fill_rectangle = function(x, y, w, h) {
 graph.set_color = function(r, g, b, a) {
 
     this.defShader.set_unif_color(r, g, b, a);
+}
+
+
+/**
+ * Draw a bitmap
+ */
+graph.draw_bitmap = function(bmp, x, y, flip) {
+
+    var gl = graph.glctx;
+
+    if(this.prevBitmap != bmp) {
+
+        gl.bindTexture(gl.TEXTURE_2D, bmp.texture);
+    }
+
+    var w = bmp.width;
+    var h = bmp.height;
+    if( (flip & FLIP_H) != 0) {
+
+        x += w;
+        w *= -1;
+    }
+    if( (flip & FLIP_V) != 0) {
+
+        y += h;
+        h *= -1;
+    }
+    
+    this.defShader.set_unif_vertex([x, y], [w, h]);
+    this.draw_rect_mesh();
 }

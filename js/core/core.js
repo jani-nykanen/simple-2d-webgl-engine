@@ -97,10 +97,17 @@ core.loop = function(ts) {
         tm = TM_LIMIT;
     core.oldTs = ts;
 
-    // Update frame 
-    core.update(tm);
-    // Draw frame
-    core.draw();
+    if(assets.has_loaded()) {
+        // Update frame 
+        core.update(tm);
+        // Draw frame
+        core.draw();
+    }
+    else {
+
+        // TODO: Loading screen
+        graph.clear(0, 0, 0);
+    }
 
     // Next frame
     window.requestAnimationFrame(core.loop);
