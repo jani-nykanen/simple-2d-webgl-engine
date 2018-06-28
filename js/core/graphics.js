@@ -275,7 +275,13 @@ graph.draw_rect_mesh = function() {
 graph.fill_rectangle = function(x, y, w, h) {
 
     var gl = graph.glctx;
-    gl.bindTexture(gl.TEXTURE_2D, this.texWhite);
+
+    var bmp = this.texWhite;
+    if(this.prevBitmap != bmp) {
+
+        this.prevBitmap = bmp;
+        gl.bindTexture(gl.TEXTURE_2D, bmp);
+    }
 
     this.defShader.set_unif_vertex([x, y], [w, h]);
     this.draw_rect_mesh();
@@ -297,29 +303,135 @@ graph.set_color = function(r, g, b, a) {
 
 /**
  * Draw a bitmap
+ * @param bmp Bitmap
+ * @param x X coordinate
+ * @param y Y coordinate
+ * @param flip Flipping flag
  */
 graph.draw_bitmap = function(bmp, x, y, flip) {
 
-    var gl = graph.glctx;
+    this.draw_scaled_bitmap_region(bmp, 0, 0, bmp.width, bmp.height,
+        x,y, bmp.width, bmp.height, flip);
+}
 
+
+/**
+ * Draw a scaled bitmap
+ * @param bmp Bitmap
+ * @param x X coordinate
+ * @param y Y coordinate
+ * @param sx Scale X
+ * @param sy Scale Y
+ * @param flip Flipping flag
+ */
+graph.draw_scaled_bitmap = function(bmp, x, y, sx, sy, flip) {
+
+    this.draw_scaled_bitmap_region(bmp, 0, 0, bmp.width, bmp.height,
+        x,y, bmp.width * sx, bmp.height * sy, flip);
+}
+
+
+/**
+ * Draw a bitmap region
+ * @param bmp Bitmap
+ * @param sx Source x
+ * @param sy Source y
+ * @param sw Source width
+ * @param sh Source height
+ * @param dx Destination x
+ * @param dy Destination y
+ * @param flip Flipping flag
+ */
+graph.draw_bitmap_region = function(bmp, sx, sy, sw, sh, dx, dy, flip) {
+
+    this.draw_scaled_bitmap_region(bmp, sx,sy,sw,sh,dx,dy,sw,sh, flip);
+}
+
+
+/**
+ * Draw a scaled bitmap region
+ * @param bmp Bitmap
+ * @param sx Source x
+ * @param sy Source y
+ * @param sw Source width
+ * @param sh Source height
+ * @param dx Destination x
+ * @param dy Destination y
+ * @param dw Destination width
+ * @param dh Destination height
+ * @param flip Flipping flag
+ */
+graph.draw_scaled_bitmap_region = function(bmp, sx,sy,sw,sh,dx,dy,dw,dh, flip) {
+
+    flip = flip | FLIP_NONE;
+
+    var gl = graph.glctx;
     if(this.prevBitmap != bmp) {
 
-        gl.bindTexture(gl.TEXTURE_2D, bmp.texture);
+        gl.bindTexture(gl.TEXTURE_2D, bmp.texture); 
+        this.prevBitmap = bmp;
     }
 
     var w = bmp.width;
     var h = bmp.height;
     if( (flip & FLIP_H) != 0) {
 
-        x += w;
-        w *= -1;
+        dx += dw;
+        dw *= -1;
     }
     if( (flip & FLIP_V) != 0) {
 
-        y += h;
-        h *= -1;
+        dy += dh;
+        dh *= -1;
     }
     
-    this.defShader.set_unif_vertex([x, y], [w, h]);
+    this.defShader.set_unif_vertex([dx, dy], [dw, dh]);
+    this.defShader.set_unif_uv([sx / bmp.width, sy / bmp.height], [sw / bmp.width, sh / bmp.height]);
     this.draw_rect_mesh();
+}
+
+
+/**
+ * Draw text using a bitmap font
+ * @param bmp Bitmap
+ * @param text Text to be drawn
+ * @param dx Destination x
+ * @param dy Destination y
+ * @param xoff X offset
+ * @param yoff Y offset
+ * @param center Center the text or not
+ */
+graph.draw_text = function(bmp, text, dx, dy, xoff, yoff, center) {
+
+    center = center == null ? false : center;
+
+    var cw = bmp.width / 16;
+    var ch = cw;
+    var len = text.length;
+    var x = dx;
+    var y = dy;
+
+    if(center) {
+
+        dx -= ( (len+1)/2.0 * (cw+xoff) );
+        x = dx;
+    }
+
+    for(var i = 0; i < len;  ++ i) {
+
+        c = text.charCodeAt(i);
+        if(text[i] == '\n') {
+
+            x = dx;
+            y += yoff + ch;
+            continue;
+        }
+
+        sx = c % 16;
+        sy = (c / 16) | 0;
+
+        this.draw_bitmap_region(bmp,sx*cw,sy*ch,cw,ch,x,y, FLIP_NONE);
+
+        x += cw + xoff;
+    }
 }

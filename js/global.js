@@ -14,7 +14,8 @@ global.init = function() {
     
     // Load assets
     assets.load({
-        test: "test.png"
+        test: "test.png",
+        font: "font.png"
     }, "assets/bitmaps");
 }
 

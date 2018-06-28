@@ -47,6 +47,12 @@ game.draw = function() {
 
     graph.set_color(1, 1, 1, 1);
     graph.draw_bitmap(assets.bitmaps.test, 256,256, FLIP_V | FLIP_H);
+    graph.draw_bitmap_region(assets.bitmaps.test, 32,32,96,64, 512, 64, FLIP_H);
+
+    tr.identity();
+    tr.scale(2.0, 2.0);
+    tr.use_transform();
+    graph.draw_text(assets.bitmaps.font, "Hello,\nworld!",2,2,-1,0,false);
 }
 
 
