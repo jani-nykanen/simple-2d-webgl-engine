@@ -144,3 +144,21 @@ input.update = function() {
     input.update_state_array(input.keyStates);
     input.update_state_array(input.mouseStates);
 }
+
+
+/**
+ * Return the cursor position in current viewport
+ * @return Cursor position
+ */
+input.cursor_pos = function() {
+
+    var w = tr.viewport.w;
+    var h = tr.viewport.h;
+    var cw = graph.canvas.width;
+    var ch = graph.canvas.height;
+
+    var x = w/cw * this.cursorPos.x;
+    var y = h/ch * this.cursorPos.y;
+
+    return {x: x, y: y};
+}

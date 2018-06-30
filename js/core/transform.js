@@ -14,6 +14,9 @@ tr.operand = new Mat3();
 // Model matrix stack
 tr.stack = [];
 
+// Viewport info
+tr.viewport = {w: 1, h: 1};
+
 
 /**
  * Initialize
@@ -33,6 +36,8 @@ tr.init = function() {
 tr.set_view = function(w, h) {
 
     tr.view.ortho2D(0, w, 0, h);
+    tr.viewport.w = w;
+    tr.viewport.h = h;
 }
 
 
