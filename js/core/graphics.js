@@ -198,7 +198,7 @@ graph.init = function() {
     // Get canvas
     graph.canvas = document.getElementById("webgl_canvas");
     // Get GL context
-    graph.glctx = graph.canvas.getContext("webgl");
+    graph.glctx = graph.canvas.getContext("webgl", {alpha:false});
     if(graph.glctx == null) {
 
         throw new DOMException("Failed to initialize WebGL context!");
@@ -217,8 +217,9 @@ graph.init = function() {
     // Enable GL content & other things
     var gl = graph.glctx;
     gl.activeTexture(gl.TEXTURE0);
-    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    gl.disable(gl.DEPTH_TEST);
     gl.enable( gl.BLEND );
+    gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
 
     // Bind buffers
     graph.bind_buffers();
@@ -297,7 +298,7 @@ graph.fill_rectangle = function(x, y, w, h) {
  */
 graph.set_color = function(r, g, b, a) {
 
-    this.defShader.set_unif_color(r, g, b, a);
+    this.defShader.set_unif_color(r, g, b , a );
 }
 
 
