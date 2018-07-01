@@ -54,12 +54,9 @@ game.draw = function() {
     graph.fill_rectangle(p.x, p.y, 16, 16);
 
     tr.identity();
-    tr.scale(2.0, 2.0);
     tr.use_transform();
     graph.set_color(255, 255,255,255);
-    graph.draw_text(assets.bitmaps.font, "Hello,\nworld!",2,2,-1,0,false);
-
-    graph.draw_bitmap(assets.bitmaps.font,0,0);
+    graph.draw_text(assets.bitmaps.font, "Hello,\nworld!",2,2,-12,0,false);
     
 }
 
