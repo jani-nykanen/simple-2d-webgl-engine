@@ -41,7 +41,7 @@ game.draw = function() {
     bg.draw();
 
     // Draw game object shadows
-    objman.draw(16,16,{r: 0, g: 0, b: 0, a: 0.5});
+    objman.draw(16,16,{r: 0, g: 0, b: 0, a: 0.35});
     // Draw game objects 
     objman.draw();
 }

@@ -2,11 +2,12 @@
 // (c) 2018 Jani Nykänen
 
 // Constants
-const PL_ROTATE_SPEED = 0.075;
+const PL_ROTATE_SPEED = 0.0625;
 const PL_FORWARD_TARGET = 16.0;
 const PL_REVERSE_TARGET = 8.0;
-const PL_ACCELERATION = 0.5;
+const PL_ACCELERATION = 0.4;
 const PL_SIZE_SCALE = 0.85;
+const PL_GAS_WAIT = 8.0;
 
 // Constructor
 var Player = function(x, y) {
@@ -28,6 +29,29 @@ var Player = function(x, y) {
     this.angle = 0.0
     this.totalSpeed = 0.0;
     this.totalTarget = 0.0;
+
+    this.gasTimer = 0;
+}
+
+
+// Handle gas creation
+Player.prototype.create_gas = function(tm) {
+
+    const DELTA = 0.1;
+    if(this.totalTarget < DELTA)
+        return;
+
+    this.gasTimer += 1.0 * tm;
+    if(this.gasTimer >= PL_GAS_WAIT) {
+
+        let x = this.pos.x + Math.cos(-this.angle + Math.PI / 2) * 80;
+        let y = this.pos.y + Math.sin(-this.angle + Math.PI / 2) * 80;
+
+        // Create gas
+        objman.add_gas(x, y, 1.5, 1.0);
+
+        this.gasTimer -= PL_GAS_WAIT;
+    }
 }
 
 
@@ -90,11 +114,13 @@ Player.prototype.move_axis = function(o,target, speed, tm) {
 // Move
 Player.prototype.move = function(tm) {
 
+    var accl = PL_ACCELERATION - 0.325 *(this.totalSpeed / PL_FORWARD_TARGET);
+
     var ox = {pos: this.pos.x, coord: this.speed.x};
     var oy = {pos: this.pos.y, coord: this.speed.y};
 
-    this.move_axis(ox, this.target.x, PL_ACCELERATION, tm);
-    this.move_axis(oy, this.target.y, PL_ACCELERATION, tm);
+    this.move_axis(ox, this.target.x, accl, tm);
+    this.move_axis(oy, this.target.y, accl, tm);
 
     this.pos.x = ox.pos;
     this.speed.x = ox.coord;
@@ -146,6 +172,7 @@ Player.prototype.move_cam = function(tm) {
 // Update player
 Player.prototype.update = function(tm) {
 
+    this.create_gas(tm);
     this.control(tm);
     this.move(tm);
     this.move_cam(tm);

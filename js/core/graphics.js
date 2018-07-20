@@ -100,7 +100,10 @@ graph.texWhite = null;
 graph.prevBitmap = null;
 // Is the color locked
 graph.colLocked = false;
-
+// Old color
+graph.oldColor = {r:0,g:0,b:0,a:1};
+// Stored color
+graph.storedColor = {r:0,g:0,b:0,a:1}; 
 
 /**
  * Create rectangle mesh
@@ -299,9 +302,21 @@ graph.fill_rectangle = function(x, y, w, h) {
  */
 graph.set_color = function(r, g, b, a) {
 
-    if(graph.colLocked) return;
+    if(graph.colLocked) {
+        
+        this.defShader.set_unif_color(
+            graph.oldColor.r, graph.oldColor.g, graph.oldColor.b , 
+            graph.oldColor.a * a);
+
+        return;
+    }
 
     this.defShader.set_unif_color(r, g, b , a );
+
+    graph.oldColor.r = r;
+    graph.oldColor.g = g;
+    graph.oldColor.b = b;
+    graph.oldColor.a = a;
 }
 
 
@@ -448,4 +463,17 @@ graph.draw_text = function(bmp, text, dx, dy, xoff, yoff, center) {
 graph.toggle_color_lock = function(state) {
 
     graph.colLocked = state;
+}
+
+
+/**
+ * Set back to the locked color
+ */
+graph.set_to_locked_color = function() {
+    
+    if(!graph.colLocked) return;
+
+    this.defShader.set_unif_color(
+        graph.oldColor.r, graph.oldColor.g, graph.oldColor.b , 
+        graph.oldColor.a);
 }

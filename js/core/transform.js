@@ -153,8 +153,6 @@ tr.push = function() {
 tr.pop = function() {
 
     tr.model = tr.stack.pop();
-
-    
 }
 
 
