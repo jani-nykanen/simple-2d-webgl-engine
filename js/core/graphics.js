@@ -9,7 +9,6 @@ FLIP_H = 1;
 FLIP_V = 2;
 FLIP_H_V = 3;
 
-
 // Graphics object
 graph = {};
 
@@ -99,6 +98,8 @@ graph.rectangle = {
 graph.texWhite = null;
 // Previous bitmap
 graph.prevBitmap = null;
+// Is the color locked
+graph.colLocked = false;
 
 
 /**
@@ -298,6 +299,8 @@ graph.fill_rectangle = function(x, y, w, h) {
  */
 graph.set_color = function(r, g, b, a) {
 
+    if(graph.colLocked) return;
+
     this.defShader.set_unif_color(r, g, b , a );
 }
 
@@ -435,4 +438,14 @@ graph.draw_text = function(bmp, text, dx, dy, xoff, yoff, center) {
 
         x += cw + xoff;
     }
+}
+
+
+/**
+ * Toggle color lock
+ * @param state State
+ */
+graph.toggle_color_lock = function(state) {
+
+    graph.colLocked = state;
 }

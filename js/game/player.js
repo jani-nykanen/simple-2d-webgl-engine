@@ -6,6 +6,7 @@ const PL_ROTATE_SPEED = 0.075;
 const PL_FORWARD_TARGET = 16.0;
 const PL_REVERSE_TARGET = 8.0;
 const PL_ACCELERATION = 0.5;
+const PL_SIZE_SCALE = 0.85;
 
 // Constructor
 var Player = function(x, y) {
@@ -26,6 +27,7 @@ var Player = function(x, y) {
 
     this.angle = 0.0
     this.totalSpeed = 0.0;
+    this.totalTarget = 0.0;
 }
 
 
@@ -101,16 +103,17 @@ Player.prototype.move = function(tm) {
     this.speed.y = oy.coord;
 
     this.totalSpeed = Math.hypot(this.speed.x, this.speed.y);
-
+    this.totalTarget = Math.hypot(this.target.x, this.target.y);
 }
 
 
 // Move camera
 Player.prototype.move_cam = function(tm) {
 
-    const SCALE_MOD = 32.0;
+    const SCALE_SPEED = 0.005;
     const DIST_MOD_MIN = 128.0;
 
+    // Move
     var dmod = DIST_MOD_MIN + this.totalSpeed * 4.0;
 
     var dx = this.pos.x + Math.cos(-this.angle - Math.PI / 2.0) * dmod;
@@ -121,10 +124,22 @@ Player.prototype.move_cam = function(tm) {
 
     cam.x += Math.cos(angle) * (dist/12.0) * tm;
     cam.y += Math.sin(angle) * (dist/8.0) * tm;
-/*
-    cam.sx = 1.0 / (1.0 + this.totalSpeed / SCALE_MOD);
+
+    // Scale
+    var scaleTarget = 1.0 - 0.25 * (this.totalTarget / PL_FORWARD_TARGET);
+    if(cam.sx > scaleTarget) {
+
+        cam.sx -= SCALE_SPEED * tm;
+        if(cam.sx < scaleTarget)
+            cam.sx = scaleTarget;
+    }
+    else if(cam.sx < scaleTarget) {
+
+        cam.sx += SCALE_SPEED * tm;
+        if(cam.sx > scaleTarget)
+            cam.sx = scaleTarget;
+    }
     cam.sy = cam.sx;
-    */
 }
 
 
@@ -147,7 +162,10 @@ Player.prototype.draw = function() {
     tr.rotate(-this.angle);
     tr.use_transform();
     
-    graph.draw_bitmap(bmp, -bmp.width/2, -bmp.height/2, 0);
+    graph.draw_scaled_bitmap(bmp, 
+         -bmp.width/2 * PL_SIZE_SCALE,
+         -bmp.height/2 * PL_SIZE_SCALE
+         ,PL_SIZE_SCALE,PL_SIZE_SCALE, 0);
 
     tr.pop();
 }

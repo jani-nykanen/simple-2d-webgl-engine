@@ -1,6 +1,10 @@
 // Game scene
 // (c) 2018 Jani Nykänen
 
+// Constants
+const AREA_WIDTH = 1280*2;
+const AREA_HEIGHT = 1280*2;
+
 // Game object
 game = {};
 
@@ -18,6 +22,9 @@ game.update = function(tm) {
 
     // Update objects
     objman.update(tm);
+
+    // Limit camera
+    cam.limit(AREA_WIDTH, AREA_HEIGHT);
 }
 
 
@@ -33,7 +40,9 @@ game.draw = function() {
     // Draw background
     bg.draw();
 
-    // Draw game objects
+    // Draw game object shadows
+    objman.draw(16,16,{r: 0, g: 0, b: 0, a: 0.5});
+    // Draw game objects 
     objman.draw();
     
 }
