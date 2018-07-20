@@ -1,69 +1,45 @@
-/**
- * Global scene
- * @author Jani Nykänen
- */
+// Game scene
+// (c) 2018 Jani Nykänen
 
 // Game object
 game = {};
 
-// TEST
-angle = 0.0;
 
-
-/**
- * Initialize
- */
+// Initialize
 game.init = function() {
     
-    console.log("Beep boop");
+    // Initialize object manager
+    objman.init();
 }
 
 
-/**
- * Update
- * @param tm Time mul.
- */
+// Update game
 game.update = function(tm) {
 
-    angle += 0.05 * tm;
+    // Update objects
+    objman.update(tm);
 }
 
 
-/**
- * Draw
- */
+// Draw game
 game.draw = function() {
 
-    tr.fit_view_height(720.0);
-
     tr.identity();
+    cam.use();
     tr.use_transform();
 
-    graph.set_color(1, 0, 0, 1);
-    graph.fill_rectangle(128,128,128,128);
+    graph.clear(1, 1, 1);
 
-    graph.set_color(0, 0, 1, 0.5);
-    graph.fill_rectangle(192,192,128,128);
+    // Draw background
+    bg.draw();
 
-    graph.set_color(1, 1, 1, 1);
-    graph.draw_bitmap(assets.bitmaps.test, 256,256, FLIP_V | FLIP_H);
-    graph.draw_bitmap_region(assets.bitmaps.test, 32,32,96,64, 512, 64, FLIP_H);
-
-    graph.set_color(1, 0,0,1);
-    var p = input.cursor_pos();
-    graph.fill_rectangle(p.x, p.y, 16, 16);
-
-    tr.identity();
-    tr.use_transform();
-    graph.set_color(1, 1,1,1);
-    graph.draw_text(assets.bitmaps.font, "Hello,\nworld!",2,2,-12,0,false);
+    // Draw game objects
+    objman.draw();
     
 }
 
 
-/**
- * On change
- */
+// On change
 game.on_change = function() {
 
 }

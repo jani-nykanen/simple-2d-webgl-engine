@@ -14,8 +14,10 @@ global.init = function() {
     
     // Load assets
     assets.load({
-        test: "test.png",
-        font: "font.png"
+        player: "player.png",
+        animal: "animal.png",
+        gas: "gas.png",
+        bg: "background.jpg",
     }, "assets/bitmaps");
 }
 
@@ -26,7 +28,8 @@ global.init = function() {
  */
 global.update = function(tm) {
 
-
+    // Update key config
+    kconf.update();
 }
 
 

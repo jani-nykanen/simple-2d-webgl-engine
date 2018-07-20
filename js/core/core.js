@@ -166,6 +166,7 @@ core.init = function() {
     // Initialize components
     tr.init();
     graph.init();
+    input.init();
 
     // Add listeners
     window.addEventListener("keydown", core.key_down_listener);

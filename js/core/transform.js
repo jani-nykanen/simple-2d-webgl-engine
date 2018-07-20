@@ -3,12 +3,19 @@
  * @author Jani Nykänen
  */
 
+// Constants
+const TARGET_MODEL = 0;
+const TARGET_WORLD = 1;
+
 // Transformation object
 tr = {};
 
 // Matrices
 tr.model = new Mat3();
 tr.view = new Mat3();
+tr.world = new Mat3();
+tr.target = tr.model;
+tr.targetID = 0;
 tr.operand = new Mat3();
 
 // Model matrix stack
@@ -23,8 +30,9 @@ tr.viewport = {w: 1, h: 1};
  */
 tr.init = function() {
 
-    tr.model.identity();
+    tr.target.identity();
     tr.view.identity();
+    tr.world.identity();
 }
 
 
@@ -52,6 +60,31 @@ tr.fit_view_height = function(h) {
 
     tr.set_view(w, h);
 }
+
+
+/**
+ * Fit view with fixed height and center it
+ * @param h Height
+ * @param sx Scale X
+ * @param sy Scale y
+ */
+tr.fit_view_height_center = function(h, sx, sy) {
+
+    sx = sx || 1;
+    sy = sy || 1;
+
+    h *= sy;
+    var ratio = graph.canvas.width / graph.canvas.height;
+    var w = ratio * h * sx;
+
+    var x = w / 2;
+    var y = h / 2
+
+    tr.translate_world(x, y);
+
+    tr.set_view(w, h);
+}
+
 
 
 /**
@@ -122,5 +155,18 @@ tr.pop = function() {
 tr.use_transform = function() {
 
     var pr = graph.defShader;
-    pr.set_unif_transf(this.model, this.view);
+    var out = this.world.mul(this.model);
+    pr.set_unif_transf(out, this.view);
+}
+
+
+/**
+ * Translate world
+ * @param x X translation
+ * @param y Y translation
+ */
+tr.translate_world = function(x, y) {
+
+    this.world.identity();
+    this.world.translate(x, y);
 }
