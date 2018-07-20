@@ -9,8 +9,6 @@ kconf = {
     down: {key: KEY_DOWN_ARROW,  state: state.UP },
 }
 
-console.log(kconf.left.key)
-
 // Update key configuration
 kconf.update = function() {
 

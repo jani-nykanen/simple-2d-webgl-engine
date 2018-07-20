@@ -6,6 +6,7 @@
 // Constants
 const TARGET_MODEL = 0;
 const TARGET_WORLD = 1;
+const STACK_MAX = 16;
 
 // Transformation object
 tr = {};
@@ -20,6 +21,8 @@ tr.operand = new Mat3();
 
 // Model matrix stack
 tr.stack = [];
+// Stack pointer
+tr.stackPointer = 0;
 
 // Viewport info
 tr.viewport = {w: 1, h: 1};
@@ -33,6 +36,11 @@ tr.init = function() {
     tr.target.identity();
     tr.view.identity();
     tr.world.identity();
+
+    for(var i = 0; i < STACK_MAX; ++ i) {
+
+        tr.stack[i] = new Mat3();
+    }
 }
 
 
@@ -81,7 +89,6 @@ tr.fit_view_height_center = function(h, sx, sy) {
     var y = h / 2
 
     tr.translate_world(x, y);
-
     tr.set_view(w, h);
 }
 
@@ -145,7 +152,9 @@ tr.push = function() {
  */
 tr.pop = function() {
 
-    tr.model = tr.stack.pop().clone();
+    tr.model = tr.stack.pop();
+
+    
 }
 
 
@@ -167,6 +176,5 @@ tr.use_transform = function() {
  */
 tr.translate_world = function(x, y) {
 
-    this.world.identity();
     this.world.translate(x, y);
 }

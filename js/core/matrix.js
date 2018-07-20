@@ -117,8 +117,8 @@ Mat3.prototype.clone = function() {
 
     var A = new Mat3();
     A.m11 = this.m11; A.m21 = this.m21; A.m31 = this.m31;
-    A.m12 = this.m11; A.m22 = this.m21; A.m32 = this.m31;
-    A.m13 = this.m11; A.m23 = this.m21; A.m33 = this.m31;
+    A.m12 = this.m12; A.m22 = this.m22; A.m32 = this.m32;
+    A.m13 = this.m13; A.m23 = this.m23; A.m33 = this.m33;
 
     return A;
 }

@@ -166,6 +166,6 @@ Player.prototype.draw = function() {
          -bmp.width/2 * PL_SIZE_SCALE,
          -bmp.height/2 * PL_SIZE_SCALE
          ,PL_SIZE_SCALE,PL_SIZE_SCALE, 0);
-
+         
     tr.pop();
 }

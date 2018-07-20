@@ -44,7 +44,6 @@ game.draw = function() {
     objman.draw(16,16,{r: 0, g: 0, b: 0, a: 0.5});
     // Draw game objects 
     objman.draw();
-    
 }
 
 
