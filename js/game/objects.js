@@ -10,12 +10,14 @@ objman = {};
 // Initialize
 objman.init = function() {
 
-    objman.player = new Player(0, 0);
+    // Create components
+    objman.player = new Player(0, 400);
     objman.gas = [];
     for(var i = 0; i < GAS_COUNT; ++ i) {
 
         objman.gas[i] = new Gas();
     }
+    objman.heart = new Heart(0, 0);
 }
 
 
@@ -30,6 +32,12 @@ objman.update = function(tm) {
 
     // Update player
     objman.player.update(tm);
+    // Check player-wall collisions
+    objman.player.wall_collisions(AREA_WIDTH, AREA_HEIGHT);
+
+    // Update heart
+    objman.heart.update(tm);
+    objman.heart.player_collision(objman.player);
 }
 
 
@@ -48,6 +56,10 @@ objman.draw = function(tx, ty, color) {
 
     tr.push();
     tr.translate(tx, ty);
+    tr.use_transform();
+
+    // Draw heart
+    objman.heart.draw();
 
     // Draw gas
     for(var i = 0; i < GAS_COUNT; ++ i) {

@@ -25,7 +25,7 @@ tr.stack = [];
 tr.stackPointer = 0;
 
 // Viewport info
-tr.viewport = {w: 1, h: 1};
+tr.viewport = {w: 1, h: 1, ratio: 1};
 
 
 /**
@@ -54,6 +54,7 @@ tr.set_view = function(w, h) {
     tr.view.ortho2D(0, w, 0, h);
     tr.viewport.w = w;
     tr.viewport.h = h;
+    tr.ratio = w / h;
 }
 
 
@@ -153,6 +154,7 @@ tr.push = function() {
 tr.pop = function() {
 
     tr.model = tr.stack.pop();
+    tr.use_transform();
 }
 
 

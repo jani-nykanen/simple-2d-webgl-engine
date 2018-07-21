@@ -8,6 +8,8 @@ const PL_REVERSE_TARGET = 8.0;
 const PL_ACCELERATION = 0.4;
 const PL_SIZE_SCALE = 0.85;
 const PL_GAS_WAIT = 8.0;
+const PL_RADIUS = 96;
+const PL_MASS = 1.25;
 
 // Constructor
 var Player = function(x, y) {
@@ -31,6 +33,9 @@ var Player = function(x, y) {
     this.totalTarget = 0.0;
 
     this.gasTimer = 0;
+
+    this.radius = PL_RADIUS;
+    this.mass = PL_MASS;
 }
 
 
@@ -138,6 +143,7 @@ Player.prototype.move_cam = function(tm) {
 
     const SCALE_SPEED = 0.005;
     const DIST_MOD_MIN = 128.0;
+    const CAM_SPEED = 12;
 
     // Move
     var dmod = DIST_MOD_MIN + this.totalSpeed * 4.0;
@@ -148,8 +154,8 @@ Player.prototype.move_cam = function(tm) {
     var angle = Math.atan2(dy - cam.y,dx - cam.x);
     var dist = Math.hypot(dx-cam.x, dy-cam.y);
 
-    cam.x += Math.cos(angle) * (dist/12.0) * tm;
-    cam.y += Math.sin(angle) * (dist/8.0) * tm;
+    cam.x += Math.cos(angle) * (dist/CAM_SPEED) * tm;
+    cam.y += Math.sin(angle) * (dist/ (CAM_SPEED / tr.viewport.ratio)) * tm;
 
     // Scale
     var scaleTarget = 1.0 - 0.25 * (this.totalTarget / PL_FORWARD_TARGET);
@@ -195,4 +201,46 @@ Player.prototype.draw = function() {
          ,PL_SIZE_SCALE,PL_SIZE_SCALE, 0);
          
     tr.pop();
+}
+
+
+// Horizontal wall collision
+Player.prototype.horizontal_wall_collision = function(y, dir) {
+
+    if(dir == -1 && this.pos.y < y + this.radius) {
+
+        this.pos.y = y + this.radius;
+        this.speed.y /= -this.mass;
+    }
+    else if(dir == 1 && this.pos.y > y - this.radius) {
+
+        this.pos.y = y - this.radius;
+        this.speed.y /= -this.mass;
+    }
+}
+
+
+// Vertical wall collision
+Player.prototype.vertical_wall_collision = function(x, dir) {
+
+    if(dir == -1 && this.pos.x < x + this.radius) {
+
+        this.pos.x = x + this.radius;
+        this.speed.x /= -this.mass;
+    }
+    else if(dir == 1 && this.pos.x > x - this.radius) {
+
+        this.pos.x = x - this.radius;
+        this.speed.x /= -this.mass;
+    }
+}
+
+
+// Wall collisions
+Player.prototype.wall_collisions = function(w, h) {
+
+    this.horizontal_wall_collision(-h/2, -1);
+    this.horizontal_wall_collision(h/2, 1);
+    this.vertical_wall_collision(-w/2, -1);
+    this.vertical_wall_collision(w/2, 1);
 }

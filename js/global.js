@@ -18,6 +18,8 @@ global.init = function() {
         animal: "animal.png",
         gas: "gas.png",
         bg: "background.jpg",
+        bgElements: "bg_elements.png",
+        heart: "heart.png",
     }, "assets/bitmaps");
 }
 
