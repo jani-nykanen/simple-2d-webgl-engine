@@ -3,6 +3,7 @@
 
 // Constants
 const GAS_COUNT = 32;
+const CHAIN_COUNT = 6;
 
 // Object manager object
 objman = {};
@@ -10,14 +11,30 @@ objman = {};
 // Initialize
 objman.init = function() {
 
-    // Create components
+    //// Create components:
+    // Player
     objman.player = new Player(0, 400);
+    // Gas
     objman.gas = [];
     for(var i = 0; i < GAS_COUNT; ++ i) {
 
         objman.gas[i] = new Gas();
     }
+    // Heart
     objman.heart = new Heart(0, 0);
+    // Chains
+    objman.chain = [];
+    for(var i = 0; i < CHAIN_COUNT; ++ i) {
+
+        objman.chain[i] = new Chain(
+            objman.player.pos.x, objman.player.pos.y,
+            i == 0 ? objman.player.butt : objman.chain[i-1],
+            64, 1.5);
+    }
+    // Fetus
+    objman.fetus = new Fetus(
+        objman.player.pos.x, objman.player.pos.y+128,
+        objman.chain[CHAIN_COUNT-1],64,1.33);
 }
 
 
@@ -38,6 +55,15 @@ objman.update = function(tm) {
     // Update heart
     objman.heart.update(tm);
     objman.heart.player_collision(objman.player);
+
+    // Update chain
+    for(var i = 0; i < CHAIN_COUNT; ++ i) {
+
+        objman.chain[i].update(tm);
+    }
+
+    // Update fetus
+    objman.fetus.update(tm);
 }
 
 
@@ -60,6 +86,15 @@ objman.draw = function(tx, ty, color) {
 
     // Draw heart
     objman.heart.draw();
+
+    // Draw chain
+    for(var i = CHAIN_COUNT -1; i >= 0; -- i) {
+
+        objman.chain[i].draw();
+    }
+
+    // Draw fetus
+    objman.fetus.draw();
 
     // Draw gas
     for(var i = 0; i < GAS_COUNT; ++ i) {

@@ -23,6 +23,9 @@ game.update = function(tm) {
     // Update objects
     objman.update(tm);
 
+    // Update background
+    bg.update(tm);
+
     // Limit camera
     cam.limit(AREA_WIDTH, AREA_HEIGHT);
 }

@@ -20,6 +20,7 @@ global.init = function() {
         bg: "background.jpg",
         bgElements: "bg_elements.png",
         heart: "heart.png",
+        fetus: "fetus.png",
     }, "assets/bitmaps");
 }
 

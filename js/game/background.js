@@ -4,8 +4,15 @@
 // Background object
 bg = {};
 
+// Star "shining" timer
+bg.starTimer = 0.0;
+
+
 // Draw the background elements
 bg.draw_bg_elements = function() {
+
+    const STAR_SHINE_MUL = 0.1;
+    const POS_OFF = Math.PI / 4.0;
 
     const SPC_ELEMENTS = [
         [3,2],
@@ -20,7 +27,10 @@ bg.draw_bg_elements = function() {
     var left = -1280;
     var top = -1280;
 
-    var size = 256*2.5;
+    var scale = 2.5;
+    var size = 256 * scale;
+    var sizeBase = 256 * scale;
+    var off = 0.0;
 
     graph.set_color(1,1,1, 0.35);
 
@@ -28,6 +38,7 @@ bg.draw_bg_elements = function() {
 
         for(var x = 0; x < 4; ++ x) {
 
+            off = 0.0;
             frame = -1;
             for(var i = 0; i < 4; ++ i) {
 
@@ -44,15 +55,29 @@ bg.draw_bg_elements = function() {
                 starId = ( (y % 2 == 0 && x % 2 == 0) || (y % 2 == 1 && x % 2 == 1) ) ? 1 : 0;
                 frame = 1 + starId;
                 row = 1;
+
+                off = Math.sin(bg.starTimer + POS_OFF * (x+y)) 
+                    * STAR_SHINE_MUL;
             }
+            size = 256 * (scale + off);
 
             graph.draw_scaled_bitmap_region(assets.bitmaps.bgElements,
                 frame*256,row*256,256,256,
-                left + x*size,top + y*size,size,size, 0);
+                left + x*sizeBase - 256*off/2,top + y*sizeBase - 256*off/2,
+                size,size, 0);
         }
     }
 
     graph.set_color(1,1,1,1);
+}
+
+
+// Update background
+bg.update = function(tm) {
+
+    const STAR_SHINE_SPEED = 0.05;
+
+    bg.starTimer += STAR_SHINE_SPEED * tm;
 }
 
 

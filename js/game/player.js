@@ -10,6 +10,8 @@ const PL_SIZE_SCALE = 0.85;
 const PL_GAS_WAIT = 8.0;
 const PL_RADIUS = 96;
 const PL_MASS = 1.25;
+const PL_BUTT_DIST = 24;
+const PL_GAS_DIST = 72;
 
 // Constructor
 var Player = function(x, y) {
@@ -36,6 +38,10 @@ var Player = function(x, y) {
 
     this.radius = PL_RADIUS;
     this.mass = PL_MASS;
+
+    this.butt = {
+        pos: {x: 0, y: 0}
+    };
 }
 
 
@@ -49,8 +55,8 @@ Player.prototype.create_gas = function(tm) {
     this.gasTimer += 1.0 * tm;
     if(this.gasTimer >= PL_GAS_WAIT) {
 
-        let x = this.pos.x + Math.cos(-this.angle + Math.PI / 2) * 80;
-        let y = this.pos.y + Math.sin(-this.angle + Math.PI / 2) * 80;
+        let x = this.pos.x + Math.cos(-this.angle + Math.PI / 2) * PL_GAS_DIST;
+        let y = this.pos.y + Math.sin(-this.angle + Math.PI / 2) * PL_GAS_DIST;
 
         // Create gas
         objman.add_gas(x, y, 1.5, 1.0);
@@ -135,6 +141,9 @@ Player.prototype.move = function(tm) {
 
     this.totalSpeed = Math.hypot(this.speed.x, this.speed.y);
     this.totalTarget = Math.hypot(this.target.x, this.target.y);
+
+    this.butt.pos.x = this.pos.x + Math.cos(-this.angle + Math.PI / 2) * PL_BUTT_DIST;
+    this.butt.pos.y = this.pos.y + Math.sin(-this.angle + Math.PI / 2) * PL_BUTT_DIST;
 }
 
 
