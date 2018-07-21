@@ -1,5 +1,7 @@
-## A simple 2D WebGL engine
+## Weird Things Happen
 
-The goal of this engine is to have a minimal 2D WebGL/Html5 game engine for game jams and other purposes.
+[And they happen here](https://jani-nykanen.github.io/weird-things-happen/)
+
+COMING SOONER THAN ~~GOOFY~~ LATER!
 
 (c) 2018 Jani Nykänen
