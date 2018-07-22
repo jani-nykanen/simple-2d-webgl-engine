@@ -4,9 +4,40 @@
 // Constants
 const GAS_COUNT = 32;
 const CHAIN_COUNT = 6;
+const ANIMAL_COUNT = 32;
+
 
 // Object manager object
 objman = {};
+
+
+// Get the next animal
+objman.next_animal = function() {
+
+    for(var i = 0; i < ANIMAL_COUNT; ++ i) {
+
+        if(objman.animals[i].exist == false &&
+          objman.animals[i].dying == false) {
+
+            return objman.animals[i];
+        }
+    }
+
+    return null;
+}
+
+
+// Create an animal to a random position
+objman.create_animal = function() {
+
+    const ANIMAL_MAX_SIZE = 2.0;
+    const SPEED_MOD = 4; 
+    const MAX_SPEED = 16.0;
+
+    var scale = 1.0 + Math.random() * ANIMAL_MAX_SIZE;
+    var speed = 16.0 - (scale-1.0) * SPEED_MOD;
+}
+
 
 // Initialize
 objman.init = function() {
@@ -35,6 +66,12 @@ objman.init = function() {
     objman.fetus = new Fetus(
         objman.player.pos.x, objman.player.pos.y+128,
         objman.chain[CHAIN_COUNT-1],64,1.33);
+    // Animals
+    objman.animals = [];
+    for(var i = 0; i < ANIMAL_COUNT; ++ i) {
+
+        objman.animals[i] = new Animal();
+    }
 }
 
 
@@ -129,5 +166,5 @@ objman.add_gas = function(x, y, speed, scale) {
         }
     }
 
-    gas.create_instance(x,y,speed,scale);
+    gas.create_self(x,y,speed,scale);
 }

@@ -17,7 +17,7 @@ var Gas = function() {
 
 
 // Create some nice gas
-Gas.prototype.create_instance = function(x, y, speed, scale) {
+Gas.prototype.create_self = function(x, y, speed, scale) {
 
     this.x = x;
     this.y = y;
