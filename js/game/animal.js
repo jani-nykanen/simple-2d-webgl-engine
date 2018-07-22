@@ -14,6 +14,7 @@ var Animal = function() {
     this.scale = 1.0;
     this.angle = 0.0;
     this.radius = 1;
+    this.rotSpeed = 0;
 
     this.exist = false;
     this.dying = false;
@@ -39,14 +40,18 @@ Animal.prototype.create_self = function(x, y, sx, sy, scale) {
     this.dying = false;
     this.deathTimer = 0.0;
 
+    var perimeter = Math.PI * this.radius * 2;
+    var speed = Math.hypot(sx, sy);
+
+    this.rotSpeed = speed / perimeter * 2 * Math.PI;
 }
 
 
 // Move animal
 Animal.prototype.move = function(tm) {
 
-    this.pos.x += this.speed.x;
-    this.pos.y += this.speed.y;
+    this.pos.x += this.speed.x * tm;
+    this.pos.y += this.speed.y * tm;
 
     // Check if outside the screen
     if( (this.speed.x > 0 && this.pos.x-this.radius > AREA_WIDTH/2)
@@ -57,6 +62,10 @@ Animal.prototype.move = function(tm) {
         this.dying = false;
         this.exist = false;
     }
+
+    // Rotate
+    var dir = this.speed.x < 0.0 ? -1 : 1;
+    this.angle += this.rotSpeed * dir * tm;
     
 }
 
@@ -70,11 +79,14 @@ Animal.prototype.update = function(tm) {
         if(this.dying) {
 
             this.deathTimer -= 1.0 * tm;
-            if(this.deathTimer < 0.0)
+            if(this.deathTimer <= 0.0)
                 this.dying = false;
         }
         return;
     }
+
+    // Move
+    this.move(tm);
 }
 
 
@@ -94,8 +106,9 @@ Animal.prototype.draw = function() {
     tr.translate(this.pos.x, this.pos.y);
     tr.rotate(this.angle);
     tr.scale(this.scale, this.scale);
+    tr.use_transform();
 
-    graph.draw_bitmap(assets.bitmaps.animal, 0, 0, 0);
+    graph.draw_bitmap(assets.bitmaps.animal, -128, -128, 0);
 
     tr.pop();
 }
