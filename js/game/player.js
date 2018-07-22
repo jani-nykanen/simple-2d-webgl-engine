@@ -16,19 +16,12 @@ const PL_GAS_DIST = 72;
 // Constructor
 var Player = function(x, y) {
 
-    this.pos = {
-        x: x,
-        y: y,
-    }
+    CollisionObject.call(this);
 
-    this.speed = {
-        x: 0,
-        y: 0
-    }
-    this.target = {
-        x: 0,
-        y: 0,
-    }
+    this.pos.x = x;
+    this.pos.y = y;
+
+    this.target = {x: 0, y: 0};
 
     this.angle = 0.0
     this.totalSpeed = 0.0;
@@ -38,11 +31,13 @@ var Player = function(x, y) {
 
     this.radius = PL_RADIUS;
     this.mass = PL_MASS;
+    this.exist = true;
 
     this.butt = {
         pos: {x: 0, y: 0}
     };
 }
+Player.prototype = Object.create(CollisionObject.prototype);
 
 
 // Handle gas creation

@@ -1,8 +1,6 @@
 // Fetus
 // (c) 2018 Jani Nykänen
 
-const FETUS_MAX_SPEED = 32.0; 
-
 // Fetus constructor
 var Fetus = function(x, y, follow, dist, scale) {
 
@@ -26,6 +24,8 @@ Fetus.prototype.update = function(tm) {
     var d = Math.hypot(this.pos.x-this.fo.pos.x, 
         this.pos.y-this.fo.pos.y);
 
+    this.speed.x = 0.0;
+    this.speed.y = 0.0;
     if(d > this.minDist) {
 
         this.angle = Math.atan2(this.fo.pos.y-this.pos.y, 
@@ -35,14 +35,6 @@ Fetus.prototype.update = function(tm) {
 
         this.speed.x = Math.cos(this.angle) * s;
         this.speed.y = Math.sin(this.angle) * s;
-    }
-
-    if(Math.hypot(this.speed.x,this.speed.y) > FETUS_MAX_SPEED) {
-
-        this.pos.x = this.fo.pos.x;
-        this.pos.y = this.fo.pos.y;
-        this.speed.x = 0.0;
-        this.speed.y = 0.0;
     }
 
     this.pos.x += this.speed.x * tm;

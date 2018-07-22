@@ -6,7 +6,7 @@ const GAS_COUNT = 32;
 const CHAIN_COUNT = 6;
 const ANIMAL_COUNT = 32;
 
-const ANIMAL_TIME_WAIT_MIN = 60.0;
+const ANIMAL_TIME_WAIT_MIN = 30.0;
 const ANIMAL_TIME_WAIT_VARY = 90.0;
 const ANIMAL_WAIT_INITIAL = 60.0;
 
@@ -183,7 +183,7 @@ objman.update = function(tm) {
 
     // Update heart
     objman.heart.update(tm);
-    objman.heart.player_collision(objman.player);
+    objman.heart.object_collision(objman.player);
 
     // Update chain
     for(var i = 0; i < CHAIN_COUNT; ++ i) {
@@ -198,6 +198,21 @@ objman.update = function(tm) {
     for(var i = 0; i < ANIMAL_COUNT; ++ i) {
 
         objman.animals[i].update(tm);
+        // Collide with player
+        objman.animals[i].object_collision(objman.player);
+        // Collide with heart
+        objman.animals[i].object_collision(objman.heart);
+        // Collide with other animals
+        if(objman.animals[i].exist) {
+
+            for(var i2 = 0; i2 < ANIMAL_COUNT; ++ i2) {
+
+                if(i != i2) {
+
+                    objman.animals[i].object_collision(objman.animals[i2]);
+                }
+            }
+        }
     }
 }
 

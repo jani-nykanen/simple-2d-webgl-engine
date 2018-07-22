@@ -3,6 +3,10 @@
  * @author Jani Nykänen
  */
 
+// Constants
+const FRAME_RATE = 30;
+
+
 // Core class
 core = {};
 
@@ -15,6 +19,9 @@ core.scenes = new Array();
 core.currentScene = null;
 // Global scene
 core.globalScene = null;
+
+// Time count
+core.timeCount = 0.0;
 
 
 /**
@@ -90,18 +97,35 @@ core.loop = function(ts) {
 
     const TM_LIMIT = 5.0;
 
+    var redraw = false;
+
     // Calculate time multiplier
     var delta = ts - core.oldTs;
+    /*
     var tm = (delta / 1000) / (1.0 / 60.0);
     if(tm > TM_LIMIT)
         tm = TM_LIMIT;
+    */
     core.oldTs = ts;
 
+    core.timeCount += delta / 1000.0;
+
     if(assets.has_loaded()) {
-        // Update frame 
-        core.update(tm);
-        // Draw frame
-        core.draw();
+
+        // Check if enough time has passed
+        while(core.timeCount >= 1.0 / FRAME_RATE) {
+
+            // Update frame 
+            core.update(60.0 / FRAME_RATE);
+
+            core.timeCount -= 1.0 / FRAME_RATE;
+            redraw = true;
+        }
+        
+        if(redraw) {
+            // Draw frame
+            core.draw();
+        }
     }
     else {
 
