@@ -1,8 +1,16 @@
 // Fetus
 // (c) 2018 Jani Nykänen
 
+// Constants
+const MAGNET_DELTA = 0.01;
+const FETUS_MAGNET_DIST = 768.0;
+const FETUS_MAGNET_POWER = 24.0;
+
+
 // Fetus constructor
 var Fetus = function(x, y, follow, dist, scale) {
+
+    CollisionObject.call(this);
 
     this.pos = {};
     this.pos.x = x;
@@ -10,8 +18,49 @@ var Fetus = function(x, y, follow, dist, scale) {
     this.fo = follow;
     this.minDist = dist;
     this.scale = scale;
-    this.speed = {x: 0, y: 0};
+    this.speed.x = 0;
+    this.speed.y = 0;
     this.angle = 0.0;
+    this.mass = 1.0;
+
+    this.radius = 64*this.scale;
+    this.static = true;
+    this.exist = true;
+    this.dying = false;
+
+    this.magnetic = false;
+    this.magnetTimer = 0.0;
+    this.magnetDist = FETUS_MAGNET_DIST;
+    this.magnetPower = FETUS_MAGNET_POWER;
+}
+Fetus.prototype = Object.create(CollisionObject.prototype);
+
+
+// Update magnet
+Fetus.prototype.update_magnet = function(tm) {
+
+    const MAGNET_SPEED = 0.1;
+
+    let oldState = this.magnetic;
+    this.magnetic = kconf.fire1.state == state.DOWN;
+
+    if(!this.magnetic) {
+
+        if(this.magnetTimer < MAGNET_DELTA) {
+
+            return;
+        }
+    }
+
+    this.magnetTimer += MAGNET_SPEED * tm;
+    if(this.magnetTimer >= Math.PI) {
+
+        if(!this.magnetic)
+            this.magnetTimer = 0.0;
+
+        else
+            this.magnetTimer -= Math.PI;
+    }
 }
 
 
@@ -40,6 +89,9 @@ Fetus.prototype.update = function(tm) {
     this.pos.x += this.speed.x * tm;
     this.pos.y += this.speed.y * tm;
 
+    // Update magnet
+    this.update_magnet(tm);
+
 }
 
 
@@ -51,13 +103,37 @@ Fetus.prototype.draw = function() {
     tr.rotate(this.angle - Math.PI);
     tr.use_transform();
 
-    graph.draw_scaled_bitmap_region(
-        assets.bitmaps.fetus,
-        0,0,128, 128,
-        - 64*this.scale, - 64*this.scale,
-        128*this.scale, 128*this.scale,
-        0
-    );
+    
+     // Draw magnet, if magnetic
+     if(this.magnetic || this.magnetTimer > MAGNET_DELTA) {
+
+        let t = Math.abs(Math.sin(this.magnetTimer))
+
+        graph.set_color(1+t,1+t,1+t, 1);
+        let s = (1.0+t*0.5) * this.scale;
+
+        graph.draw_scaled_bitmap_region(
+            assets.bitmaps.fetus,
+            0,0,128, 128,
+            - 64*s, - 64*s,
+            128*s, 128*s,
+            0
+        );
+
+        graph.set_color(1, 1, 1, 1);
+    }
+    else {
+
+        // Draw base
+        graph.draw_scaled_bitmap_region(
+            assets.bitmaps.fetus,
+            0,0,128, 128,
+            - 64*this.scale, - 64*this.scale,
+            128*this.scale, 128*this.scale,
+            0
+        );
+
+    }
 
     tr.pop();
 }

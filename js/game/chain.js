@@ -4,14 +4,19 @@
 // Chain constructor
 var Chain = function(x, y, follow, dist, scale) {
 
+    CollisionObject.call(this);
+
     this.pos = {};
     this.pos.x = x;
     this.pos.y = y;
     this.fo = follow;
     this.minDist = dist;
     this.scale = scale;
-    this.speed = {x: 0, y: 0};
+    this.speed.x = 0;
+    this.speed.y = 0;
+    this.mass = 0.0;
 }
+Chain.prototype = Object.create(CollisionObject.prototype);
 
 
 // Update

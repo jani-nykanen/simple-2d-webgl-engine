@@ -7,7 +7,10 @@ kconf = {
     right: {key: KEY_RIGHT_ARROW,  state: state.UP },
     up: {key: KEY_UP_ARROW,  state: state.UP },
     down: {key: KEY_DOWN_ARROW,  state: state.UP },
-}
+    fire1: {key: KEY_Z, state: state.UP},
+    fire2: {key: KEY_X, state: state.UP},
+};
+
 
 // Update key configuration
 kconf.update = function() {

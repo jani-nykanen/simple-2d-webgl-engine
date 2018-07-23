@@ -7,8 +7,9 @@ const CHAIN_COUNT = 6;
 const ANIMAL_COUNT = 32;
 
 const ANIMAL_TIME_WAIT_MIN = 30.0;
-const ANIMAL_TIME_WAIT_VARY = 90.0;
+const ANIMAL_TIME_WAIT_VARY = 60.0;
 const ANIMAL_WAIT_INITIAL = 60.0;
+const ANIMAL_MAX_CREATE = 4;
 
 // Object manager object
 objman = {};
@@ -107,8 +108,6 @@ objman.create_animal = function() {
 
 // Handle object creation
 objman.create_objects = function(tm) {
-
-    const ANIMAL_MAX_CREATE = 3;
 
     // Handle animal creation
     objman.animalTimer += 1.0 * tm;
@@ -213,6 +212,10 @@ objman.update = function(tm) {
                 }
             }
         }
+        // Collide with fetus
+        objman.fetus.object_collision(objman.animals[i]);
+        // Magnet interaction
+        objman.animals[i].magnet_interaction(objman.fetus, tm);
     }
 }
 
