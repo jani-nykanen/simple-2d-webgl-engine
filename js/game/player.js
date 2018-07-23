@@ -3,9 +3,9 @@
 
 // Constants
 const PL_ROTATE_SPEED = 0.0625;
-const PL_FORWARD_TARGET = 16.0;
+const PL_FORWARD_TARGET = 14.0;
 const PL_REVERSE_TARGET = 8.0;
-const PL_ACCELERATION = 0.4;
+const PL_ACCELERATION = 0.30;
 const PL_SIZE_SCALE = 0.85;
 const PL_GAS_WAIT = 8.0;
 const PL_RADIUS = 96;
@@ -120,7 +120,9 @@ Player.prototype.move_axis = function(o,target, speed, tm) {
 // Move
 Player.prototype.move = function(tm) {
 
-    var accl = PL_ACCELERATION - 0.325 *(this.totalSpeed / PL_FORWARD_TARGET);
+    const SLOW_MODIF = 0.90;
+
+    var accl = PL_ACCELERATION - (PL_ACCELERATION*SLOW_MODIF) *Math.pow(this.totalSpeed / PL_FORWARD_TARGET, 2);
 
     var ox = {pos: this.pos.x, coord: this.speed.x};
     var oy = {pos: this.pos.y, coord: this.speed.y};
@@ -145,9 +147,10 @@ Player.prototype.move = function(tm) {
 // Move camera
 Player.prototype.move_cam = function(tm) {
 
-    const SCALE_SPEED = 0.005;
+    const SCALE_SPEED = 0.0035;
     const DIST_MOD_MIN = 128.0;
     const CAM_SPEED = 12;
+    const DELTA = 1.0;
 
     // Move
     var dmod = DIST_MOD_MIN + this.totalSpeed * 4.0;
@@ -169,7 +172,7 @@ Player.prototype.move_cam = function(tm) {
         if(cam.sx < scaleTarget)
             cam.sx = scaleTarget;
     }
-    else if(cam.sx < scaleTarget) {
+    else if(cam.sx < scaleTarget && this.totalSpeed <= DELTA) {
 
         cam.sx += SCALE_SPEED * tm;
         if(cam.sx > scaleTarget)
