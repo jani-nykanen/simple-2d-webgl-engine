@@ -12,6 +12,7 @@ const PL_RADIUS = 96;
 const PL_MASS = 1.25;
 const PL_BUTT_DIST = 24;
 const PL_GAS_DIST = 72;
+const PL_SPEED_LIMIT = 16.0;
 
 // Constructor
 var Player = function(x, y) {
@@ -141,6 +142,25 @@ Player.prototype.move = function(tm) {
 
     this.butt.pos.x = this.pos.x + Math.cos(-this.angle + Math.PI / 2) * PL_BUTT_DIST;
     this.butt.pos.y = this.pos.y + Math.sin(-this.angle + Math.PI / 2) * PL_BUTT_DIST;
+
+    // Check if speed is in allowed range
+    if(this.speed.x > PL_SPEED_LIMIT) {
+
+        this.speed.x = PL_SPEED_LIMIT;
+    }
+    else if(this.speed.x < -PL_SPEED_LIMIT) {
+
+        this.speed.x = -PL_SPEED_LIMIT;
+    }
+
+    if(this.speed.y > PL_SPEED_LIMIT) {
+
+        this.speed.y = PL_SPEED_LIMIT;
+    }
+    else if(this.speed.y < -PL_SPEED_LIMIT) {
+
+        this.speed.y = -PL_SPEED_LIMIT;
+    }
 }
 
 
@@ -149,20 +169,35 @@ Player.prototype.move_cam = function(tm) {
 
     const SCALE_SPEED = 0.0035;
     const DIST_MOD_MIN = 128.0;
-    const CAM_SPEED = 12;
+    const CAM_SPEED_DEFAULT = 12;
+    const CAM_SPEED_FETUS = 24;
     const DELTA = 1.0;
 
     // Move
     var dmod = DIST_MOD_MIN + this.totalSpeed * 4.0;
 
-    var dx = this.pos.x + Math.cos(-this.angle - Math.PI / 2.0) * dmod;
-    var dy = this.pos.y + Math.sin(-this.angle - Math.PI / 2.0) * dmod;
+    var camSpeed, dx, dy;
+
+    if(kconf.fire1.state == state.DOWN) {
+
+        dx = this.pos.x;
+        dy = this.pos.y;
+        camSpeed = CAM_SPEED_FETUS;
+    }
+    else {
+
+        let cdir = kconf.down.state == state.DOWN ? - 1 : 1;
+
+        dx = this.pos.x + cdir*Math.cos(-this.angle - Math.PI / 2.0) * dmod;
+        dy = this.pos.y + cdir*Math.sin(-this.angle - Math.PI / 2.0) * dmod;
+        camSpeed = CAM_SPEED_DEFAULT;
+    }
 
     var angle = Math.atan2(dy - cam.y,dx - cam.x);
     var dist = Math.hypot(dx-cam.x, dy-cam.y);
 
-    cam.x += Math.cos(angle) * (dist/CAM_SPEED) * tm;
-    cam.y += Math.sin(angle) * (dist/ (CAM_SPEED / tr.viewport.ratio)) * tm;
+    cam.x += Math.cos(angle) * (dist/camSpeed) * tm;
+    cam.y += Math.sin(angle) * (dist/ (camSpeed / tr.viewport.ratio)) * tm;
 
     // Scale
     var scaleTarget = 1.0 - 0.25 * (this.totalTarget / PL_FORWARD_TARGET);

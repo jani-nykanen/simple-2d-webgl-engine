@@ -6,10 +6,10 @@ const GAS_COUNT = 32;
 const CHAIN_COUNT = 6;
 const ANIMAL_COUNT = 32;
 
-const ANIMAL_TIME_WAIT_MIN = 30.0;
-const ANIMAL_TIME_WAIT_VARY = 60.0;
+const ANIMAL_TIME_WAIT_MIN = 60.0;
+const ANIMAL_TIME_WAIT_VARY = 180.0;
 const ANIMAL_WAIT_INITIAL = 60.0;
-const ANIMAL_MAX_CREATE = 4;
+const ANIMAL_MAX_CREATE = 3;
 
 // Object manager object
 objman = {};
@@ -122,7 +122,7 @@ objman.create_objects = function(tm) {
         }
 
         objman.animalTimer -= objman.animalWait;
-        objman.animalWait += ANIMAL_TIME_WAIT_MIN + Math.random()* ANIMAL_TIME_WAIT_VARY;
+        objman.animalWait = ANIMAL_TIME_WAIT_MIN + Math.random()* ANIMAL_TIME_WAIT_VARY;
     }
 }
 

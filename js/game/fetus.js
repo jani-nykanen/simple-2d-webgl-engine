@@ -3,8 +3,8 @@
 
 // Constants
 const MAGNET_DELTA = 0.01;
-const FETUS_MAGNET_DIST = 768.0;
-const FETUS_MAGNET_POWER = 24.0;
+const FETUS_MAGNET_DIST = 1024.0;
+const FETUS_MAGNET_POWER = 0.5;
 
 
 // Fetus constructor
@@ -95,6 +95,23 @@ Fetus.prototype.update = function(tm) {
 }
 
 
+// Draw magnetic radiation
+Fetus.prototype.draw_radiation = function() {
+
+    let t = 1.0 - this.magnetTimer / Math.PI;
+    let s = this.scale * (1 + 4*t);
+
+    graph.set_color(0.95,0.95,1,1 - t);
+    graph.draw_scaled_bitmap_region(
+        assets.bitmaps.fetus,
+        0,128,128, 128,
+        - 64*s, - 64*s,
+        128*s, 128*s,
+        0
+    );
+}
+
+
 // Draw
 Fetus.prototype.draw = function() {
 
@@ -106,6 +123,9 @@ Fetus.prototype.draw = function() {
     
      // Draw magnet, if magnetic
      if(this.magnetic || this.magnetTimer > MAGNET_DELTA) {
+
+        // Draw radiation to the background
+        this.draw_radiation();
 
         let t = Math.abs(Math.sin(this.magnetTimer))
 

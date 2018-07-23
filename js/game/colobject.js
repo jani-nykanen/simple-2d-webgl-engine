@@ -83,7 +83,7 @@ CollisionObject.prototype.magnet_interaction = function(src, tm) {
 
         let angle = Math.atan2(src.pos.y - this.pos.y, src.pos.x - this.pos.x);
 
-        this.pos.x += Math.cos(angle) * pull *tm;
-        this.pos.y += Math.sin(angle) * pull *tm;
+        this.speed.x += Math.cos(angle) * pull *tm;
+        this.speed.y += Math.sin(angle) * pull *tm;
     }
 }

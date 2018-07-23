@@ -36,10 +36,10 @@ Animal.prototype.create_self = function(x, y, sx, sy, scale) {
     this.dying = false;
     this.deathTimer = 0.0;
 
-    var perimeter = Math.PI * this.radius * 2;
+    this.perimeter = Math.PI * this.radius * 2;
     var speed = Math.hypot(sx, sy);
 
-    this.rotSpeed = speed / perimeter * 2 * Math.PI;
+    this.rotSpeed = speed / this.perimeter * 2 * Math.PI;
 }
 
 
@@ -61,6 +61,7 @@ Animal.prototype.move = function(tm) {
 
     // Rotate
     var dir = this.speed.x < 0.0 ? -1 : 1;
+    this.rotSpeed = Math.hypot(this.speed.x, this.speed.y) / this.perimeter * 2 * Math.PI;
     this.angle += this.rotSpeed * dir * tm;
     
 }
