@@ -1,10 +1,7 @@
 // Animal
 // (c) 2018 Jani Nykänen
 
-// TODO: Inherit from "CollisionObject"
-// TODO: Add "CollisionObject"
-
-const ANIMAL_DEATH_MAX = 60.0;
+const ANIMAL_DEATH_MAX = 30.0;
 
 // Animal constructor
 var Animal = function() {
@@ -93,22 +90,57 @@ Animal.prototype.update = function(tm) {
 // Draw animal
 Animal.prototype.draw = function() {
 
+    let s = this.scale;
+
     if(!this.exist) {
 
         if(this.dying) {
 
-            // ...
+            let t = this.deathTimer / ANIMAL_DEATH_MAX;
+            graph.set_color(1,1,1, t);
+            s += (1-t) * 0.5;
         }
-        return;
+        else {
+
+            return;
+        }
     }
 
     tr.push();
     tr.translate(this.pos.x, this.pos.y);
     tr.rotate(this.angle);
-    tr.scale(this.scale, this.scale);
+    tr.scale(s, s);
     tr.use_transform();
 
     graph.draw_bitmap(assets.bitmaps.animal, -128, -128, 0);
 
     tr.pop();
+
+    if(this.dying) {
+
+        graph.set_color(1,1,1,1);
+    }
+}
+
+
+// Death comes
+Animal.prototype.die = function() {
+
+    this.exist = false;
+    this.dying = true;
+    this.deathTimer = ANIMAL_DEATH_MAX;
+}
+
+
+// Animal-explosion collision
+Animal.prototype.exp_collision = function(e) {
+
+    if(!e.exist || !this.exist) return;
+
+    let dist = Math.hypot(e.pos.x - this.pos.x, e.pos.y - this.pos.y);
+
+    if(dist < e.radius + this.radius) {
+
+        this.die();
+    }
 }

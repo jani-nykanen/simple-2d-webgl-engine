@@ -92,6 +92,12 @@ Fetus.prototype.update = function(tm) {
     // Update magnet
     this.update_magnet(tm);
 
+    // Explosion
+    if(kconf.fire2.state == state.PRESSED) {
+
+        objman.add_explosion(this.pos.x, this.pos.y, 2.0, 1.75);
+    }
+
 }
 
 

@@ -5,6 +5,7 @@
 const GAS_COUNT = 32;
 const CHAIN_COUNT = 6;
 const ANIMAL_COUNT = 32;
+const EXP_COUNT = 8;
 
 const ANIMAL_TIME_WAIT_MIN = 60.0;
 const ANIMAL_TIME_WAIT_VARY = 180.0;
@@ -20,19 +21,39 @@ objman.animalTimer = 0.0;
 objman.animalWait = ANIMAL_WAIT_INITIAL;
 
 
-// Get the next animal
-objman.next_animal = function() {
+// Get the next object in an array
+objman.next_obj = function(arr) {
 
-    for(var i = 0; i < ANIMAL_COUNT; ++ i) {
+    for(var i = 0; i < arr.length; ++ i) {
 
-        if(objman.animals[i].exist == false &&
-          objman.animals[i].dying == false) {
+        if(arr[i].exist == false &&
+          arr[i].dying == false) {
 
-            return objman.animals[i];
+            return arr[i];
         }
     }
 
     return null;
+}
+
+
+// Update objects in an array
+objman.update_obj = function(arr, tm) {
+
+    for(var i = 0; i < arr.length; ++ i) {
+
+        arr[i].update(tm);
+    }
+}
+
+
+// Draw objects in an array
+objman.draw_obj = function(arr) {
+
+    for(var i = 0; i < arr.length; ++ i) {
+
+        arr[i].draw();
+    }
 }
 
 
@@ -44,7 +65,7 @@ objman.create_animal = function() {
     const SPEED_MOD = 3; 
     const MAX_SPEED = 8.0;
 
-    var next = this.next_animal();
+    var next = this.next_obj(objman.animals);
     if(next == null) return;
 
     var scale = ANIMAL_MIN_SIZE + Math.random() * ANIMAL_SIZE_VARY;
@@ -160,6 +181,12 @@ objman.init = function() {
 
         objman.animals[i] = new Animal();
     }
+    // Explosions
+    objman.explosions = [];
+    for(var i = 0; i < EXP_COUNT; ++ i) {
+
+        objman.explosions[i] = new Explosion();
+    }
 }
 
 
@@ -170,10 +197,7 @@ objman.update = function(tm) {
     objman.create_objects(tm);
 
     // Update gas
-    for(var i = 0; i < GAS_COUNT; ++ i) {
-
-        objman.gas[i].update(tm);
-    }
+    objman.update_obj(objman.gas, tm);
 
     // Update player
     objman.player.update(tm);
@@ -185,10 +209,9 @@ objman.update = function(tm) {
     objman.heart.object_collision(objman.player);
 
     // Update chain
-    for(var i = 0; i < CHAIN_COUNT; ++ i) {
-
-        objman.chain[i].update(tm);
-    }
+    objman.update_obj(objman.chain, tm);
+    // Update explosions
+    objman.update_obj(objman.explosions, tm);
 
     // Update fetus
     objman.fetus.update(tm);
@@ -201,14 +224,19 @@ objman.update = function(tm) {
         objman.animals[i].object_collision(objman.player);
         // Collide with heart
         objman.animals[i].object_collision(objman.heart);
-        // Collide with other animals
+        
         if(objman.animals[i].exist) {
-
+            
             for(var i2 = 0; i2 < ANIMAL_COUNT; ++ i2) {
-
+                // Collide with other animals
                 if(i != i2) {
 
                     objman.animals[i].object_collision(objman.animals[i2]);
+                }
+                // Collide with explosions
+                if(i2 < EXP_COUNT) {
+
+                    objman.animals[i].exp_collision(objman.explosions[i2]);
                 }
             }
         }
@@ -241,28 +269,21 @@ objman.draw = function(tx, ty, color) {
     objman.heart.draw();
 
     // Draw animals
-    for(var i = 0; i < ANIMAL_COUNT; ++ i) {
-     
-        objman.animals[i].draw();
-    }
-
+    objman.draw_obj(objman.animals);
     // Draw chain
-    for(var i = CHAIN_COUNT -1; i >= 0; -- i) {
-
-        objman.chain[i].draw();
-    }
+    objman.draw_obj(objman.chain);
 
     // Draw fetus
     objman.fetus.draw();
 
     // Draw gas
-    for(var i = 0; i < GAS_COUNT; ++ i) {
-
-        objman.gas[i].draw();
-    }
+    objman.draw_obj(objman.gas);
 
     // Draw player
     objman.player.draw();
+
+    // Draw explosion
+    objman.draw_obj(objman.explosions);
 
     tr.pop();
     
@@ -289,4 +310,14 @@ objman.add_gas = function(x, y, speed, scale) {
     }
 
     gas.create_self(x,y,speed,scale);
+}
+
+
+// Add an explosion
+objman.add_explosion = function(x, y, speed, scale) {
+
+    let e = objman.next_obj(objman.explosions);
+    e = e || objman.explosions[0];
+
+    e.create_self(x, y, speed, scale);
 }

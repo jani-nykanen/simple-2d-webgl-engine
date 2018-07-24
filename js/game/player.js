@@ -87,10 +87,9 @@ Player.prototype.control = function(tm) {
         max = PL_REVERSE_TARGET;
         dir = 1.0;
     }
-
     this.target.x = Math.sin(this.angle) * max * dir;
     this.target.y = Math.cos(this.angle) * max * dir;
-        
+    
 }
 
 
