@@ -5,6 +5,7 @@
 const MAGNET_DELTA = 0.01;
 const FETUS_MAGNET_DIST = 1024.0;
 const FETUS_MAGNET_POWER = 0.5;
+const FETUS_DEAD_MAX = 240.0;
 
 
 // Fetus constructor
@@ -32,6 +33,9 @@ var Fetus = function(x, y, follow, dist, scale) {
     this.magnetTimer = 0.0;
     this.magnetDist = FETUS_MAGNET_DIST;
     this.magnetPower = FETUS_MAGNET_POWER;
+
+    this.dead = false;
+    this.deadTimer = 0.0;
 }
 Fetus.prototype = Object.create(CollisionObject.prototype);
 
@@ -42,7 +46,7 @@ Fetus.prototype.update_magnet = function(tm) {
     const MAGNET_SPEED = 0.1;
 
     let oldState = this.magnetic;
-    this.magnetic = kconf.fire1.state == state.DOWN;
+    this.magnetic = kconf.fire1.state == state.DOWN && !this.dead;
 
     if(!this.magnetic) {
 
@@ -60,6 +64,18 @@ Fetus.prototype.update_magnet = function(tm) {
 
         else
             this.magnetTimer -= Math.PI;
+    }
+}
+
+
+// Update dead state
+Fetus.prototype.update_death = function(tm) {
+
+    this.deadTimer -= 1.0 * tm;
+    if(this.deadTimer <= 0.0) {
+
+        this.deadTimer = 0.0;
+        this.dead = false;
     }
 }
 
@@ -93,9 +109,17 @@ Fetus.prototype.update = function(tm) {
     this.update_magnet(tm);
 
     // Explosion
-    if(kconf.fire2.state == state.PRESSED) {
+    if(!this.dead && kconf.fire2.state == state.PRESSED) {
 
         objman.add_explosion(this.pos.x, this.pos.y, 2.0, 1.75);
+        this.dead = true;
+        this.deadTimer = FETUS_DEAD_MAX;
+    }
+
+    // Update dead state
+    if(this.dead) {
+
+        this.update_death(tm);
     }
 
 }
@@ -153,11 +177,28 @@ Fetus.prototype.draw = function() {
         // Draw base
         graph.draw_scaled_bitmap_region(
             assets.bitmaps.fetus,
-            0,0,128, 128,
+            0,this.dead ? 256 : 0,128, 128,
             - 64*this.scale, - 64*this.scale,
             128*this.scale, 128*this.scale,
             0
         );
+
+        // Draw "appearing" fetus
+        if(this.dead && this.deadTimer < 30.0) {
+
+            let t = 1.0 - this.deadTimer / 30.0;
+            graph.set_color(1, 1, 1, t);
+
+            graph.draw_scaled_bitmap_region(
+                assets.bitmaps.fetus,
+                0,0,128, 128,
+                - 64*this.scale, - 64*this.scale,
+                128*this.scale, 128*this.scale,
+                0
+            );
+
+            graph.set_color(1, 1, 1, 1);
+        }
 
     }
 

@@ -28,16 +28,21 @@ CollisionObject.prototype.calculate_total_speed = function() {
 CollisionObject.prototype.object_collision = function(o) {
 
     const DELTA = 0.01;
+    const POW_LIMIT = 2.0;
+    const POW_MIN = 1.5;
+    const POW_MOD = 8;
 
     if(o.exist == false || this.exist == false) return;
 
     let dist = Math.hypot(o.pos.x - this.pos.x, o.pos.y- this.pos.y);
     let d = this.radius + o.radius;
 
+
     if(dist < d) {
 
         let angle = Math.atan2(this.pos.y - o.pos.y, this.pos.x - o.pos.x);
         let massRatio = o.mass / this.mass;
+        let speedAverage = (this.totalSpeed + o.totalSpeed) / 2;
 
         if(this.static) {
 
@@ -52,8 +57,6 @@ CollisionObject.prototype.object_collision = function(o) {
         }
         else {
 
-            let speedAverage = (this.totalSpeed + o.totalSpeed) / 2;
-
             o.pos.x = this.pos.x - Math.cos(angle) * d;
             o.pos.y = this.pos.y - Math.sin(angle) * d;
 
@@ -65,6 +68,19 @@ CollisionObject.prototype.object_collision = function(o) {
 
             this.speed.x = Math.cos(angle) * speedAverage * massRatio;
             this.speed.y = Math.sin(angle) * speedAverage * massRatio;
+        }
+
+        
+        // Create pow
+        if(speedAverage >= POW_LIMIT) {
+
+            let size = POW_MIN + (speedAverage-POW_LIMIT) / POW_MOD;
+
+            // let x = 
+            let x = this.pos.x - Math.cos(angle) * this.radius;
+            let y = this.pos.y - Math.sin(angle) * this.radius;
+
+            objman.add_pow(x, y, 2, size);
         }
     }
 }

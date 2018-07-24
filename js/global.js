@@ -22,6 +22,7 @@ global.init = function() {
         heart: "heart.png",
         fetus: "fetus.png",
         explosion: "explosion.png",
+        pow: "pow.png",
     }, "assets/bitmaps");
 }
 

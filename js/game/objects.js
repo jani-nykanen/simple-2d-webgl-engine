@@ -6,6 +6,7 @@ const GAS_COUNT = 32;
 const CHAIN_COUNT = 6;
 const ANIMAL_COUNT = 32;
 const EXP_COUNT = 8;
+const POW_COUNT = 32;
 
 const ANIMAL_TIME_WAIT_MIN = 60.0;
 const ANIMAL_TIME_WAIT_VARY = 180.0;
@@ -22,12 +23,15 @@ objman.animalWait = ANIMAL_WAIT_INITIAL;
 
 
 // Get the next object in an array
-objman.next_obj = function(arr) {
+objman.next_obj = function(arr, cond2) {
+
+    if(cond2 == null)
+        cond2 = false;
 
     for(var i = 0; i < arr.length; ++ i) {
 
         if(arr[i].exist == false &&
-          arr[i].dying == false) {
+          (cond2 || arr[i].dying == false) ) {
 
             return arr[i];
         }
@@ -187,6 +191,12 @@ objman.init = function() {
 
         objman.explosions[i] = new Explosion();
     }
+    // Pows
+    objman.pows = [];
+    for(var i = 0; i < POW_COUNT; ++ i) {
+
+        objman.pows[i] = new Pow();
+    }
 }
 
 
@@ -198,6 +208,8 @@ objman.update = function(tm) {
 
     // Update gas
     objman.update_obj(objman.gas, tm);
+    // Update pos
+    objman.update_obj(objman.pows, tm);
 
     // Update player
     objman.player.update(tm);
@@ -282,6 +294,9 @@ objman.draw = function(tx, ty, color) {
     // Draw player
     objman.player.draw();
 
+    // Update pos
+    objman.draw_obj(objman.pows);
+
     // Draw explosion
     objman.draw_obj(objman.explosions);
 
@@ -299,17 +314,10 @@ objman.draw = function(tx, ty, color) {
 // Add gas
 objman.add_gas = function(x, y, speed, scale) {
 
-    let gas = objman.gas[0];
-    for(var i = 0; i < GAS_COUNT; ++ i) {
+    let g = objman.next_obj(objman.gas, true);
+    g = g || objman.gas[0];
 
-        if(!objman.gas[i].exist) {
-
-            gas = objman.gas[i];
-            break;
-        }
-    }
-
-    gas.create_self(x,y,speed,scale);
+    g.create_self(x, y, speed, scale);
 }
 
 
@@ -320,4 +328,14 @@ objman.add_explosion = function(x, y, speed, scale) {
     e = e || objman.explosions[0];
 
     e.create_self(x, y, speed, scale);
+}
+
+
+// Add a pow
+objman.add_pow = function(x, y, speed, scale) {
+
+    let p = objman.next_obj(objman.pows, true);
+    p = p || objman.pows[0];
+
+    p.create_self(x, y, speed, scale);
 }
