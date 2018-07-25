@@ -8,6 +8,10 @@ const EXP_ANIM_SPEED = 0.2;
 const EXP_APPEAR_MAX = 10.0;
 const EXP_SCALE_UP_SPEED = 0.025;
 
+// Global explosion index
+global_exp_index = 0;
+
+
 // Constructor
 var Explosion = function() {
 
@@ -37,7 +41,9 @@ Explosion.prototype.create_self = function(x, y, speed, scale) {
     this.dying = false;
     this.exist = true;
 
-    this.radius = this.targetScale * 96;
+    this.radius = this.targetScale * 112;
+
+    this.eindex = global_exp_index ++;
 }
 
 

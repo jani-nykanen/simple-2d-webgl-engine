@@ -22,6 +22,8 @@ var Heart = function(x, y) {
     this.radius = HEART_RADIUS;
     this.static = true;
     this.exist = true;
+
+    this.isHeart = true;
 }
 Heart.prototype = Object.create(CollisionObject.prototype);
 

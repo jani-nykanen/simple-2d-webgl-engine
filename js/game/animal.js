@@ -11,6 +11,8 @@ var Animal = function() {
     this.radius = 1;
     this.rotSpeed = 0;
     this.offscreen = false;
+
+    this.isAnimal = true;
 }
 Animal.prototype = Object.create(CollisionObject.prototype);
 
@@ -38,6 +40,8 @@ Animal.prototype.create_self = function(x, y, sx, sy, scale) {
     var speed = Math.hypot(sx, sy);
 
     this.rotSpeed = speed / this.perimeter * 2 * Math.PI;
+
+    this.eindex = -1;
 }
 
 
@@ -144,16 +148,43 @@ Animal.prototype.die = function() {
 }
 
 
+// Divide to two smaller animals, if big enough
+Animal.prototype.divide = function(angle, eindex) {
+
+    if(this.scale < 1.5) return;
+
+    let scale = this.scale / 2;
+    let rad = this.radius / 2;
+    let x,y;
+
+    let anglePlus = -Math.PI / 4;
+
+    for(var a = 0; a < 2; ++ a) {
+
+        anglePlus = a == 0 ? anglePlus : -anglePlus;
+
+        x = this.pos.x + Math.cos(Math.PI/2 + angle + a*Math.PI + anglePlus) * rad;
+        y = this.pos.y + Math.sin(Math.PI/2 + angle + a*Math.PI + anglePlus) * rad;
+
+        objman.add_animal(x, y, -Math.PI + angle + a*Math.PI, Math.max(this.totalSpeed * 0.90, 2), scale,eindex);
+    }
+}
+
+
 // Animal-explosion collision
 Animal.prototype.exp_collision = function(e) {
 
-    if(!e.exist || !this.exist) return;
+    if(!e.exist || !this.exist || e.eindex == this.eindex) return;
 
     let dist = Math.hypot(e.pos.x - this.pos.x, e.pos.y - this.pos.y);
 
     if(dist < e.radius + this.radius) {
 
         this.die();
+        let angle = Math.atan2(e.pos.y - this.pos.y, 
+            e.pos.x - this.pos.x);
+
+        this.divide(angle, e.eindex);
     }
 }
 

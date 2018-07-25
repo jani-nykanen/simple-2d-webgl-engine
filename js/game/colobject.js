@@ -44,15 +44,18 @@ CollisionObject.prototype.object_collision = function(o) {
         let massRatio = o.mass / this.mass;
         let speedAverage = (this.totalSpeed + o.totalSpeed) / 2;
 
-        if(this.static) {
+        if(o.static) {
 
-            o.pos.x = this.pos.x - Math.cos(angle) * d;
-            o.pos.y = this.pos.y - Math.sin(angle) * d;
+            this.pos.x = o.pos.x + Math.cos(angle) * d;
+            this.pos.y = o.pos.y + Math.sin(angle) * d;
 
-            if(massRatio > DELTA) {
+            this.speed.x = Math.cos(angle) * this.totalSpeed * massRatio;
+            this.speed.y = Math.sin(angle) * this.totalSpeed * massRatio;
 
-                o.speed.x = Math.cos(angle) * -o.totalSpeed / massRatio;
-                o.speed.y = Math.sin(angle) * -o.totalSpeed / massRatio;
+            if(o.isHeart && this.isAnimal) {
+
+                this.die();
+                 this.divide(angle, -1);
             }
         }
         else {
@@ -72,9 +75,13 @@ CollisionObject.prototype.object_collision = function(o) {
 
         
         // Create pow
-        if(speedAverage >= POW_LIMIT) {
+        if( (this.isAnimal && o.isHeart) || speedAverage >= POW_LIMIT) {
 
             let size = POW_MIN + (speedAverage-POW_LIMIT) / POW_MOD;
+            if(this.isAnimal && o.isHeart)  {
+
+                size = POW_MIN + this.scale / 2.0;
+            }
 
             // let x = 
             let x = this.pos.x - Math.cos(angle) * this.radius;
@@ -100,6 +107,6 @@ CollisionObject.prototype.magnet_interaction = function(src, tm) {
         let angle = Math.atan2(src.pos.y - this.pos.y, src.pos.x - this.pos.x);
 
         this.speed.x += Math.cos(angle) * pull *tm;
-        this.speed.y += Math.sin(angle) * pull *tm;
+        this.speed.y += Math.sin(angle) * pull *tm; 
     }
 }

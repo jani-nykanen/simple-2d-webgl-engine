@@ -73,7 +73,10 @@ Player.prototype.control = function(tm) {
         dir = 1.0;
 
     this.angle += PL_ROTATE_SPEED * dir * tm;
-    
+
+    this.target.x = 0.0;
+    this.target.y = 0.0;
+
     // Move back/forward
     dir = 0.0;
     var max = 0;
@@ -177,7 +180,7 @@ Player.prototype.move_cam = function(tm) {
 
     var camSpeed, dx, dy;
 
-    if(objman.fetus.magnetic && objman.fetus.dead == false) {
+    if(kconf.fire1.state == state.DOWN) {
 
         dx = this.pos.x;
         dy = this.pos.y;
@@ -199,14 +202,16 @@ Player.prototype.move_cam = function(tm) {
     cam.y += Math.sin(angle) * (dist/ (camSpeed / tr.viewport.ratio)) * tm;
 
     // Scale
-    var scaleTarget = 1.0 - 0.25 * (this.totalTarget / PL_FORWARD_TARGET);
+    var scaleTarget = 0.90 - 0.20 * (this.totalTarget / PL_FORWARD_TARGET);
+    
     if(cam.sx > scaleTarget) {
 
         cam.sx -= SCALE_SPEED * tm;
         if(cam.sx < scaleTarget)
             cam.sx = scaleTarget;
     }
-    else if(cam.sx < scaleTarget && this.totalSpeed <= DELTA) {
+    else if(cam.sx < scaleTarget && this.totalSpeed <= DELTA
+     && !(kconf.fire1.state == state.DOWN || kconf.fire2.state == state.DOWN)) {
 
         cam.sx += SCALE_SPEED * tm;
         if(cam.sx > scaleTarget)

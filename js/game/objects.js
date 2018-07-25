@@ -218,7 +218,7 @@ objman.update = function(tm) {
 
     // Update heart
     objman.heart.update(tm);
-    objman.heart.object_collision(objman.player);
+    objman.player.object_collision(objman.heart);
 
     // Update chain
     objman.update_obj(objman.chain, tm);
@@ -311,6 +311,18 @@ objman.draw = function(tx, ty, color) {
 }
 
 
+// Draw hud elements
+objman.draw_hud = function() {
+
+    // Draw animal arrows
+    for(var i = 0; i < ANIMAL_COUNT; ++ i) {
+
+        objman.animals[i].draw_arrow();
+    }
+    graph.set_color(1,1,1,1);
+}
+
+
 // Add gas
 objman.add_gas = function(x, y, speed, scale) {
 
@@ -341,13 +353,15 @@ objman.add_pow = function(x, y, speed, scale) {
 }
 
 
-// Draw hud elements
-objman.draw_hud = function() {
+// Add an animal
+objman.add_animal = function(x, y, angle, speed, scale, eindex) {
 
-    // Draw animal arrows
-    for(var i = 0; i < ANIMAL_COUNT; ++ i) {
+    let sx = Math.cos(angle) * speed;
+    let sy = Math.sin(angle) * speed;
 
-        objman.animals[i].draw_arrow();
-    }
-    graph.set_color(1,1,1,1);
+    let a = objman.next_obj(objman.animals);
+    if(a == null) return;
+
+    a.create_self(x, y, sx, sy, scale);
+    a.eindex = eindex;
 }
