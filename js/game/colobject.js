@@ -14,6 +14,7 @@ var CollisionObject = function() {
     this.deathTimer = 0.0;
     this.mass = 1.0;
     this.totalSpeed = 0.0;
+    this.eindex = -1;
 }
 
 
@@ -55,7 +56,9 @@ CollisionObject.prototype.object_collision = function(o) {
             if(o.isHeart && this.isAnimal) {
 
                 this.die();
-                 this.divide(angle, -1);
+                this.divide(angle, -1);
+
+                o.hurt();
             }
         }
         else {

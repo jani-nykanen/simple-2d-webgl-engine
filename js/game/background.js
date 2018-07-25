@@ -84,6 +84,14 @@ bg.update = function(tm) {
 // Draw background
 bg.draw = function() {
 
+    // If heart hurt (eh), make this red
+    if(objman.heart.hurtTimer > 0.0) {
+
+        let s = Math.abs(Math.sin(objman.heart.hurtTimer / HEART_HURT_MAX 
+            * (Math.PI*2 * HEART_HURT_MOD))) * 0.5;
+        graph.set_color(1-s*0.5,1-s,1-s, 1);
+    }
+
     // Draw "paper"
     graph.draw_scaled_bitmap(assets.bitmaps.bg,-1280,-1280,2.5,2.5, 0);
 

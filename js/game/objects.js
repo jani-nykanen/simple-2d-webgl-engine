@@ -215,6 +215,11 @@ objman.update = function(tm) {
     objman.player.update(tm);
     // Check player-wall collisions
     objman.player.wall_collisions(AREA_WIDTH, AREA_HEIGHT);
+    // Collide with explosions
+    for(var i = 0; i < EXP_COUNT; ++ i) {
+
+        objman.player.exp_collision(objman.explosions[i]);
+    }
 
     // Update heart
     objman.heart.update(tm);

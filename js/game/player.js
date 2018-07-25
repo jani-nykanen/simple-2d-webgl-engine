@@ -12,7 +12,7 @@ const PL_RADIUS = 96;
 const PL_MASS = 1.25;
 const PL_BUTT_DIST = 24;
 const PL_GAS_DIST = 72;
-const PL_SPEED_LIMIT = 16.0;
+
 
 // Constructor
 var Player = function(x, y) {
@@ -74,9 +74,6 @@ Player.prototype.control = function(tm) {
 
     this.angle += PL_ROTATE_SPEED * dir * tm;
 
-    this.target.x = 0.0;
-    this.target.y = 0.0;
-
     // Move back/forward
     dir = 0.0;
     var max = 0;
@@ -125,7 +122,8 @@ Player.prototype.move = function(tm) {
 
     const SLOW_MODIF = 0.90;
 
-    var accl = PL_ACCELERATION - (PL_ACCELERATION*SLOW_MODIF) *Math.pow(this.totalSpeed / PL_FORWARD_TARGET, 2);
+    var accl = PL_ACCELERATION - (PL_ACCELERATION*SLOW_MODIF) *
+        Math.min(1.0, Math.pow(this.totalSpeed / PL_FORWARD_TARGET, 2));
 
     var ox = {pos: this.pos.x, coord: this.speed.x};
     var oy = {pos: this.pos.y, coord: this.speed.y};
@@ -144,25 +142,6 @@ Player.prototype.move = function(tm) {
 
     this.butt.pos.x = this.pos.x + Math.cos(-this.angle + Math.PI / 2) * PL_BUTT_DIST;
     this.butt.pos.y = this.pos.y + Math.sin(-this.angle + Math.PI / 2) * PL_BUTT_DIST;
-
-    // Check if speed is in allowed range
-    if(this.speed.x > PL_SPEED_LIMIT) {
-
-        this.speed.x = PL_SPEED_LIMIT;
-    }
-    else if(this.speed.x < -PL_SPEED_LIMIT) {
-
-        this.speed.x = -PL_SPEED_LIMIT;
-    }
-
-    if(this.speed.y > PL_SPEED_LIMIT) {
-
-        this.speed.y = PL_SPEED_LIMIT;
-    }
-    else if(this.speed.y < -PL_SPEED_LIMIT) {
-
-        this.speed.y = -PL_SPEED_LIMIT;
-    }
 }
 
 
@@ -289,4 +268,26 @@ Player.prototype.wall_collisions = function(w, h) {
     this.horizontal_wall_collision(h/2, 1);
     this.vertical_wall_collision(-w/2, -1);
     this.vertical_wall_collision(w/2, 1);
+}
+
+
+// Player-explosion collision
+Player.prototype.exp_collision = function(e) {
+
+    const EXP_SPEED = 24.0;
+
+    if(!e.exist || e.eindex == this.eindex) return;
+
+    let dist = Math.hypot(e.pos.x - this.pos.x, e.pos.y - this.pos.y);
+
+    if(dist < e.radius + this.radius) {
+
+        this.eindex = e.eindex;
+
+        let angle = Math.atan2(e.pos.y - this.pos.y, 
+            e.pos.x - this.pos.x);
+
+        this.speed.x -= Math.cos(angle) * EXP_SPEED;
+        this.speed.y -= Math.sin(angle) * EXP_SPEED;
+    }
 }
