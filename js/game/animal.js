@@ -84,7 +84,6 @@ Animal.prototype.update = function(tm) {
     let r = 128 * this.scale;
     let x = this.pos.x;
     let y = this.pos.y;
-
     this.offscreen = (x+r < cam.left || x-r > cam.left + cam.w 
         || y+r < cam.top || y-r > cam.top + cam.h);
 
@@ -168,25 +167,37 @@ Animal.prototype.draw_arrow = function() {
 
     let angle = Math.atan2(cam.y - this.pos.y, cam.x - this.pos.x);
     let dist = Math.hypot(cam.x-this.pos.x, cam.y-this.pos.y);
-    let scale = 1.5 - 0.5 * (dist / DIST_MOD);
+    let scale = 1.25 - 0.5 * (dist / DIST_MOD);
+    let radius = 64 * scale;
+    let alpha = 0.6 - 0.1 * (dist / DIST_MOD);
 
     // Project sphere to a box
     let sx = Math.cos(angle);
     let sy = Math.sin(angle);
 
-    let m = 1.0 / Math.max(sx, sy);
+    let m = 1.0 / Math.max(Math.abs(sx), Math.abs(sy) );
     let cx = -m * sx;
     let cy = -m * sy;
 
     // Project the result to the game screen dimensions
-    cx *= 0.90;
-    cy *= 0.90;
     cx += 1.0;
     cy += 1.0;
     cx /= 2;
     cy /= 2;
     let scx = tr.viewport.w * cx;
     let scy = tr.viewport.h * cy;
+
+    // Make sure the whole arrows is drawn
+    if(scx - radius < 0)
+        scx = radius;
+    else if(scx + radius > tr.viewport.w)
+        scx = tr.viewport.w - radius;
+    if(scy - radius < 0)
+        scy = radius;
+    else if(scy + radius > tr.viewport.h)
+        scy = tr.viewport.h - radius;
+
+    graph.set_color(1,1,1, alpha);
 
     // Draw the arrow
     tr.push();

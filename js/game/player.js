@@ -177,7 +177,7 @@ Player.prototype.move_cam = function(tm) {
 
     var camSpeed, dx, dy;
 
-    if(kconf.fire1.state == state.DOWN) {
+    if(objman.fetus.magnetic && objman.fetus.dead == false) {
 
         dx = this.pos.x;
         dy = this.pos.y;
