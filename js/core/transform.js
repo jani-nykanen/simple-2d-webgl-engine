@@ -67,6 +67,7 @@ tr.fit_view_height = function(h) {
     var ratio = graph.canvas.width / graph.canvas.height;
     var w = ratio * h;
 
+    tr.translate_world(0, 0);
     tr.set_view(w, h);
 }
 

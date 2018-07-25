@@ -339,3 +339,16 @@ objman.add_pow = function(x, y, speed, scale) {
 
     p.create_self(x, y, speed, scale);
 }
+
+
+// Draw hud elements
+objman.draw_hud = function() {
+
+    // Draw animal arrows
+    graph.set_color(1,1,1,0.5);
+    for(var i = 0; i < ANIMAL_COUNT; ++ i) {
+
+        objman.animals[i].draw_arrow();
+    }
+    graph.set_color(1,1,1,1);
+}

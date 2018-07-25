@@ -47,6 +47,14 @@ game.draw = function() {
     objman.draw(16,16,{r: 0, g: 0, b: 0, a: 0.35});
     // Draw game objects 
     objman.draw();
+
+    // Reset view
+    tr.fit_view_height(CAMERA_HEIGHT);
+    tr.identity();
+    tr.use_transform();
+
+    // Draw HUD
+    objman.draw_hud();
 }
 
 

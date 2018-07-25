@@ -10,6 +10,7 @@ var Animal = function() {
 
     this.radius = 1;
     this.rotSpeed = 0;
+    this.offscreen = false;
 }
 Animal.prototype = Object.create(CollisionObject.prototype);
 
@@ -79,6 +80,14 @@ Animal.prototype.update = function(tm) {
         return;
     }
 
+    // Check if in the screen
+    let r = 128 * this.scale;
+    let x = this.pos.x;
+    let y = this.pos.y;
+
+    this.offscreen = (x+r < cam.left || x-r > cam.left + cam.w 
+        || y+r < cam.top || y-r > cam.top + cam.h);
+
     // Move
     this.move(tm);
 
@@ -104,6 +113,10 @@ Animal.prototype.draw = function() {
 
             return;
         }
+    }
+    else if(this.offscreen) {
+
+        return;
     }
 
     tr.push();
@@ -143,4 +156,46 @@ Animal.prototype.exp_collision = function(e) {
 
         this.die();
     }
+}
+
+
+// Draw an arrow (if offscreen)
+Animal.prototype.draw_arrow = function() {
+
+    const DIST_MOD = 1280;
+
+    if(!this.exist || !this.offscreen) return;
+
+    let angle = Math.atan2(cam.y - this.pos.y, cam.x - this.pos.x);
+    let dist = Math.hypot(cam.x-this.pos.x, cam.y-this.pos.y);
+    let scale = 1.5 - 0.5 * (dist / DIST_MOD);
+
+    // Project sphere to a box
+    let sx = Math.cos(angle);
+    let sy = Math.sin(angle);
+
+    let m = 1.0 / Math.max(sx, sy);
+    let cx = -m * sx;
+    let cy = -m * sy;
+
+    // Project the result to the game screen dimensions
+    cx *= 0.90;
+    cy *= 0.90;
+    cx += 1.0;
+    cy += 1.0;
+    cx /= 2;
+    cy /= 2;
+    let scx = tr.viewport.w * cx;
+    let scy = tr.viewport.h * cy;
+
+    // Draw the arrow
+    tr.push();
+    tr.translate(scx, scy);
+    tr.rotate(angle - Math.PI/2);
+    tr.scale(scale, scale);
+    tr.use_transform();
+
+    graph.draw_bitmap(assets.bitmaps.arrow, -64, -64, 0);
+
+    tr.pop();
 }

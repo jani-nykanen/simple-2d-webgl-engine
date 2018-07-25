@@ -10,6 +10,10 @@ cam = {
     y: 0,
     sx: 1,
     sy: 1,
+    left: 0,
+    top: 0,
+    w: 1,
+    h: 1,
 };
 
 // Use camera
@@ -18,8 +22,14 @@ cam.use = function() {
     tr.fit_view_height_center(CAMERA_HEIGHT);
     tr.scale(cam.sx, cam.sy);
     tr.translate(-cam.x, -cam.y);
-    
+
+    cam.w = tr.viewport.w / cam.sx;
+    cam.h = tr.viewport.h / cam.sy;
+
+    cam.left = cam.x - cam.w/2;
+    cam.top = cam.y - cam.h/2;
 }
+
 
 // Limit camera 
 cam.limit = function(w, h) {

@@ -23,6 +23,7 @@ global.init = function() {
         fetus: "fetus.png",
         explosion: "explosion.png",
         pow: "pow.png",
+        arrow: "arrow.png",
     }, "assets/bitmaps");
 }
 
