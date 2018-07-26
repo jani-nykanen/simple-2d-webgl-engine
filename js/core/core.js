@@ -19,6 +19,8 @@ core.scenes = new Array();
 core.currentScene = null;
 // Global scene
 core.globalScene = null;
+// Loading function
+core.loadingFunc = null;
 
 // Time count
 core.timeCount = 0.0;
@@ -129,8 +131,12 @@ core.loop = function(ts) {
     }
     else {
 
-        // TODO: Loading screen
-        graph.clear(0, 0, 0);
+        // Draw loading screen
+        if(core.loadingFunc != null)
+            core.loadingFunc();
+            
+        else
+            graph.clear(0, 0, 0);
     }
 
     // Next frame
@@ -227,4 +233,14 @@ core.add_scene = function(s) {
         core.globalScene = s;
     else if(core.currentScene == null)
         core.currentScene = s;
+}
+
+
+/**
+ * Set function called in loading screen
+ * @param f Function
+ */
+core.set_loading_func = function(f) {
+
+    core.loadingFunc = f;
 }

@@ -9,7 +9,7 @@ _status = {};
 
 // Health
 _status.health = 1.0;
-// Old health
+// Old health (TODO: Rename to "drawnHealth" or something)
 _status.oldHealth = 1.0;
 // Time (in seconds)
 _status.time = 60.0;
@@ -18,7 +18,7 @@ _status.time = 60.0;
 // Update status
 _status.update = function(tm) {
 
-    // Update health
+    // Update drawn health value
     if(_status.oldHealth > _status.health) {
 
         _status.oldHealth -= HEALTH_BAR_SPEED * tm;

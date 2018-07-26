@@ -14,6 +14,7 @@ global.init = function() {
     
     // Load assets
     assets.load({
+        font: "font.png",
         player: "player.png",
         animal: "animal.png",
         gas: "gas.png",
