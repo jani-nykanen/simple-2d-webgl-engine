@@ -140,11 +140,21 @@ Animal.prototype.draw = function() {
 
 
 // Death comes
-Animal.prototype.die = function() {
+Animal.prototype.die = function(hurtHeart) {
+
+    const MIN_DMG = 0.05;
+    const DMG_MOD = 0.02;
 
     this.exist = false;
     this.dying = true;
     this.deathTimer = ANIMAL_DEATH_MAX;
+
+    // Reduce health
+    if(hurtHeart) {
+
+        let t = MIN_DMG + this.mass * DMG_MOD;
+        _status.reduce_health(t);
+    }
 }
 
 

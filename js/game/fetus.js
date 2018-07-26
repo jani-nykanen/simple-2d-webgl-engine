@@ -25,7 +25,7 @@ var Fetus = function(x, y, follow, dist, scale) {
     this.mass = 1.0;
 
     this.radius = 64*this.scale;
-    this.static = true;
+    this.static = false;
     this.exist = true;
     this.dying = false;
 

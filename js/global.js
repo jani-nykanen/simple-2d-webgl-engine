@@ -24,6 +24,7 @@ global.init = function() {
         explosion: "explosion.png",
         pow: "pow.png",
         arrow: "arrow.png",
+        healthBar: "healthbar.png",
     }, "assets/bitmaps");
 }
 

@@ -28,6 +28,9 @@ game.update = function(tm) {
 
     // Limit camera
     cam.limit(AREA_WIDTH, AREA_HEIGHT);
+
+    // Update status
+    _status.update(tm);
 }
 
 
@@ -53,8 +56,11 @@ game.draw = function() {
     tr.identity();
     tr.use_transform();
 
-    // Draw HUD
+    // Draw HUD parts related to object manager
     objman.draw_hud();
+
+    // Draw status (i.e. global HUD elements)
+    _status.draw();
 }
 
 

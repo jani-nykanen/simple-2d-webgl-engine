@@ -55,7 +55,7 @@ CollisionObject.prototype.object_collision = function(o) {
 
             if(o.isHeart && this.isAnimal) {
 
-                this.die();
+                this.die(true);
                 this.divide(angle, -1);
 
                 o.hurt();
