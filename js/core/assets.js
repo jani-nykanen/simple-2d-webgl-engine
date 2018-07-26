@@ -69,5 +69,5 @@ assets.has_loaded = function() {
 assets.get_percentage = function() {
 
     if(assets.total == 0) return 0.0;
-    return Math.round(assets.loaded / assets.total);
+    return Math.round(assets.loaded / assets.total * 100.0);
 }

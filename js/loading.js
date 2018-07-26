@@ -20,8 +20,11 @@ loading.draw = function() {
     let x = tr.viewport.w / 2;
     let y = tr.viewport.h / 2 - 32;
 
+    let p = assets.get_percentage();
+    let pstr = (p < 10 ? "0" : "" ) + String(p) + "%";
+
     graph.set_color(1,1,1,1);
-    graph.draw_text(bmp, "Loading " + String(assets.get_percentage()), x, y, -16, 0, true);
+    graph.draw_text(bmp, "Loading " + pstr, x, y, -16, 0, true);
 
 }
 core.set_loading_func(loading.draw);

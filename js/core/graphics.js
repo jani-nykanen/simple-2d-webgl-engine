@@ -385,7 +385,7 @@ graph.draw_scaled_bitmap_region = function(bmp, sx,sy,sw,sh,dx,dy,dw,dh, flip) {
     flip = flip | FLIP_NONE;
 
     var gl = graph.glctx;
-    if(this.prevBitmap != bmp) {
+    if(this.prevBitmap != bmp || !assets.has_loaded()) {
 
         gl.bindTexture(gl.TEXTURE_2D, bmp.texture); 
         this.prevBitmap = bmp;
@@ -436,7 +436,7 @@ graph.draw_text = function(bmp, text, dx, dy, xoff, yoff, center, scale) {
 
     if(center) {
 
-        dx -= ( (len+1)/2.0 * (cw+xoff) );
+        dx -= ( (len+1)/2.0 * (cw+xoff) * scale );
         x = dx;
     }
 

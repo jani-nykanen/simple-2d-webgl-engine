@@ -11,8 +11,23 @@ _status = {};
 _status.health = 1.0;
 // Old health (TODO: Rename to "drawnHealth" or something)
 _status.oldHealth = 1.0;
-// Time (in seconds)
-_status.time = 60.0;
+// Time (in frames)
+_status.time = 0;
+
+
+// Get time string
+_status.get_time_string = function() {
+
+    let t = Math.floor(_status.time / 60.0);
+    let sec = t % 60;
+    let min = Math.floor(t / 60);
+
+    let out = String(min) + ":";
+    if(sec < 10) out += "0";
+    out += String(sec);
+
+    return out;
+}
 
 
 // Update status
@@ -27,6 +42,9 @@ _status.update = function(tm) {
             _status.oldHealth = _status.health;
         }
     }
+
+    // Update time
+    _status.time += 1.0 * tm;
 }
 
 
@@ -66,6 +84,11 @@ _status.draw_health = function() {
 
 
     graph.set_color(1,1,1, 1);
+
+    // Draw black parts
+    graph.draw_scaled_bitmap_region(assets.bitmaps.healthBar,
+        0, 192, 272, 96,
+        x, y, 272*BAR_SCALE, 96*BAR_SCALE, 0);
 }
 
 
@@ -76,7 +99,9 @@ _status.draw = function() {
     _status.draw_health();
 
     // Draw time
-    graph.draw_text(assets.bitmaps.font, "Sample Text!",8,8,-24,0, false, 0.5);
+    let x = tr.viewport.w / 2;
+    graph.draw_text(assets.bitmaps.font, "TIME:",x,4,-24,0, true, 0.625);
+    graph.draw_text(assets.bitmaps.font, this.get_time_string(),x,8 + 32,-24,0, true, 1.0);
 }
 
 
