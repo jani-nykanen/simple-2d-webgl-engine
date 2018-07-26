@@ -60,3 +60,14 @@ assets.has_loaded = function() {
 
     return assets.loaded >= assets.total;
 }
+
+
+/**
+ * Get how many % of data has been loaded
+ * @return Percentage
+ */
+assets.get_percentage = function() {
+
+    if(assets.total == 0) return 0.0;
+    return Math.round(assets.loaded / assets.total);
+}

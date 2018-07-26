@@ -420,11 +420,15 @@ graph.draw_scaled_bitmap_region = function(bmp, sx,sy,sw,sh,dx,dy,dw,dh, flip) {
  * @param yoff Y offset
  * @param center Center the text or not
  */
-graph.draw_text = function(bmp, text, dx, dy, xoff, yoff, center) {
+graph.draw_text = function(bmp, text, dx, dy, xoff, yoff, center, scale) {
+
+    if(bmp == null) return;
+    
+    scale = scale || 1.0;
 
     center = center == null ? false : center;
 
-    var cw = bmp.width / 16;
+    var cw = (bmp.width) / 16;
     var ch = cw;
     var len = text.length;
     var x = dx;
@@ -442,16 +446,16 @@ graph.draw_text = function(bmp, text, dx, dy, xoff, yoff, center) {
         if(text[i] == '\n') {
 
             x = dx;
-            y += yoff + ch;
+            y += (yoff + ch) * scale;
             continue;
         }
 
         sx = c % 16;
         sy = (c / 16) | 0;
 
-        this.draw_bitmap_region(bmp,sx*cw,sy*ch,cw,ch,x,y, FLIP_NONE);
+        this.draw_scaled_bitmap_region(bmp,sx*cw,sy*ch,cw,ch,x,y, cw* scale, ch* scale, FLIP_NONE);
 
-        x += cw + xoff;
+        x += (cw + xoff)* scale;
     }
 }
 

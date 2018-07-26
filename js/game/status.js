@@ -30,8 +30,8 @@ _status.update = function(tm) {
 }
 
 
-// Draw status
-_status.draw = function() {
+// Draw health
+_status.draw_health = function() {
 
     const BAR_SCALE = 1.5;
     const ALPHA = 0.75;
@@ -66,6 +66,17 @@ _status.draw = function() {
 
 
     graph.set_color(1,1,1, 1);
+}
+
+
+// Draw status
+_status.draw = function() {
+
+    // Draw health
+    _status.draw_health();
+
+    // Draw time
+    graph.draw_text(assets.bitmaps.font, "Sample Text!",8,8,-24,0, false, 0.5);
 }
 
 
