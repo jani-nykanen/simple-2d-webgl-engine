@@ -50,6 +50,15 @@ _status.draw = function() {
         t, 96, w-t, 96,
         x + t*BAR_SCALE, y, (w-t)*BAR_SCALE, 96*BAR_SCALE, 0);
 
+    // If hurt, make "whiter"
+    if(objman.heart.hurtTimer > 0.0) {
+
+        let s = Math.abs(Math.sin(objman.heart.hurtTimer / HEART_HURT_MAX 
+            * (Math.PI*2 * HEART_HURT_MOD)));
+        let t = 1 + 2*s;
+        graph.set_color(t,t,t, ALPHA );
+    }
+
     // Draw health bar (=red)
     graph.draw_scaled_bitmap_region(assets.bitmaps.healthBar,
         0, 0, t, 96,
