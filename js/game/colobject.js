@@ -113,3 +113,61 @@ CollisionObject.prototype.magnet_interaction = function(src, tm) {
         this.speed.y += Math.sin(angle) * pull *tm; 
     }
 }
+
+
+// Draw an arrow (if offscreen)
+CollisionObject.prototype.draw_arrow = function() {
+
+    const DIST_MOD = 1280;
+    const ALPHA_BASE = 0.7;
+
+    if(!this.exist || !this.offscreen) return;
+
+    let angle = Math.atan2(cam.y - this.pos.y, cam.x - this.pos.x);
+    let dist = Math.hypot(cam.x-this.pos.x, cam.y-this.pos.y);
+    let scale = 1.25 - 0.5 * (dist / DIST_MOD);
+    let radius = 64 * scale;
+    let alpha = ALPHA_BASE - 0.1 * (dist / DIST_MOD);
+
+    // Project sphere to a box
+    let sx = Math.cos(angle);
+    let sy = Math.sin(angle);
+
+    let m = 1.0 / Math.max(Math.abs(sx), Math.abs(sy) );
+    let cx = -m * sx;
+    let cy = -m * sy;
+
+    // Project the result to the game screen dimensions
+    cx += 1.0;
+    cy += 1.0;
+    cx /= 2;
+    cy /= 2;
+    let scx = tr.viewport.w * cx;
+    let scy = tr.viewport.h * cy;
+
+    // Make sure the whole arrows is drawn
+    if(scx - radius < 0)
+        scx = radius;
+    else if(scx + radius > tr.viewport.w)
+        scx = tr.viewport.w - radius;
+    if(scy - radius < 0)
+        scy = radius;
+    else if(scy + radius > tr.viewport.h)
+        scy = tr.viewport.h - radius;
+
+    graph.set_color(1,1,1, alpha);
+
+    // Draw the arrow
+    tr.push();
+    tr.translate(scx, scy);
+    tr.rotate(angle - Math.PI/2);
+    tr.scale(scale, scale);
+    tr.use_transform();
+
+    graph.draw_bitmap_region(assets.bitmaps.arrow,
+        this.arrowID*128,0,128,128, 
+        -64, -64, 0);
+
+    tr.pop();
+}
+

@@ -161,6 +161,8 @@ miniMap.draw_content = function() {
             let t = 0;
             if(objman.creatures[i].isMonster)
                 t = 1;
+            else if(objman.creatures[i].skeleton)
+                t = 2;
 
             miniMap.draw_object_icon(objman.creatures[i], 
                 64 + t*32,0,32,32, 1);

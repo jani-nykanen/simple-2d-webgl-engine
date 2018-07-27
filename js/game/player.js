@@ -5,7 +5,7 @@
 const PL_ROTATE_SPEED = 0.0625;
 const PL_FORWARD_TARGET = 14.0;
 const PL_REVERSE_TARGET = 8.0;
-const PL_ACCELERATION = 0.30;
+const PL_ACCELERATION = 0.40;
 const PL_SIZE_SCALE = 0.85;
 const PL_GAS_WAIT = 8.0;
 const PL_RADIUS = 96;
@@ -148,7 +148,7 @@ Player.prototype.move = function(tm) {
 // Move camera
 Player.prototype.move_cam = function(tm) {
 
-    const SCALE_SPEED = 0.0035;
+    const SCALE_SPEED = 0.00275;
     const DIST_MOD_MIN = 128.0;
     const CAM_SPEED_DEFAULT = 12;
     const CAM_SPEED_FETUS = 24;

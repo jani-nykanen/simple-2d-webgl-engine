@@ -6,7 +6,7 @@ const MONSTER_DEATH_MAX = 30.0;
 const MONSTER_ACC = 0.25;
 const MONSTER_WAVE_SPEED = 0.05;
 const MONSTER_AMPLITUDE = 0.25;
-const MONSTER_WEIGHT = 0.625;
+const MONSTER_WEIGHT = 0.75;
 
 
 // Monster constructor
@@ -48,6 +48,8 @@ Monster.prototype.create_self = function(x, y, sx, sy, scale) {
 
     this.perimeter = Math.PI * this.radius * 2;
     this.eindex = -1;
+    
+    this.arrowID = 1;
 }
 
 
@@ -191,7 +193,7 @@ Monster.prototype.die = function(eindex, angle) {
         let x = this.pos.x;
         let y = this.pos.y;
 
-        let o = objman.add_animal(x, y, -angle, this.speedTarget * 2, this.scale,eindex, true);
+        let o = objman.add_animal(x, y, -angle, this.speedTarget * 2, this.scale * 0.90,eindex, true);
         o.angle = this.angle;
     }
 }
@@ -209,58 +211,4 @@ Monster.prototype.exp_collision = function(e) {
         // Die
         this.die(e.eindex, Math.atan2(e.pos.y-this.pos.y, e.pos.x-this.pos.x));
     }
-}
-
-
-// Draw an arrow (if offscreen)
-Monster.prototype.draw_arrow = function() {
-
-    const DIST_MOD = 1280;
-
-    if(!this.exist || !this.offscreen) return;
-
-    let angle = Math.atan2(cam.y - this.pos.y, cam.x - this.pos.x);
-    let dist = Math.hypot(cam.x-this.pos.x, cam.y-this.pos.y);
-    let scale = 1.25 - 0.5 * (dist / DIST_MOD);
-    let radius = 64 * scale;
-    let alpha = 0.6 - 0.1 * (dist / DIST_MOD);
-
-    // Project sphere to a box
-    let sx = Math.cos(angle);
-    let sy = Math.sin(angle);
-
-    let m = 1.0 / Math.max(Math.abs(sx), Math.abs(sy) );
-    let cx = -m * sx;
-    let cy = -m * sy;
-
-    // Project the result to the game screen dimensions
-    cx += 1.0;
-    cy += 1.0;
-    cx /= 2;
-    cy /= 2;
-    let scx = tr.viewport.w * cx;
-    let scy = tr.viewport.h * cy;
-
-    // Make sure the whole arrows is drawn
-    if(scx - radius < 0)
-        scx = radius;
-    else if(scx + radius > tr.viewport.w)
-        scx = tr.viewport.w - radius;
-    if(scy - radius < 0)
-        scy = radius;
-    else if(scy + radius > tr.viewport.h)
-        scy = tr.viewport.h - radius;
-
-    graph.set_color(1,1,1, alpha);
-
-    // Draw the arrow
-    tr.push();
-    tr.translate(scx, scy);
-    tr.rotate(angle - Math.PI/2);
-    tr.scale(scale, scale);
-    tr.use_transform();
-
-    graph.draw_bitmap(assets.bitmaps.arrow, -64, -64, 0);
-
-    tr.pop();
 }
