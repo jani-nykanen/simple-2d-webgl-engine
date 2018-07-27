@@ -280,7 +280,7 @@ Player.prototype.exp_collision = function(e) {
 
     let dist = Math.hypot(e.pos.x - this.pos.x, e.pos.y - this.pos.y);
 
-    if(dist < e.radius + this.radius) {
+    if(dist < (e.radius*0.90) + this.radius) {
 
         this.eindex = e.eindex;
 

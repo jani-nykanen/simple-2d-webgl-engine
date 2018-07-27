@@ -14,6 +14,8 @@ game.init = function() {
     
     // Initialize object manager
     objman.init();
+    // Initialize minimap
+    miniMap.init();
 }
 
 
@@ -31,16 +33,21 @@ game.update = function(tm) {
 
     // Update status
     _status.update(tm);
+
+    // Update minimap
+    miniMap.update(tm);
 }
 
 
 // Draw game
 game.draw = function() {
 
+    // Set view
     tr.identity();
     cam.use();
     tr.use_transform();
 
+    // Clear background to white
     graph.clear(1, 1, 1);
 
     // Draw background
@@ -61,6 +68,9 @@ game.draw = function() {
 
     // Draw status (i.e. global HUD elements)
     _status.draw();
+
+    // Draw minimap
+    miniMap.draw(tr.viewport.w-272,16,1,1);
 }
 
 

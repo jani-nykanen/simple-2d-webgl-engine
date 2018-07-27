@@ -11,6 +11,7 @@ const FADE_MAX = 60.0;
 // Global object
 global = {};
 
+// TODO: fade.js
 // Fade timer
 global.fadeTimer = 60.0;
 // Fade mode
@@ -42,6 +43,7 @@ global.init = function() {
         pow: "pow.png",
         arrow: "arrow.png",
         healthBar: "healthbar.png",
+        mapIcons: "map_icons.png",
     }, "assets/bitmaps");
 
     // Fade!
