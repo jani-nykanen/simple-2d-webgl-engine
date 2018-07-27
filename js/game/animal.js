@@ -1,7 +1,15 @@
 // Animal
 // (c) 2018 Jani Nykänen
 
+// Constants
 const ANIMAL_DEATH_MAX = 30.0;
+const ANIMAL_NORMAL = 0;
+const ANIMAL_MONSTER = 1;
+
+const MONSTER_ACC = 0.25;
+const MONSTER_WAVE_SPEED = 0.05;
+const MONSTER_AMPLITUDE = 0.25;
+
 
 // Animal constructor
 var Animal = function() {
@@ -18,7 +26,7 @@ Animal.prototype = Object.create(CollisionObject.prototype);
 
 
 // Create the animal
-Animal.prototype.create_self = function(x, y, sx, sy, scale) {
+Animal.prototype.create_self = function(x, y, sx, sy, scale, type) {
 
     this.pos.x = x;
     this.pos.y = y;
@@ -26,11 +34,18 @@ Animal.prototype.create_self = function(x, y, sx, sy, scale) {
     this.speed.x = sx;
     this.speed.y = sy;
 
+    if(type == ANIMAL_MONSTER) {
+
+        this.target = {x: 0, y: 0};
+        this.speedTarget = Math.hypot(sx, sy);
+        this.wave = 0.0;
+    }
+
     this.scale = scale;
     this.angle = Math.random() * Math.PI * 2;
     this.radius = 112 * this.scale;
     this.checkRadius = 128 * this.scale;
-    this.mass = this.scale;
+    this.mass = ([this.scale, 0.75]) [type];
 
     this.exist = true;
     this.dying = false;
@@ -42,6 +57,71 @@ Animal.prototype.create_self = function(x, y, sx, sy, scale) {
     this.rotSpeed = speed / this.perimeter * 2 * Math.PI;
 
     this.eindex = -1;
+
+    this.type = type;
+}
+
+
+// Update type specific behavior
+Animal.prototype.update_special = function(tm) {
+
+    switch(this.type) {
+
+    // Normal animal
+    case ANIMAL_NORMAL:
+        // Rotate
+        var dir = this.speed.x < 0.0 ? -1 : 1;
+        this.rotSpeed = Math.hypot(this.speed.x, this.speed.y) / this.perimeter * 2 * Math.PI;
+        this.angle += this.rotSpeed * dir * tm;
+
+        break;
+    
+    // Monster
+    case ANIMAL_MONSTER:
+        
+        // Get target
+        this.angle = Math.atan2(this.pos.y, this.pos.x);
+        this.target.x = -Math.cos(this.angle) * this.speedTarget;
+        this.target.y = -Math.sin(this.angle) * this.speedTarget;
+
+        // Update wave
+        this.wave += MONSTER_WAVE_SPEED * tm;
+        this.scale = (2.0-MONSTER_AMPLITUDE) + Math.sin(this.wave) * MONSTER_AMPLITUDE;
+        this.radius = 112 * this.scale;
+
+        // Update speed
+        if(this.speed.x < this.target.x) {
+
+            this.speed.x += MONSTER_ACC * tm;
+            if(this.speed.x > this.target.x)
+                this.speed.x = this.target.x;
+        }
+        else if(this.speed.x > this.target.x) {
+
+            this.speed.x -= MONSTER_ACC * tm;
+            if(this.speed.x < this.target.x)
+                this.speed.x = this.target.x;
+        }
+
+        if(this.speed.y < this.target.y) {
+
+            this.speed.y += MONSTER_ACC * tm;
+            if(this.speed.y > this.target.y)
+                this.speed.y = this.target.y;
+        }
+        else if(this.speed.y > this.target.y) {
+
+            this.speed.y -= MONSTER_ACC * tm;
+            if(this.speed.y < this.target.y)
+                this.speed.y = this.target.y;
+        }
+
+        break;
+
+    default:
+        break;
+
+    }
 }
 
 
@@ -61,11 +141,8 @@ Animal.prototype.move = function(tm) {
         this.exist = false;
     }
 
-    // Rotate
-    var dir = this.speed.x < 0.0 ? -1 : 1;
-    this.rotSpeed = Math.hypot(this.speed.x, this.speed.y) / this.perimeter * 2 * Math.PI;
-    this.angle += this.rotSpeed * dir * tm;
-    
+    // Update special
+    this.update_special(tm);
 }
 
 
@@ -103,7 +180,8 @@ Animal.prototype.update = function(tm) {
 Animal.prototype.draw = function() {
 
     let s = this.scale;
-
+    let bitmap = ([assets.bitmaps.animal, assets.bitmaps.monster]) [this.type];
+    
     if(!this.exist) {
 
         if(this.dying) {
@@ -128,7 +206,8 @@ Animal.prototype.draw = function() {
     tr.scale(s, s);
     tr.use_transform();
 
-    graph.draw_bitmap(assets.bitmaps.animal, -128, -128, 0);
+    graph.draw_bitmap_region(bitmap,
+        0,0,256,256,-128, -128, 0);
 
     tr.pop();
 
@@ -161,7 +240,7 @@ Animal.prototype.die = function(hurtHeart) {
 // Divide to two smaller animals, if big enough
 Animal.prototype.divide = function(angle, eindex) {
 
-    if(this.scale < 1.5) return;
+    if(this.type != ANIMAL_NORMAL || this.scale < 1.5) return;
 
     let scale = this.scale / 2;
     let rad = this.radius / 2;

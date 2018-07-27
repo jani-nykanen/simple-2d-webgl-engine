@@ -30,6 +30,40 @@ miniMap.get_obj_pos = function(o) {
 }
 
 
+// Draw camera area
+miniMap.draw_cam_area = function() {
+
+    const LINE_WIDTH = 3;
+
+    let left = cam.left + AREA_WIDTH/2.0;
+    let top = cam.top + AREA_HEIGHT/2.0;
+    let w = cam.w;
+    let h = cam.h;
+
+    left /= AREA_WIDTH;
+    top /= AREA_HEIGHT;
+    w /= AREA_WIDTH;
+    h /= AREA_HEIGHT;
+
+    left *= MINIMAP_WIDTH;
+    top *= MINIMAP_HEIGHT;
+    w *= MINIMAP_WIDTH;
+    h *= MINIMAP_HEIGHT;
+
+    graph.set_color(1,1,1,0.75);
+
+    // Horizontal
+    graph.fill_rectangle(left, top, w, LINE_WIDTH);
+    graph.fill_rectangle(left, top+h, w + LINE_WIDTH, LINE_WIDTH);
+
+    // Vertical
+    graph.fill_rectangle(left, top, LINE_WIDTH, h);
+    graph.fill_rectangle(left+w, top, LINE_WIDTH, h);
+
+    graph.set_color(1,1,1,1);
+}
+
+
 // Draw an object icon
 miniMap.draw_object_icon = function(o, sx, sy, sw, sh, angle) {
 
@@ -83,7 +117,7 @@ miniMap.update = function(tm) {
 miniMap.draw_content = function() {
 
     const GRID_LOOP = 6;
-    const GRID_WIDTH = 2;
+    const GRID_WIDTH = 3;
 
     tr.identity();
     tr.set_view(MINIMAP_WIDTH, MINIMAP_HEIGHT);
@@ -112,8 +146,12 @@ miniMap.draw_content = function() {
     for(var i = 0; i < ANIMAL_COUNT; ++ i) {
 
         if(objman.animals[i].exist)
-            miniMap.draw_object_icon(objman.animals[i], 64,0,32,32, 1);
+            miniMap.draw_object_icon(objman.animals[i], 
+                64 + objman.animals[i].type*32,0,32,32, 1);
     }
+
+    // Draw camera area
+    miniMap.draw_cam_area();
 }
 
 

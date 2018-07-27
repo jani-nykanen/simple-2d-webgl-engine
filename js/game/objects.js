@@ -13,6 +13,9 @@ const ANIMAL_TIME_WAIT_VARY = 180.0;
 const ANIMAL_WAIT_INITIAL = 60.0;
 const ANIMAL_MAX_CREATE = 3;
 
+const MONSTER_COUNTER_MIN = 4;
+const MONSTER_COUNTER_VARY = 4;
+
 // Object manager object
 objman = {};
 
@@ -20,6 +23,8 @@ objman = {};
 objman.animalTimer = 0.0;
 // Animal timer wait
 objman.animalWait = ANIMAL_WAIT_INITIAL;
+// Monster counter
+objman.monsterCounter = 0;
 
 
 // Get the next object in an array
@@ -62,26 +67,33 @@ objman.draw_obj = function(arr) {
 
 
 // Create an animal to a random position
-objman.create_animal = function() {
+objman.create_animal = function(type) {
 
     const ANIMAL_MIN_SIZE = 1.0;
     const ANIMAL_SIZE_VARY = 1.0;
     const SPEED_MOD = 3; 
     const MAX_SPEED = 8.0;
 
-    var next = this.next_obj(objman.animals);
+    const MONSTER_MIN_SPEED = 2.0;
+    const MONSTER_SPEED_VARY = 2.0;
+
+    let next = this.next_obj(objman.animals);
     if(next == null) return;
 
-    var scale = ANIMAL_MIN_SIZE + Math.random() * ANIMAL_SIZE_VARY;
-    var radius = 128 * scale;
-    var totalSpeed = MAX_SPEED- scale * SPEED_MOD;
+    let scale = type == ANIMAL_NORMAL ?
+        ANIMAL_MIN_SIZE + Math.random() * ANIMAL_SIZE_VARY : 1.75;
 
-    var mode = Math.floor(Math.random()* 4);
-    var x = 0;
-    var y = 0;
-    var sx = 0;
-    var sy = 0;
-    var angle = 0;
+    let radius = 128 * scale;
+    let totalSpeed = ([MAX_SPEED- scale * SPEED_MOD,
+        MONSTER_MIN_SPEED + Math.random()* MONSTER_SPEED_VARY]) 
+        [type];
+
+    let mode = Math.floor(Math.random()* 4);
+    let x = 0;
+    let y = 0;
+    let sx = 0;
+    let sy = 0;
+    let angle = 0;
 
     switch(mode) {
 
@@ -124,10 +136,20 @@ objman.create_animal = function() {
         break;
     }
 
-    sx = Math.cos(angle) * totalSpeed;
-    sy = -Math.sin(angle) * totalSpeed;
+    // If monster or missile, move towards the core
+    if(type == ANIMAL_MONSTER) {
 
-    next.create_self(x, y, sx, sy, scale);
+        angle = Math.atan2(y, x);
+        sx = -Math.cos(angle) * totalSpeed;
+        sy = -Math.sin(angle) * totalSpeed;
+    }
+    else {
+
+        sx = Math.cos(angle) * totalSpeed;
+        sy = -Math.sin(angle) * totalSpeed;
+    }
+
+    next.create_self(x, y, sx, sy, scale, type);
 }
 
 
@@ -143,7 +165,16 @@ objman.create_objects = function(tm) {
         
         for(var i = 0; i < loop; ++ i) {
 
-            this.create_animal();
+            let type = ANIMAL_NORMAL;
+            if(-- objman.monsterCounter <= 0) {
+
+                objman.monsterCounter = Math.floor(Math.random() * MONSTER_COUNTER_VARY)
+                    + MONSTER_COUNTER_MIN;
+
+                type = ANIMAL_MONSTER;
+            }
+
+            this.create_animal(type);
         }
 
         objman.animalTimer -= objman.animalWait;
@@ -367,6 +398,6 @@ objman.add_animal = function(x, y, angle, speed, scale, eindex) {
     let a = objman.next_obj(objman.animals);
     if(a == null) return;
 
-    a.create_self(x, y, sx, sy, scale);
+    a.create_self(x, y, sx, sy, scale, ANIMAL_NORMAL);
     a.eindex = eindex;
 }
