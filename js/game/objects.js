@@ -16,6 +16,9 @@ const ANIMAL_MAX_CREATE = 3;
 const MONSTER_COUNTER_MIN = 4;
 const MONSTER_COUNTER_VARY = 4;
 
+const ANIMAL_NORMAL = 0;
+const ANIMAL_MONSTER = 1;
+
 // Object manager object
 objman = {};
 
@@ -38,11 +41,11 @@ objman.next_obj = function(arr, cond2) {
         if(arr[i].exist == false &&
           (cond2 || arr[i].dying == false) ) {
 
-            return arr[i];
+            return i;
         }
     }
 
-    return null;
+    return 0;
 }
 
 
@@ -77,8 +80,8 @@ objman.create_animal = function(type) {
     const MONSTER_MIN_SPEED = 2.0;
     const MONSTER_SPEED_VARY = 2.0;
 
-    let next = this.next_obj(objman.animals);
-    if(next == null) return;
+    let i = this.next_obj(objman.creatures);
+    if(i == null) return;
 
     let scale = type == ANIMAL_NORMAL ?
         ANIMAL_MIN_SIZE + Math.random() * ANIMAL_SIZE_VARY : 1.75;
@@ -142,14 +145,19 @@ objman.create_animal = function(type) {
         angle = Math.atan2(y, x);
         sx = -Math.cos(angle) * totalSpeed;
         sy = -Math.sin(angle) * totalSpeed;
+
+        objman.creatures[i] = new Monster();
     }
     else {
 
         sx = Math.cos(angle) * totalSpeed;
         sy = -Math.sin(angle) * totalSpeed;
+
+        objman.creatures[i] = new Animal();
     }
 
-    next.create_self(x, y, sx, sy, scale, type);
+    
+    objman.creatures[i].create_self(x, y, sx, sy, scale, type);
 }
 
 
@@ -210,11 +218,11 @@ objman.init = function() {
     objman.fetus = new Fetus(
         objman.player.pos.x, objman.player.pos.y+128,
         objman.chain[CHAIN_COUNT-1],64,1.33);
-    // Animals
-    objman.animals = [];
+    // creatures
+    objman.creatures = [];
     for(var i = 0; i < ANIMAL_COUNT; ++ i) {
 
-        objman.animals[i] = new Animal();
+        objman.creatures[i] = new Animal();
     }
     // Explosions
     objman.explosions = [];
@@ -264,34 +272,34 @@ objman.update = function(tm) {
     // Update fetus
     objman.fetus.update(tm);
 
-    // Update animals
+    // Update creatures
     for(var i = 0; i < ANIMAL_COUNT; ++ i) {
 
-        objman.animals[i].update(tm);
+        objman.creatures[i].update(tm);
         // Collide with player
-        objman.animals[i].object_collision(objman.player);
+        objman.creatures[i].object_collision(objman.player);
         // Collide with heart
-        objman.animals[i].object_collision(objman.heart);
+        objman.creatures[i].object_collision(objman.heart);
         
-        if(objman.animals[i].exist) {
+        if(objman.creatures[i].exist) {
             
             for(var i2 = 0; i2 < ANIMAL_COUNT; ++ i2) {
-                // Collide with other animals
+                // Collide with other creatures
                 if(i != i2) {
 
-                    objman.animals[i].object_collision(objman.animals[i2]);
+                    objman.creatures[i].object_collision(objman.creatures[i2]);
                 }
                 // Collide with explosions
                 if(i2 < EXP_COUNT) {
 
-                    objman.animals[i].exp_collision(objman.explosions[i2]);
+                    objman.creatures[i].exp_collision(objman.explosions[i2]);
                 }
             }
         }
         // Collide with fetus
-        objman.fetus.object_collision(objman.animals[i]);
+        objman.fetus.object_collision(objman.creatures[i]);
         // Magnet interaction
-        objman.animals[i].magnet_interaction(objman.fetus, tm);
+        objman.creatures[i].magnet_interaction(objman.fetus, tm);
     }
 }
 
@@ -316,8 +324,8 @@ objman.draw = function(tx, ty, color) {
     // Draw heart
     objman.heart.draw();
 
-    // Draw animals
-    objman.draw_obj(objman.animals);
+    // Draw creatures
+    objman.draw_obj(objman.creatures);
     // Draw chain
     objman.draw_obj(objman.chain);
 
@@ -353,7 +361,7 @@ objman.draw_hud = function() {
     // Draw animal arrows
     for(var i = 0; i < ANIMAL_COUNT; ++ i) {
 
-        objman.animals[i].draw_arrow();
+        objman.creatures[i].draw_arrow();
     }
     graph.set_color(1,1,1,1);
 }
@@ -362,9 +370,7 @@ objman.draw_hud = function() {
 // Add gas
 objman.add_gas = function(x, y, speed, scale) {
 
-    let g = objman.next_obj(objman.gas, true);
-    g = g || objman.gas[0];
-
+    let g = objman.gas[objman.next_obj(objman.gas, true)];
     g.create_self(x, y, speed, scale);
 }
 
@@ -372,9 +378,7 @@ objman.add_gas = function(x, y, speed, scale) {
 // Add an explosion
 objman.add_explosion = function(x, y, speed, scale) {
 
-    let e = objman.next_obj(objman.explosions);
-    e = e || objman.explosions[0];
-
+    let e = objman.explosions[objman.next_obj(objman.explosions)];
     e.create_self(x, y, speed, scale);
 }
 
@@ -382,22 +386,25 @@ objman.add_explosion = function(x, y, speed, scale) {
 // Add a pow
 objman.add_pow = function(x, y, speed, scale) {
 
-    let p = objman.next_obj(objman.pows, true);
-    p = p || objman.pows[0];
+    let p = objman.pows[objman.next_obj(objman.pows, true)];
 
     p.create_self(x, y, speed, scale);
 }
 
 
 // Add an animal
-objman.add_animal = function(x, y, angle, speed, scale, eindex) {
+objman.add_animal = function(x, y, angle, speed, scale, eindex, skeleton) {
 
     let sx = Math.cos(angle) * speed;
     let sy = Math.sin(angle) * speed;
 
-    let a = objman.next_obj(objman.animals);
-    if(a == null) return;
+    let i = objman.next_obj(objman.creatures);
+    if(i == 0 && (objman.creatures[i].exist || objman.creatures[i].dying) )
+        return;
 
-    a.create_self(x, y, sx, sy, scale, ANIMAL_NORMAL);
-    a.eindex = eindex;
+    objman.creatures[i] = new Animal();
+    objman.creatures[i].create_self(x, y, sx, sy, scale, skeleton);
+    objman.creatures[i].eindex = eindex;
+
+    return objman.creatures[i];
 }

@@ -1,12 +1,16 @@
-// Animal
+// Monster
 // (c) 2018 Jani Nykänen
 
 // Constants
-const ANIMAL_DEATH_MAX = 30.0;
+const MONSTER_DEATH_MAX = 30.0;
+const MONSTER_ACC = 0.25;
+const MONSTER_WAVE_SPEED = 0.05;
+const MONSTER_AMPLITUDE = 0.25;
+const MONSTER_WEIGHT = 0.625;
 
 
-// Animal constructor
-var Animal = function() {
+// Monster constructor
+var Monster = function() {
 
     CollisionObject.call(this);
 
@@ -14,13 +18,13 @@ var Animal = function() {
     this.rotSpeed = 0;
     this.offscreen = false;
 
-    this.isAnimal = true;
+    this.isMonster = true;
 }
-Animal.prototype = Object.create(CollisionObject.prototype);
+Monster.prototype = Object.create(CollisionObject.prototype);
 
 
-// Create the animal
-Animal.prototype.create_self = function(x, y, sx, sy, scale, skeleton) {
+// Create the Monster
+Monster.prototype.create_self = function(x, y, sx, sy, scale) {
 
     this.pos.x = x;
     this.pos.y = y;
@@ -36,27 +40,22 @@ Animal.prototype.create_self = function(x, y, sx, sy, scale, skeleton) {
     this.angle = Math.random() * Math.PI * 2;
     this.radius = 112 * this.scale;
     this.checkRadius = 128 * this.scale;
-    this.mass = skeleton ? MONSTER_WEIGHT : this.scale;
+    this.mass = MONSTER_WEIGHT;
 
     this.exist = true;
     this.dying = false;
     this.deathTimer = 0.0;
 
     this.perimeter = Math.PI * this.radius * 2;
-    var speed = Math.hypot(sx, sy);
-
-    this.rotSpeed = speed / this.perimeter * 2 * Math.PI;
-
     this.eindex = -1;
-    this.skeleton = skeleton;
 }
 
 
-// Move animal
-Animal.prototype.move = function(tm) {
+// Move monster
+Monster.prototype.move = function(tm) {
 
-    this.pos.x += this.speed.x * tm;
-    this.pos.y += this.speed.y * tm;
+    this.pos.x += this.speed.x * (this.scale / 2.0) * tm;
+    this.pos.y += this.speed.y * (this.scale / 2.0)  * tm;
 
     // Check if outside the screen
     if( (this.speed.x > 0 && this.pos.x-this.checkRadius > AREA_WIDTH/2)
@@ -68,15 +67,47 @@ Animal.prototype.move = function(tm) {
         this.exist = false;
     }
 
-    // Rotate
-    var dir = this.speed.x < 0.0 ? -1 : 1;
-    this.rotSpeed = Math.hypot(this.speed.x, this.speed.y) / this.perimeter * 2 * Math.PI;
-    this.angle += this.rotSpeed * dir * tm;
+    // Get target
+    this.angle = Math.atan2(this.pos.y, this.pos.x);
+    this.target.x = -Math.cos(this.angle) * this.speedTarget;
+    this.target.y = -Math.sin(this.angle) * this.speedTarget;
+
+    // Update wave
+    this.wave += MONSTER_WAVE_SPEED * tm;
+    this.scale = (2.0-MONSTER_AMPLITUDE) + Math.sin(this.wave) * MONSTER_AMPLITUDE;
+    this.radius = 112 * this.scale;
+
+    // Update speed
+    if(this.speed.x < this.target.x) {
+
+        this.speed.x += MONSTER_ACC * tm;
+        if(this.speed.x > this.target.x)
+            this.speed.x = this.target.x;
+    }
+    else if(this.speed.x > this.target.x) {
+
+        this.speed.x -= MONSTER_ACC * tm;
+        if(this.speed.x < this.target.x)
+            this.speed.x = this.target.x;
+    }
+
+    if(this.speed.y < this.target.y) {
+
+        this.speed.y += MONSTER_ACC * tm;
+        if(this.speed.y > this.target.y)
+            this.speed.y = this.target.y;
+    }
+    else if(this.speed.y > this.target.y) {
+
+        this.speed.y -= MONSTER_ACC * tm;
+        if(this.speed.y < this.target.y)
+            this.speed.y = this.target.y;
+    }
 }
 
 
-// Update animal
-Animal.prototype.update = function(tm) {
+// Update monster
+Monster.prototype.update = function(tm) {
 
     if(!this.exist) {
         
@@ -105,17 +136,17 @@ Animal.prototype.update = function(tm) {
 }
 
 
-// Draw animal
-Animal.prototype.draw = function() {
+// Draw Monster
+Monster.prototype.draw = function() {
 
     let s = this.scale;
-    let bitmap = assets.bitmaps.animal;
+    let bitmap = assets.bitmaps.monster;
     
     if(!this.exist) {
 
         if(this.dying) {
 
-            let t = this.deathTimer / ANIMAL_DEATH_MAX;
+            let t = this.deathTimer / MONSTER_DEATH_MAX;
             graph.set_color(1,1,1, t);
             s += (1-t) * 0.5;
         }
@@ -136,7 +167,7 @@ Animal.prototype.draw = function() {
     tr.use_transform();
 
     graph.draw_bitmap_region(bitmap,
-        this.skeleton ? 256 : 0,0,256,256,-128, -128, 0);
+        0,0,256,256,-128, -128, 0);
 
     tr.pop();
 
@@ -148,49 +179,26 @@ Animal.prototype.draw = function() {
 
 
 // Death comes
-Animal.prototype.die = function(hurtHeart) {
-
-    const MIN_DMG = 0.05;
-    const DMG_MOD = 0.02;
+Monster.prototype.die = function(eindex, angle) {
 
     this.exist = false;
     this.dying = true;
-    this.deathTimer = ANIMAL_DEATH_MAX;
+    this.deathTimer = MONSTER_DEATH_MAX;
 
-    // Reduce health
-    if(hurtHeart) {
+    // Create a skeletal animal
+    if(eindex != null) {
 
-        let t = MIN_DMG + this.mass * DMG_MOD;
-        _status.reduce_health(t);
+        let x = this.pos.x;
+        let y = this.pos.y;
+
+        let o = objman.add_animal(x, y, -angle, this.speedTarget * 2, this.scale,eindex, true);
+        o.angle = this.angle;
     }
 }
 
 
-// Divide to two smaller animals, if big enough
-Animal.prototype.divide = function(angle, eindex) {
-
-    if(this.scale < 1.5 || this.skeleton) return;
-
-    let scale = this.scale / 2;
-    let rad = this.radius / 2;
-    let x,y;
-
-    let anglePlus = -Math.PI / 4;
-
-    for(var a = 0; a < 2; ++ a) {
-
-        anglePlus = a == 0 ? anglePlus : -anglePlus;
-
-        x = this.pos.x + Math.cos(Math.PI/2 + angle + a*Math.PI + anglePlus) * rad;
-        y = this.pos.y + Math.sin(Math.PI/2 + angle + a*Math.PI + anglePlus) * rad;
-
-        objman.add_animal(x, y, -Math.PI + angle + a*Math.PI, Math.max(this.totalSpeed * 0.90, 2), scale,eindex);
-    }
-}
-
-
-// Animal-explosion collision
-Animal.prototype.exp_collision = function(e) {
+// Monster-explosion collision
+Monster.prototype.exp_collision = function(e) {
 
     if(!e.exist || !this.exist || e.eindex == this.eindex) return;
 
@@ -198,17 +206,14 @@ Animal.prototype.exp_collision = function(e) {
 
     if(dist < e.radius + this.radius) {
 
-        this.die();
-        let angle = Math.atan2(e.pos.y - this.pos.y, 
-            e.pos.x - this.pos.x);
-
-        this.divide(angle, e.eindex);
+        // Die
+        this.die(e.eindex, Math.atan2(e.pos.y-this.pos.y, e.pos.x-this.pos.x));
     }
 }
 
 
 // Draw an arrow (if offscreen)
-Animal.prototype.draw_arrow = function() {
+Monster.prototype.draw_arrow = function() {
 
     const DIST_MOD = 1280;
 

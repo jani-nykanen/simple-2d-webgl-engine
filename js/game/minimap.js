@@ -136,18 +136,35 @@ miniMap.draw_content = function() {
     }
     graph.set_color(1,1,1,1);
 
+    // If hurt, make "whiter"
+    if(objman.heart.hurtTimer > 0.0) {
+
+        let s = Math.abs(Math.sin(objman.heart.hurtTimer / HEART_HURT_MAX 
+            * (Math.PI*2 * HEART_HURT_MOD)));
+        let t = 1 + 3*s;
+        graph.set_color(t,t,t, 1);
+    }
+
     // Draw heart
     miniMap.draw_object_icon(objman.heart, 32,0,32,32);
+    graph.set_color(1,1,1,1);
 
     // Draw player
     miniMap.draw_object_icon(objman.player, 0,0,32,32, -1);
 
-    // Draw animals
+    // Draw creatures
     for(var i = 0; i < ANIMAL_COUNT; ++ i) {
 
-        if(objman.animals[i].exist)
-            miniMap.draw_object_icon(objman.animals[i], 
-                64 + objman.animals[i].type*32,0,32,32, 1);
+        
+        if(objman.creatures[i].exist) {
+
+            let t = 0;
+            if(objman.creatures[i].isMonster)
+                t = 1;
+
+            miniMap.draw_object_icon(objman.creatures[i], 
+                64 + t*32,0,32,32, 1);
+        }
     }
 
     // Draw camera area

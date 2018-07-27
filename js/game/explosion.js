@@ -9,7 +9,7 @@ const EXP_APPEAR_MAX = 10.0;
 const EXP_SCALE_UP_SPEED = 0.025;
 
 // Global explosion index
-global_exp_index = 0;
+global_exp_index = 1;
 
 
 // Constructor
