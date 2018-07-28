@@ -110,9 +110,9 @@ core.loop = function(ts) {
     */
     core.oldTs = ts;
 
-    core.timeCount += delta / 1000.0;
-
     if(assets.has_loaded()) {
+
+        core.timeCount += delta / 1000.0;
 
         // Check if enough time has passed
         while(core.timeCount >= 1.0 / FRAME_RATE) {
