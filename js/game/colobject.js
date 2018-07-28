@@ -39,7 +39,6 @@ CollisionObject.prototype.object_collision = function(o) {
     let dist = Math.hypot(o.pos.x - this.pos.x, o.pos.y- this.pos.y);
     let d = this.radius + o.radius;
 
-
     if(dist < d) {
 
         let angle = Math.atan2(this.pos.y - o.pos.y, this.pos.x - o.pos.x);
@@ -53,22 +52,6 @@ CollisionObject.prototype.object_collision = function(o) {
 
             this.speed.x = Math.cos(angle) * this.totalSpeed * massRatio;
             this.speed.y = Math.sin(angle) * this.totalSpeed * massRatio;
-
-            // TODO: Put these to an external place
-            if(o.isHeart) {
-
-                if(this.isAnimal) {
-
-                    this.die(true);
-                    this.divide(angle, -1);
-
-                    o.hurt();
-                }
-                else {
-
-                    this.isLeeching = true;
-                }
-            }
         }
         else {
 
@@ -85,7 +68,6 @@ CollisionObject.prototype.object_collision = function(o) {
             this.speed.y = Math.sin(angle) * speedAverage * massRatio;
         }
 
-        
         // Create pow
         if( (this.isAnimal && o.isHeart) || speedAverage >= POW_LIMIT) {
 
@@ -101,7 +83,11 @@ CollisionObject.prototype.object_collision = function(o) {
 
             objman.add_pow(x, y, 2, size);
         }
+
+        return true;
     }
+
+    return false;
 }
 
 

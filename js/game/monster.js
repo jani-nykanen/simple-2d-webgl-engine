@@ -39,7 +39,6 @@ Monster.prototype.create_self = function(x, y, sx, sy, scale) {
     this.wave = 0.0;
 
     this.scale = scale;
-    this.angle = Math.random() * Math.PI * 2;
     this.radius = 112 * this.scale;
     this.checkRadius = 128 * this.scale;
     this.mass = MONSTER_WEIGHT;
@@ -236,6 +235,19 @@ Monster.prototype.exp_collision = function(e) {
     if(dist < e.radius + this.radius) {
 
         // Die
-        this.die(e.eindex, Math.atan2(e.pos.y-this.pos.y, e.pos.x-this.pos.x));
+        let angle = this.isLeeching ? Math.atan2(this.pos.y, this.pos.x) 
+            : Math.atan2(e.pos.y-this.pos.y, e.pos.x-this.pos.x);
+        this.die(e.eindex, angle);
     }
 }
+
+
+// Handle monster-heart collision
+Monster.prototype.heart_collision = function(o) {
+
+    if(!this.isLeeching && this.object_collision(o)) {
+
+        this.isLeeching = true;
+    }
+}
+

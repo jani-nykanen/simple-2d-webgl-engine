@@ -279,7 +279,7 @@ objman.update = function(tm) {
         // Collide with player
         objman.creatures[i].object_collision(objman.player);
         // Collide with heart
-        objman.creatures[i].object_collision(objman.heart);
+        objman.creatures[i].heart_collision(objman.heart);
         
         if(objman.creatures[i].exist) {
             

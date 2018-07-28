@@ -35,6 +35,7 @@ global.init = function() {
         player: "player.png",
         animal: "animal.png",
         monster: "monster.png",
+        missile: "missile.png",
         gas: "gas.png",
         bg: "background.jpg",
         bgElements: "bg_elements.png",

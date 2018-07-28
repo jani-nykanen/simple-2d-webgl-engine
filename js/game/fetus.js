@@ -84,7 +84,7 @@ Fetus.prototype.update_death = function(tm) {
 Fetus.prototype.update = function(tm) {
 
     const SPEED_MOD = 2;
-    const EXP_RADIUS = 2.0;
+    const EXP_RADIUS = 2.25;
 
     // Check distance to the follow target object
     var d = Math.hypot(this.pos.x-this.fo.pos.x, 

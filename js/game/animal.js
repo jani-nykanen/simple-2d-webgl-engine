@@ -207,3 +207,18 @@ Animal.prototype.exp_collision = function(e) {
         this.divide(angle, e.eindex);
     }
 }
+
+
+// Handle animal-heart collision
+Animal.prototype.heart_collision = function(o) {
+
+    if(this.object_collision(o)) {
+
+        let angle = Math.atan2(this.pos.y - o.pos.y, this.pos.x - o.pos.x);
+
+        this.die(true);
+        this.divide(angle, -1);
+
+         o.hurt();
+    }
+}
