@@ -14,7 +14,7 @@ const ANIMAL_WAIT_INITIAL = 60.0;
 const ANIMAL_MAX_CREATE = 3;
 
 const MONSTER_COUNTER_MIN = 4;
-const MONSTER_COUNTER_VARY = 4;
+const MONSTER_COUNTER_VARY = 6;
 
 const MISSILE_COUNTER_MIN = 2;
 const MISSILE_COUNTER_VARY = 6;
@@ -96,7 +96,7 @@ objman.create_animal = function(type) {
     let radius = 128 * scale;
     let totalSpeed = ([MAX_SPEED- scale * SPEED_MOD,
         MONSTER_MIN_SPEED + Math.random()* MONSTER_SPEED_VARY,
-        0.01]) 
+        2.0]) 
         [type];
 
     let mode = Math.floor(Math.random()* 4);
@@ -304,7 +304,7 @@ objman.update = function(tm) {
 
         objman.creatures[i].update(tm);
         // Collide with player
-        objman.creatures[i].object_collision(objman.player);
+        objman.creatures[i].player_collision(objman.player);
         // Collide with heart
         objman.creatures[i].heart_collision(objman.heart);
         
@@ -351,16 +351,17 @@ objman.draw = function(tx, ty, color) {
     // Draw heart
     objman.heart.draw();
 
-    // Draw creatures
-    objman.draw_obj(objman.creatures);
     // Draw chain
     objman.draw_obj(objman.chain);
 
-    // Draw fetus
-    objman.fetus.draw();
-
     // Draw gas
     objman.draw_obj(objman.gas);
+
+    // Draw creatures
+    objman.draw_obj(objman.creatures);
+
+    // Draw fetus
+    objman.fetus.draw();
 
     // Draw player
     objman.player.draw();

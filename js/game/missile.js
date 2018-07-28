@@ -4,8 +4,10 @@
 // Constants
 const MISSILE_DEATH_MAX = 30.0;
 const MISSILE_WEIGHT = 1.5;
-const MISSILE_ACC = 0.10;
-const MISSILE_TARGET = 6.0;
+const MISSILE_ACC = 0.05;
+const MISSILE_TARGET = 8.0;
+const MISSILE_EXP_RADIUS = 2.5;
+const MISSILE_GAS_WAIT = 12.0;
 
 
 // Missile constructor
@@ -46,6 +48,28 @@ Missile.prototype.create_self = function(x, y, sx, sy, scale) {
     this.eindex = -1;
     
     this.arrowID = 3;
+
+    this.gasTimer = 0.0;
+}
+
+
+// Handle gas generation
+Missile.prototype.gen_gas = function(tm) {
+
+    const GAS_DIST = 144;
+    const ANGLE_PLUS = Math.PI / 8.0;
+
+    this.gasTimer += 1.0 * tm;
+    if(this.gasTimer >= MISSILE_GAS_WAIT) {
+
+        let x = this.pos.x + Math.cos(this.angle + ANGLE_PLUS) * GAS_DIST;
+        let y = this.pos.y + Math.sin(this.angle + ANGLE_PLUS) * GAS_DIST;
+
+        // Create gas
+        objman.add_gas(x, y, 1.5, 1.0);
+
+        this.gasTimer -= MISSILE_GAS_WAIT;
+    }
 }
 
 
@@ -65,9 +89,12 @@ Missile.prototype.move = function(tm) {
     // Set angle
     this.angle = Math.PI + Math.atan2(this.speed.y, this.speed.x);
 
+    let plAngle = Math.atan2(this.pos.y-objman.player.pos.y,
+        this.pos.x - objman.player.pos.x);
+
     // Set target
-    this.target.x = Math.cos(this.angle - Math.PI) * MISSILE_TARGET;
-    this.target.y = Math.sin(this.angle - Math.PI) * MISSILE_TARGET;
+    this.target.x = -Math.cos(plAngle) * MISSILE_TARGET;
+    this.target.y = -Math.sin(plAngle) * MISSILE_TARGET;
 
     // Update speed
     if(this.speed.x < this.target.x) {
@@ -129,6 +156,12 @@ Missile.prototype.update = function(tm) {
 
     // Calculate total speed
     this.calculate_total_speed();
+
+    // Generate gas
+    if(!this.offscreen) {
+
+        this.gen_gas(tm);
+    }
 }
 
 
@@ -176,13 +209,13 @@ Missile.prototype.draw = function() {
 
 // Death comes
 Missile.prototype.die = function() {
-/*
+
     this.exist = false;
     this.dying = true;
     this.deathTimer = MISSILE_DEATH_MAX;
-*/
+
     // Create an explosion
-    // TODO
+    objman.add_explosion(this.pos.x, this.pos.y, 2.0, MISSILE_EXP_RADIUS);
 }
 
 
@@ -204,6 +237,19 @@ Missile.prototype.exp_collision = function(e) {
 // Handle Missile-heart collision
 Missile.prototype.heart_collision = function(o) {
 
-    this.die();
+    if(this.object_collision(o)) {
+        
+        this.die();
+    }
+}
+
+
+// Player collision
+Missile.prototype.player_collision = function(o) {
+
+    if(this.object_collision(o)) {
+
+        this.die();
+    }
 }
 

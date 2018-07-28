@@ -251,3 +251,9 @@ Monster.prototype.heart_collision = function(o) {
     }
 }
 
+
+// Player collision
+Monster.prototype.player_collision = function(o) {
+
+    this.object_collision(o);
+}

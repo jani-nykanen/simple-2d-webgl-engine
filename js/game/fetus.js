@@ -45,9 +45,7 @@ Fetus.prototype.update_magnet = function(tm) {
 
     const MAGNET_SPEED = 0.1;
 
-    let oldState = this.magnetic;
     this.magnetic = kconf.fire1.state == state.DOWN && !this.dead;
-
     if(!this.magnetic) {
 
         if(this.magnetTimer < MAGNET_DELTA) {

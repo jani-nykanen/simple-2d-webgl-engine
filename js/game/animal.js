@@ -218,3 +218,10 @@ Animal.prototype.heart_collision = function(o) {
          o.hurt();
     }
 }
+
+
+// Player collision
+Animal.prototype.player_collision = function(o) {
+
+    this.object_collision(o);
+}
