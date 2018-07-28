@@ -6,7 +6,9 @@ const MONSTER_DEATH_MAX = 30.0;
 const MONSTER_ACC = 0.25;
 const MONSTER_WAVE_SPEED = 0.05;
 const MONSTER_AMPLITUDE = 0.25;
-const MONSTER_WEIGHT = 0.75;
+const MONSTER_WEIGHT = 0.70;
+const MONSTER_ANGLE_PLUS = Math.PI / 9.0;
+const MONSTER_ANGLE_PLUS_SPEED = 0.10;
 
 
 // Monster constructor
@@ -50,14 +52,16 @@ Monster.prototype.create_self = function(x, y, sx, sy, scale) {
     this.eindex = -1;
     
     this.arrowID = 1;
+    this.isLeeching = false;
+    this.angleMod = 0.0;
 }
 
 
 // Move monster
 Monster.prototype.move = function(tm) {
 
-    this.pos.x += this.speed.x * (this.scale / 2.0) * tm;
-    this.pos.y += this.speed.y * (this.scale / 2.0)  * tm;
+    this.pos.x += this.speed.x * tm;
+    this.pos.y += this.speed.y * tm;
 
     // Check if outside the screen
     if( (this.speed.x > 0 && this.pos.x-this.checkRadius > AREA_WIDTH/2)
@@ -71,13 +75,8 @@ Monster.prototype.move = function(tm) {
 
     // Get target
     this.angle = Math.atan2(this.pos.y, this.pos.x);
-    this.target.x = -Math.cos(this.angle) * this.speedTarget;
-    this.target.y = -Math.sin(this.angle) * this.speedTarget;
-
-    // Update wave
-    this.wave += MONSTER_WAVE_SPEED * tm;
-    this.scale = (2.0-MONSTER_AMPLITUDE) + Math.sin(this.wave) * MONSTER_AMPLITUDE;
-    this.radius = 112 * this.scale;
+    this.target.x = -Math.cos(this.angle) * this.speedTarget * (this.scale-1.5)*2;
+    this.target.y = -Math.sin(this.angle) * this.speedTarget * (this.scale-1.5)*2;
 
     // Update speed
     if(this.speed.x < this.target.x) {
@@ -130,8 +129,36 @@ Monster.prototype.update = function(tm) {
     this.offscreen = (x+r < cam.left || x-r > cam.left + cam.w 
         || y+r < cam.top || y-r > cam.top + cam.h);
 
-    // Move
-    this.move(tm);
+
+    // Leech!
+    this.static = this.isLeeching;
+    if(this.isLeeching) {
+
+        // Set speed to zero
+        this.speed.x = 0.0;
+        this.speed.y = 0.0;
+
+        // Additional rotation
+        this.angleMod += MONSTER_ANGLE_PLUS_SPEED * tm;
+
+        // Hurt heart
+        if(!objman.heart.is_hurt()) {
+
+            objman.heart.hurt();
+            _status.reduce_health(0.025);
+        }
+
+    }
+    else {
+
+        // Move
+        this.move(tm);
+
+        // Update wave
+        this.wave += MONSTER_WAVE_SPEED * tm;
+        this.scale = (2.0-MONSTER_AMPLITUDE) + Math.sin(this.wave) * MONSTER_AMPLITUDE;
+        this.radius = 112 * this.scale;
+    }
 
     // Calculate total speed
     this.calculate_total_speed();
@@ -164,7 +191,7 @@ Monster.prototype.draw = function() {
 
     tr.push();
     tr.translate(this.pos.x, this.pos.y);
-    tr.rotate(this.angle);
+    tr.rotate(this.angle + Math.sin(this.angleMod) * MONSTER_ANGLE_PLUS);
     tr.scale(s, s);
     tr.use_transform();
 

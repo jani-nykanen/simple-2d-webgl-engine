@@ -91,3 +91,11 @@ Heart.prototype.hurt = function() {
 
     this.hurtTimer = HEART_HURT_MAX;
 }
+
+
+// Is hurt
+Heart.prototype.is_hurt = function() {
+
+    return this.hurtTimer > 0.0;
+}
+

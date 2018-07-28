@@ -84,6 +84,7 @@ Fetus.prototype.update_death = function(tm) {
 Fetus.prototype.update = function(tm) {
 
     const SPEED_MOD = 2;
+    const EXP_RADIUS = 2.0;
 
     // Check distance to the follow target object
     var d = Math.hypot(this.pos.x-this.fo.pos.x, 
@@ -111,7 +112,7 @@ Fetus.prototype.update = function(tm) {
     // Explosion
     if(!this.dead && kconf.fire2.state == state.PRESSED) {
 
-        objman.add_explosion(this.pos.x, this.pos.y, 2.0, 1.75);
+        objman.add_explosion(this.pos.x, this.pos.y, 2.0, EXP_RADIUS);
         this.dead = true;
         this.deadTimer = FETUS_DEAD_MAX;
     }

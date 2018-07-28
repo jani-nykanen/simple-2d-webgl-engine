@@ -33,7 +33,8 @@ CollisionObject.prototype.object_collision = function(o) {
     const POW_MIN = 1.5;
     const POW_MOD = 8;
 
-    if(o.exist == false || this.exist == false) return;
+    if(o.exist == false || this.exist == false 
+      || (o.static && this.static) ) return;
 
     let dist = Math.hypot(o.pos.x - this.pos.x, o.pos.y- this.pos.y);
     let d = this.radius + o.radius;
@@ -53,12 +54,20 @@ CollisionObject.prototype.object_collision = function(o) {
             this.speed.x = Math.cos(angle) * this.totalSpeed * massRatio;
             this.speed.y = Math.sin(angle) * this.totalSpeed * massRatio;
 
-            if(o.isHeart && this.isAnimal) {
+            // TODO: Put these to an external place
+            if(o.isHeart) {
 
-                this.die(true);
-                this.divide(angle, -1);
+                if(this.isAnimal) {
 
-                o.hurt();
+                    this.die(true);
+                    this.divide(angle, -1);
+
+                    o.hurt();
+                }
+                else {
+
+                    this.isLeeching = true;
+                }
             }
         }
         else {

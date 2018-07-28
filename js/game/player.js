@@ -274,7 +274,7 @@ Player.prototype.wall_collisions = function(w, h) {
 // Player-explosion collision
 Player.prototype.exp_collision = function(e) {
 
-    const EXP_SPEED = 24.0;
+    const EXP_SPEED = 16.0;
 
     if(!e.exist || e.eindex == this.eindex) return;
 
