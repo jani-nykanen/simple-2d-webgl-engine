@@ -16,8 +16,13 @@ const ANIMAL_MAX_CREATE = 3;
 const MONSTER_COUNTER_MIN = 4;
 const MONSTER_COUNTER_VARY = 4;
 
+const MISSILE_COUNTER_MIN = 2;
+const MISSILE_COUNTER_VARY = 6;
+
+// TODO: Rename : ANIMAL -> CREATURE
 const ANIMAL_NORMAL = 0;
 const ANIMAL_MONSTER = 1;
+const ANIMAL_MISSILE = 2;
 
 // Object manager object
 objman = {};
@@ -28,6 +33,8 @@ objman.animalTimer = 0.0;
 objman.animalWait = ANIMAL_WAIT_INITIAL;
 // Monster counter
 objman.monsterCounter = 0;
+// Missile counter
+objman.missileCounter = 0;
 
 
 // Get the next object in an array
@@ -83,12 +90,13 @@ objman.create_animal = function(type) {
     let i = this.next_obj(objman.creatures);
     if(i == null) return;
 
-    let scale = type == ANIMAL_NORMAL ?
-        ANIMAL_MIN_SIZE + Math.random() * ANIMAL_SIZE_VARY : 1.75;
+    let scale = ([1.75, ANIMAL_MIN_SIZE + Math.random() * ANIMAL_SIZE_VARY,
+                 1.25]) [type];
 
     let radius = 128 * scale;
     let totalSpeed = ([MAX_SPEED- scale * SPEED_MOD,
-        MONSTER_MIN_SPEED + Math.random()* MONSTER_SPEED_VARY]) 
+        MONSTER_MIN_SPEED + Math.random()* MONSTER_SPEED_VARY,
+        0.01]) 
         [type];
 
     let mode = Math.floor(Math.random()* 4);
@@ -148,6 +156,14 @@ objman.create_animal = function(type) {
 
         objman.creatures[i] = new Monster();
     }
+    else if(type == ANIMAL_MISSILE) {
+
+        angle = Math.atan2(y, x);
+        sx = -Math.cos(angle) * totalSpeed;
+        sy = -Math.sin(angle) * totalSpeed;
+
+        objman.creatures[i] = new Missile();
+    }
     else {
 
         sx = Math.cos(angle) * totalSpeed;
@@ -171,15 +187,26 @@ objman.create_objects = function(tm) {
 
         var loop = 1 + Math.floor(Math.random() * ANIMAL_MAX_CREATE);
         
+        -- objman.monsterCounter;
+
         for(var i = 0; i < loop; ++ i) {
 
             let type = ANIMAL_NORMAL;
-            if(-- objman.monsterCounter <= 0) {
+            // First, check if we want to create a monster
+            if(objman.monsterCounter <= 0) {
 
                 objman.monsterCounter = Math.floor(Math.random() * MONSTER_COUNTER_VARY)
                     + MONSTER_COUNTER_MIN;
 
                 type = ANIMAL_MONSTER;
+            }
+            // If not, maybe a missile
+            else if(-- objman.missileCounter <= 0) {
+                
+                objman.missileCounter = Math.floor(Math.random() * MISSILE_COUNTER_VARY)
+                    + MISSILE_COUNTER_MIN;
+
+                type = ANIMAL_MISSILE;
             }
 
             this.create_animal(type);

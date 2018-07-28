@@ -97,7 +97,8 @@ core.resize_listener = function(e) {
  */
 core.loop = function(ts) {
 
-    const TM_LIMIT = 5.0;
+    //const TM_LIMIT = 5.0;
+    const MAX_LAG = 5;
 
     var redraw = false;
 
@@ -115,6 +116,7 @@ core.loop = function(ts) {
         core.timeCount += delta / 1000.0;
 
         // Check if enough time has passed
+        let refCount = 0;
         while(core.timeCount >= 1.0 / FRAME_RATE) {
 
             // Update frame 
@@ -122,6 +124,13 @@ core.loop = function(ts) {
 
             core.timeCount -= 1.0 / FRAME_RATE;
             redraw = true;
+            // We want to make sure there won't be like a hundred
+            // frames waiting to be updated
+            if(++ refCount > MAX_LAG) {
+
+                core.timeCount = 0.0;
+                breakM
+            }
         }
         
         if(redraw) {

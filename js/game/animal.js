@@ -28,10 +28,6 @@ Animal.prototype.create_self = function(x, y, sx, sy, scale, skeleton) {
     this.speed.x = sx;
     this.speed.y = sy;
 
-    this.target = {x: 0, y: 0};
-    this.speedTarget = Math.hypot(sx, sy);
-    this.wave = 0.0;
-
     this.scale = scale;
     this.angle = Math.random() * Math.PI * 2;
     this.radius = 112 * this.scale;
