@@ -8,6 +8,9 @@ const AREA_HEIGHT = 1280*2;
 // Game object
 game = {};
 
+// Is the game paused
+game.paused = false;
+
 
 // Make the game over
 game.cause_game_over = function() {
@@ -53,6 +56,13 @@ game.update = function(tm) {
 
         return;
     }
+
+    // Pause
+    if(kconf.start.state == state.PRESSED) {
+
+        game.paused = !game.paused;
+    }
+    if(game.paused) return;
 
     // Update objects
     objman.update(tm);
