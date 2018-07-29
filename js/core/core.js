@@ -217,10 +217,10 @@ core.init = function() {
     window.addEventListener("contextmenu", function(e){e.preventDefault(); });
 
     // Initialize scenes
-    for(s of core.scenes) {
+    for(key in core.scenes) {
 
-        if(s.on_init != null)
-            s.on_init();
+        if(core.scenes[key].on_init != null)
+            core.scenes[key].on_init();
     }
 
     // Set default values
@@ -235,9 +235,9 @@ core.init = function() {
  * Add a scene
  * @param s Scene to be added
  */
-core.add_scene = function(s) {
+core.add_scene = function(s, name) {
 
-    core.scenes.push(s);
+    core.scenes[name] = s;
     if(core.globalScene == null)
         core.globalScene = s;
     else if(core.currentScene == null)
@@ -252,4 +252,15 @@ core.add_scene = function(s) {
 core.set_loading_func = function(f) {
 
     core.loadingFunc = f;
+}
+
+
+// Change scene
+core.change_scene = function(name) {
+
+    core.currentScene = core.scenes[name];
+    if(core.currentScene.on_change != null) {
+
+        core.currentScene.on_change();
+    }
 }

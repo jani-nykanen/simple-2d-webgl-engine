@@ -46,6 +46,7 @@ global.init = function() {
         arrow: "arrow.png",
         healthBar: "healthbar.png",
         mapIcons: "map_icons.png",
+        duck: "duck.png",
     }, "assets/bitmaps");
 
     // Fade!
@@ -140,4 +141,4 @@ global.fade = function(mode, speed, color, cb) {
 
 
 // Add scene
-core.add_scene(new Scene(global.init, global.update, global.draw, global.on_change ));
+core.add_scene(new Scene(global.init, global.update, global.draw, global.on_change ), "global");

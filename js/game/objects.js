@@ -80,7 +80,7 @@ objman.draw_obj = function(arr) {
 objman.create_animal = function(type) {
 
     const ANIMAL_MIN_SIZE = 1.0;
-    const ANIMAL_SIZE_VARY = 1.0;
+    const ANIMAL_SIZE_VARY_FACTOR = 0.25;
     const SPEED_MOD = 3; 
     const MAX_SPEED = 8.0;
 
@@ -90,7 +90,7 @@ objman.create_animal = function(type) {
     let i = this.next_obj(objman.creatures);
     if(i == null) return;
 
-    let scale = ([ANIMAL_MIN_SIZE + Math.random() * ANIMAL_SIZE_VARY,
+    let scale = ([ANIMAL_MIN_SIZE + Math.floor(Math.random()*5) * ANIMAL_SIZE_VARY_FACTOR,
                  MONSTER_BASE_SCALE,
                  MISSILE_BASE_SCALE]) [type];
 

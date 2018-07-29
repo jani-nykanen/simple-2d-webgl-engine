@@ -36,6 +36,12 @@ game.update = function(tm) {
 
     // Update minimap
     miniMap.update(tm);
+
+    // DEBUG
+    if(input.keyStates[KEY_P] == state.PRESSED) {
+
+        core.change_scene("gameover");
+    }
 }
 
 
@@ -81,4 +87,4 @@ game.on_change = function() {
 
 
 // Add scene
-core.add_scene(new Scene(game.init, game.update, game.draw, game.on_change ));
+core.add_scene(new Scene(game.init, game.update, game.draw, game.on_change ), "game");
