@@ -419,6 +419,7 @@ graph.draw_scaled_bitmap_region = function(bmp, sx,sy,sw,sh,dx,dy,dw,dh, flip) {
  * @param xoff X offset
  * @param yoff Y offset
  * @param center Center the text or not
+ * @param scale Scale
  */
 graph.draw_text = function(bmp, text, dx, dy, xoff, yoff, center, scale) {
 
@@ -454,6 +455,67 @@ graph.draw_text = function(bmp, text, dx, dy, xoff, yoff, center, scale) {
         sy = (c / 16) | 0;
 
         this.draw_scaled_bitmap_region(bmp,sx*cw,sy*ch,cw,ch,x,y, cw* scale, ch* scale, FLIP_NONE);
+
+        x += (cw + xoff)* scale;
+    }
+}
+
+
+/**
+ * Draw waving text using a bitmap font
+ * @param bmp Bitmap
+ * @param text Text to be drawn
+ * @param dx Destination x
+ * @param dy Destination y
+ * @param xoff X offset
+ * @param yoff Y offset
+ * @param center Center the text or not
+ * @param t Wave "time"
+ * @param ampl Wave amplitude
+ * @param div Divisor
+ * @param scale Scale
+ */
+graph.draw_waving_text = function(bmp, text, dx, dy, xoff, yoff, center, t, ampl, div, scale) {
+
+    if(bmp == null) return;
+    
+    scale = scale || 1.0;
+
+    center = center == null ? false : center;
+
+    var cw = (bmp.width) / 16;
+    var ch = cw;
+    var len = text.length;
+    var x = dx;
+    var y = dy;
+
+    let yplus = 0.0;
+    let period = Math.PI / div;
+
+    if(center) {
+
+        dx -= ( (len+1)/2.0 * (cw+xoff) * scale );
+        x = dx;
+    }
+
+    for(var i = 0; i < len;  ++ i) {
+
+        c = text.charCodeAt(i);
+        if(text[i] == '\n') {
+
+            x = dx;
+            y += (yoff + ch) * scale;
+            continue;
+        }
+
+        yplus = Math.sin(t + period * i) * ampl;
+
+        sx = c % 16;
+        sy = (c / 16) | 0;
+
+        this.draw_scaled_bitmap_region(bmp,sx*cw,sy*ch,
+            cw,ch,x,y + yplus, 
+            cw* scale, ch* scale, FLIP_NONE);
 
         x += (cw + xoff)* scale;
     }
