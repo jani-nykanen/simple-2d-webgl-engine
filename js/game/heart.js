@@ -27,6 +27,7 @@ var Heart = function(x, y) {
     this.hurtTimer = 0.0;
 
     this.isHeart = true;
+    this.eindex = -1;
 }
 Heart.prototype = Object.create(CollisionObject.prototype);
 
@@ -99,3 +100,22 @@ Heart.prototype.is_hurt = function() {
     return this.hurtTimer > 0.0;
 }
 
+
+// Heart-explosion collision
+Heart.prototype.exp_collision = function(e) {
+
+    const DMG_FACTOR = 0.075;
+
+    if(!e.exist || e.eindex == this.eindex) return;
+
+    let dist = Math.hypot(e.pos.x - this.pos.x, e.pos.y - this.pos.y);
+
+    if(dist < e.radius + this.radius) {
+
+        this.eindex = e.eindex;
+        this.hurt();
+
+        let dmg = e.targetScale * DMG_FACTOR;
+        _status.reduce_health(dmg);
+    }
+}

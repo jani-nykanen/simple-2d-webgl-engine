@@ -3,6 +3,7 @@
 
 // Constants
 const HEALTH_BAR_SPEED = 0.005;
+const HEALTH_MIN = 0.20;
 
 // Global status object
 _status = {};
@@ -61,12 +62,7 @@ _status.draw_health = function() {
     graph.set_color(1,1,1, ALPHA);
 
     let w = assets.bitmaps.healthBar.width;
-    let t = w * _status.oldHealth;
-
-    // Draw background bar (= gray)
-    graph.draw_scaled_bitmap_region(assets.bitmaps.healthBar,
-        t, 96, w-t, 96,
-        x + t*BAR_SCALE, y, (w-t)*BAR_SCALE, 96*BAR_SCALE, 0);
+    let t = w * (HEALTH_MIN + (1-HEALTH_MIN) * _status.oldHealth);
 
     // If hurt, make "whiter"
     if(objman.heart.hurtTimer > 0.0) {
@@ -77,11 +73,15 @@ _status.draw_health = function() {
         graph.set_color(t,t,t, ALPHA );
     }
 
+    // Draw background bar (= gray)
+    graph.draw_scaled_bitmap_region(assets.bitmaps.healthBar,
+        t, 96, w-t, 96,
+        x + t*BAR_SCALE, y, (w-t)*BAR_SCALE, 96*BAR_SCALE, 0);
+
     // Draw health bar (=red)
     graph.draw_scaled_bitmap_region(assets.bitmaps.healthBar,
         0, 0, t, 96,
         x, y, t*BAR_SCALE, 96*BAR_SCALE, 0);
-
 
     graph.set_color(1,1,1, 1);
 
@@ -89,6 +89,8 @@ _status.draw_health = function() {
     graph.draw_scaled_bitmap_region(assets.bitmaps.healthBar,
         0, 192, 272, 96,
         x, y, 272*BAR_SCALE, 96*BAR_SCALE, 0);
+
+   
 }
 
 

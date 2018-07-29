@@ -8,6 +8,7 @@ const MISSILE_ACC = 0.05;
 const MISSILE_TARGET = 8.0;
 const MISSILE_EXP_RADIUS = 2.5;
 const MISSILE_GAS_WAIT = 12.0;
+const MISSILE_BASE_SCALE = 1.25;
 
 
 // Missile constructor

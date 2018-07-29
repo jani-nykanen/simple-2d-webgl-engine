@@ -6,9 +6,10 @@ const MONSTER_DEATH_MAX = 30.0;
 const MONSTER_ACC = 0.25;
 const MONSTER_WAVE_SPEED = 0.05;
 const MONSTER_AMPLITUDE = 0.25;
-const MONSTER_WEIGHT = 0.70;
+const MONSTER_WEIGHT = 0.75;
 const MONSTER_ANGLE_PLUS = Math.PI / 9.0;
 const MONSTER_ANGLE_PLUS_SPEED = 0.10;
+const MONSTER_BASE_SCALE = 1.5;
 
 
 // Monster constructor
@@ -74,8 +75,9 @@ Monster.prototype.move = function(tm) {
 
     // Get target
     this.angle = Math.atan2(this.pos.y, this.pos.x);
-    this.target.x = -Math.cos(this.angle) * this.speedTarget * (this.scale-1.5)*2;
-    this.target.y = -Math.sin(this.angle) * this.speedTarget * (this.scale-1.5)*2;
+    let min = MONSTER_BASE_SCALE - MONSTER_AMPLITUDE;
+    this.target.x = -Math.cos(this.angle) * this.speedTarget * (this.scale-min)*2;
+    this.target.y = -Math.sin(this.angle) * this.speedTarget * (this.scale-min)*2;
 
     // Update speed
     if(this.speed.x < this.target.x) {
@@ -130,12 +132,11 @@ Monster.prototype.update = function(tm) {
 
 
     // Leech!
-    this.static = this.isLeeching;
     if(this.isLeeching) {
 
         // Set speed to zero
-        this.speed.x = 0.0;
-        this.speed.y = 0.0;
+        this.target.x = 0.0;
+        this.target.y = 0.0;
 
         // Additional rotation
         this.angleMod += MONSTER_ANGLE_PLUS_SPEED * tm;
@@ -150,14 +151,28 @@ Monster.prototype.update = function(tm) {
     }
     else {
 
-        // Move
-        this.move(tm);
-
         // Update wave
         this.wave += MONSTER_WAVE_SPEED * tm;
-        this.scale = (2.0-MONSTER_AMPLITUDE) + Math.sin(this.wave) * MONSTER_AMPLITUDE;
+        this.scale = MONSTER_BASE_SCALE + Math.sin(this.wave) * MONSTER_AMPLITUDE;
         this.radius = 112 * this.scale;
+
+        // Update angle mod
+        if(this.angleMod > 0.0) {
+
+            this.angleMod -= MONSTER_ANGLE_PLUS_SPEED * tm;
+            if(this.angleMod < 0.0)
+                this.angleMod = 0.0;
+        }
+        else if(this.angleMod < 0.0) {
+
+            this.angleMod += MONSTER_ANGLE_PLUS_SPEED * tm;
+            if(this.angleMod > 0.0)
+                this.angleMod = 0.0;
+        }
     }
+
+    // Move
+    this.move(tm);
 
     // Calculate total speed
     this.calculate_total_speed();
@@ -245,9 +260,15 @@ Monster.prototype.exp_collision = function(e) {
 // Handle monster-heart collision
 Monster.prototype.heart_collision = function(o) {
 
-    if(!this.isLeeching && this.object_collision(o)) {
+    let DELTA = 8;
 
-        this.isLeeching = true;
+    this.isLeeching = Math.hypot(this.pos.x-o.pos.x, 
+        this.pos.y-o.pos.y) < this.radius + o.radius + DELTA;
+
+    if(this.object_collision(o)) {
+
+        this.speed.x = 0.0;
+        this.speed.y = 0.0;
     }
 }
 

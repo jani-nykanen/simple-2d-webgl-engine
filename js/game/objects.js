@@ -13,11 +13,11 @@ const ANIMAL_TIME_WAIT_VARY = 180.0;
 const ANIMAL_WAIT_INITIAL = 60.0;
 const ANIMAL_MAX_CREATE = 3;
 
-const MONSTER_COUNTER_MIN = 4;
-const MONSTER_COUNTER_VARY = 6;
+const MONSTER_COUNTER_MIN = 3;
+const MONSTER_COUNTER_VARY = 3;
 
-const MISSILE_COUNTER_MIN = 2;
-const MISSILE_COUNTER_VARY = 6;
+const MISSILE_COUNTER_MIN = 3;
+const MISSILE_COUNTER_VARY = 3;
 
 // TODO: Rename : ANIMAL -> CREATURE
 const ANIMAL_NORMAL = 0;
@@ -84,14 +84,15 @@ objman.create_animal = function(type) {
     const SPEED_MOD = 3; 
     const MAX_SPEED = 8.0;
 
-    const MONSTER_MIN_SPEED = 3.0;
+    const MONSTER_MIN_SPEED = 4.0;
     const MONSTER_SPEED_VARY = 3.0;
 
     let i = this.next_obj(objman.creatures);
     if(i == null) return;
 
-    let scale = ([1.75, ANIMAL_MIN_SIZE + Math.random() * ANIMAL_SIZE_VARY,
-                 1.25]) [type];
+    let scale = ([ANIMAL_MIN_SIZE + Math.random() * ANIMAL_SIZE_VARY,
+                 MONSTER_BASE_SCALE,
+                 MISSILE_BASE_SCALE]) [type];
 
     let radius = 128 * scale;
     let totalSpeed = ([MAX_SPEED- scale * SPEED_MOD,
@@ -188,6 +189,7 @@ objman.create_objects = function(tm) {
         var loop = 1 + Math.floor(Math.random() * ANIMAL_MAX_CREATE);
         
         -- objman.monsterCounter;
+        -- objman.missileCounter
 
         for(var i = 0; i < loop; ++ i) {
 
@@ -201,7 +203,7 @@ objman.create_objects = function(tm) {
                 type = ANIMAL_MONSTER;
             }
             // If not, maybe a missile
-            else if(-- objman.missileCounter <= 0) {
+            else if(objman.missileCounter <= 0) {
                 
                 objman.missileCounter = Math.floor(Math.random() * MISSILE_COUNTER_VARY)
                     + MISSILE_COUNTER_MIN;
@@ -284,7 +286,10 @@ objman.update = function(tm) {
     // Collide with explosions
     for(var i = 0; i < EXP_COUNT; ++ i) {
 
+        // Player-explosion
         objman.player.exp_collision(objman.explosions[i]);
+        // Heart-explosion
+        objman.heart.exp_collision(objman.explosions[i]);
     }
 
     // Update heart
