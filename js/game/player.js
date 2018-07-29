@@ -33,6 +33,7 @@ var Player = function(x, y) {
     this.radius = PL_RADIUS;
     this.mass = PL_MASS;
     this.exist = true;
+    this.eindex = -1;
 
     this.butt = {
         pos: {x: 0, y: 0}
@@ -120,7 +121,7 @@ Player.prototype.move_axis = function(o,target, speed, tm) {
 // Move
 Player.prototype.move = function(tm) {
 
-    const SLOW_MODIF = 0.90;
+    const SLOW_MODIF = 0.80;
 
     var accl = PL_ACCELERATION - (PL_ACCELERATION*SLOW_MODIF) *
         Math.min(1.0, Math.pow(this.totalSpeed / PL_FORWARD_TARGET, 2));
@@ -274,7 +275,7 @@ Player.prototype.wall_collisions = function(w, h) {
 // Player-explosion collision
 Player.prototype.exp_collision = function(e) {
 
-    const EXP_SPEED = 16.0;
+    const EXP_SPEED = 3.0;
 
     if(!e.exist || e.eindex == this.eindex) return;
 
@@ -287,7 +288,7 @@ Player.prototype.exp_collision = function(e) {
         let angle = Math.atan2(e.pos.y - this.pos.y, 
             e.pos.x - this.pos.x);
 
-        this.speed.x -= Math.cos(angle) * EXP_SPEED;
-        this.speed.y -= Math.sin(angle) * EXP_SPEED;
+        this.speed.x -= Math.cos(angle) * EXP_SPEED * e.targetScale;
+        this.speed.y -= Math.sin(angle) * EXP_SPEED * e.targetScale;
     }
 }

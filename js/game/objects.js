@@ -220,8 +220,8 @@ objman.create_objects = function(tm) {
 }
 
 
-// Initialize
-objman.init = function() {
+// Reset
+objman.reset = function() {
 
     //// Create components:
     // Player
@@ -266,6 +266,7 @@ objman.init = function() {
         objman.pows[i] = new Pow();
     }
 }
+objman.init = objman.reset;
 
 
 // Update object manager

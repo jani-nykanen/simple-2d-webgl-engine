@@ -183,16 +183,16 @@ core.draw = function() {
 
     graph.clear(0.667, 0.667, 0.667);
 
-    // Draw the global scene
-    if(core.globalScene != null) {
-
-        core.globalScene.on_draw();
-    }
-
     // Draw the current scene
     if(core.currentScene != null) {
 
         core.currentScene.on_draw();
+    }
+
+    // Draw the global scene
+    if(core.globalScene != null) {
+
+        core.globalScene.on_draw();
     }
 }
 
@@ -238,10 +238,12 @@ core.init = function() {
 core.add_scene = function(s, name) {
 
     core.scenes[name] = s;
+
     if(core.globalScene == null)
-        core.globalScene = s;
+        core.globalScene = core.scenes[name];
+
     else if(core.currentScene == null)
-        core.currentScene = s;
+        core.currentScene = core.scenes[name];
 }
 
 
@@ -259,6 +261,7 @@ core.set_loading_func = function(f) {
 core.change_scene = function(name) {
 
     core.currentScene = core.scenes[name];
+
     if(core.currentScene.on_change != null) {
 
         core.currentScene.on_change();

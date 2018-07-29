@@ -3,18 +3,32 @@
 
 // Constants
 const CAMERA_HEIGHT = 720.0;
+const CAM_ZOOM_SPEED = 0.5 / 60.0;
+const CAM_ZOOM_GAME_OVER = 0.05;
 
 // Camera object
 cam = {
     x: 0,
     y: 0,
-    sx: 1,
-    sy: 1,
+    sx: 1.5,
+    sy: 1.5,
     left: 0,
     top: 0,
     w: 1,
     h: 1,
 };
+
+
+// Reset camera
+cam.reset = function() {
+
+    cam.x = 0;
+    cam.y = 0;
+    cam.sx = 1.5;
+    cam.sy = 1.5;
+}
+cam.reset();
+
 
 // Use camera
 cam.use = function() {
@@ -63,5 +77,29 @@ cam.limit = function(w, h) {
     else if(bottom > maxy) {
 
         cam.y = maxy- th/cam.sy;
+    }
+}
+
+
+// Called when fading
+cam.zoom = function(tm) {
+
+    if(_status.gameOver ) {
+
+        cam.sx += CAM_ZOOM_GAME_OVER * tm;
+        cam.sy = cam.sx;
+    }
+    else {
+
+        if(cam.sx > 1.0) {
+
+            cam.sx -= CAM_ZOOM_SPEED * tm;
+            if(cam.sx <= 1.0) {
+
+                cam.sx = 1.0;
+            }
+        }
+        cam.sy = cam.sx;
+
     }
 }

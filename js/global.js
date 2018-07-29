@@ -13,7 +13,7 @@ global = {};
 
 // TODO: fade.js
 // Fade timer
-global.fadeTimer = 60.0;
+global.fadeTimer = FADE_MAX;
 // Fade mode
 global.fadeMode = FADE_OUT;
 // Fade speed
@@ -132,11 +132,14 @@ global.fade = function(mode, speed, color, cb) {
 
     this.fadeMode = mode;
     this.fadeSpeed = speed;
-    this.fadeColor.r = color.r;
-    this.fadeColor.b = color.b;
-    this.fadeColor.g = color.g;
+    if(color != null) {
+        this.fadeColor.r = color.r;
+        this.fadeColor.b = color.b;
+        this.fadeColor.g = color.g;
+    }
     this.fadeCb = cb;
     this.fading = true;
+    this.fadeTimer = FADE_MAX;
 }
 
 

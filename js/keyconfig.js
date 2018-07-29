@@ -9,6 +9,7 @@ kconf = {
     down: {key: KEY_DOWN_ARROW,  state: state.UP },
     fire1: {key: KEY_Z, state: state.UP},
     fire2: {key: KEY_X, state: state.UP},
+    start: {key: KEY_ENTER, state: state.UP},
 };
 
 

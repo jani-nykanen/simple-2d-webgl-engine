@@ -9,6 +9,16 @@ const AREA_HEIGHT = 1280*2;
 game = {};
 
 
+// Make the game over
+game.cause_game_over = function() {
+
+    global.fade(FADE_IN, 1.0, null, function() {
+
+        core.change_scene("gameover");
+    });
+}
+
+
 // Initialize
 game.init = function() {
     
@@ -19,8 +29,30 @@ game.init = function() {
 }
 
 
+// Reset game
+game.reset = function() {
+
+    // Reset components
+    objman.reset();
+    _status.reset();
+    cam.reset();
+}
+
+
 // Update game
 game.update = function(tm) {
+
+    // If fading, update only certain things and stop
+    if(global.fading) {
+
+        cam.zoom(tm);
+        cam.limit(AREA_WIDTH, AREA_HEIGHT);
+
+        // Update minimap
+        miniMap.update(tm);
+
+        return;
+    }
 
     // Update objects
     objman.update(tm);
@@ -40,7 +72,7 @@ game.update = function(tm) {
     // DEBUG
     if(input.keyStates[KEY_P] == state.PRESSED) {
 
-        core.change_scene("gameover");
+        _status.reduce_health(1.0);
     }
 }
 
@@ -83,6 +115,8 @@ game.draw = function() {
 // On change
 game.on_change = function() {
 
+    // Reset game
+    game.reset();
 }
 
 

@@ -97,6 +97,16 @@ gameover.update = function(tm) {
 
         // Update letter wave
         gameover.letterWave += DUCK_WAVE_SPEED * tm;
+
+        // Get enter input
+        if(kconf.start.state == state.PRESSED) {
+
+            // Move back to the game
+            global.fade(FADE_IN, 1.0, null, function() {
+
+                core.change_scene("game");
+            });
+        }
     }
 }
 

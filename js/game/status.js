@@ -3,7 +3,7 @@
 
 // Constants
 const HEALTH_BAR_SPEED = 0.005;
-const HEALTH_MIN = 0.20;
+const HEALTH_MIN = 0.22;
 
 // Global status object
 _status = {};
@@ -14,6 +14,18 @@ _status.health = 1.0;
 _status.oldHealth = 1.0;
 // Time (in frames)
 _status.time = 0;
+// Is the game over
+_status.gameOver = false;
+
+
+// Reset
+_status.reset = function() {
+    
+    _status.health = 1.0;
+    _status.oldHealth = 1.0;
+    _status.time = 0;
+    _status.gameOver = false;
+}
 
 
 // Get time string
@@ -110,9 +122,15 @@ _status.draw = function() {
 // Reduce health
 _status.reduce_health = function(amount) {
 
-    this.health -= amount;
-    if(this.health < 0.0) {
+    if(_status.gameOver) return;
 
+    this.health -= amount;
+    if(this.health <= 0.0) {
+
+        _status.gameOver = true;
         this.health = 0.0;
+
+        // Game over!
+        game.cause_game_over();
     }
 }
