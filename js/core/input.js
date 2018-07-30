@@ -162,3 +162,31 @@ input.cursor_pos = function() {
 
     return {x: x, y: y};
 }
+
+
+/**
+ * Get mouse state
+ * @param b Button
+ * @return State
+ */
+input.mouse_state = function(b) {
+
+    if(b < 0 || b >= MOUSE_BUFFER_SIZE)
+        return state.UP;
+
+    return input.mouseStates[b];
+}
+
+
+/**
+ * Get key state
+ * @param k Key
+ * @return State 
+ */
+input.key_state = function(k) {
+
+    if(k < 0 || k >= KEY_BUFFER_SIZE)
+        return state.UP;
+
+    return input.keyStates[b];
+}

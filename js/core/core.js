@@ -129,7 +129,7 @@ core.loop = function(ts) {
             if(++ refCount > MAX_LAG) {
 
                 core.timeCount = 0.0;
-                breakM
+                break;
             }
         }
         

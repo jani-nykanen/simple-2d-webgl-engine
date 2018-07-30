@@ -10,6 +10,9 @@ const DUCK_WAVE_SPEED = 0.0625;
 const DUCK_AMPLITUDE = 24.0;
 const GAME_OVER_TEXT_SPEED = 7.0;
 const GAME_OVER_TEXT_START = 752;
+const GAME_OVER_TEXT_ALPHA_SPEED = 0.025;
+const GOVER_VIEW_HEIGHT = 720.0;
+const GOVER_BUTTONS_YOFF = 80;
 
 // Game over scene object
 gameover = {};
@@ -25,6 +28,13 @@ gameover.duckGrav = 0.0;
 gameover.textPos = GAME_OVER_TEXT_START;
 // Letter wave timer
 gameover.letterWave = 0.0;
+// Time alpha
+gameover.textAlpha = 0.0;
+
+// Submit button
+gameover.buttonSubmit = null;
+// Play again button
+gameover.buttonPlayAgain = null;
 
 
 // Draw a duck
@@ -56,7 +66,24 @@ gameover.draw_duck = function() {
 // Initialize
 gameover.init = function() {
 
-    // ...
+    // Create buttons
+    tr.fit_view_height(GOVER_VIEW_HEIGHT);
+    gameover.buttonSubmit = new Button("Submit time",
+        tr.viewport.w / 3.0, tr.viewport.h-GOVER_BUTTONS_YOFF, 1024,
+        0.75, true, function() {
+
+            window.alert("Not ready yet");
+        });
+    gameover.buttonPlayAgain = new Button("Play again",
+        tr.viewport.w / 3.0 * 2.0, tr.viewport.h-GOVER_BUTTONS_YOFF, 1024,
+        0.75, true, function() {
+
+            // Move back to the game
+            global.fade(FADE_IN, 1.0, null, function() {
+
+                core.change_scene("game");
+            });
+        });   
 }
 
 
@@ -86,6 +113,7 @@ gameover.update = function(tm) {
 
     }
 
+    
     // Make text go upwards
     if(gameover.textPos > DUCK_TARGET) {
 
@@ -98,15 +126,26 @@ gameover.update = function(tm) {
         // Update letter wave
         gameover.letterWave += DUCK_WAVE_SPEED * tm;
 
-        // Get enter input
-        if(kconf.start.state == state.PRESSED) {
+        // Update text alpha
+        if(gameover.textAlpha < 1.0) {
 
-            // Move back to the game
-            global.fade(FADE_IN, 1.0, null, function() {
-
-                core.change_scene("game");
-            });
+            gameover.textAlpha += GAME_OVER_TEXT_ALPHA_SPEED * tm;
+            if(gameover.textAlpha > 1.0)
+                gameover.textAlpha = 1.0;
         }
+        else if(!global.fading) {
+
+            // Update buttons
+            gameover.buttonSubmit.update(tm);
+            gameover.buttonPlayAgain.update(tm);
+        }
+
+        // Update button positions
+        tr.fit_view_height(GOVER_VIEW_HEIGHT);
+        gameover.buttonSubmit.update_pos(
+            tr.viewport.w / 3.0, tr.viewport.h-GOVER_BUTTONS_YOFF);
+        gameover.buttonPlayAgain.update_pos(
+            tr.viewport.w / 3.0 * 2.0, tr.viewport.h-GOVER_BUTTONS_YOFF); 
     }
 }
 
@@ -114,9 +153,7 @@ gameover.update = function(tm) {
 // Draw
 gameover.draw = function() {
 
-    const VIEW_HEIGHT = 720.0;
-
-    tr.fit_view_height(VIEW_HEIGHT);
+    tr.fit_view_height(GOVER_VIEW_HEIGHT);
     tr.identity();
     tr.use_transform();
 
@@ -132,6 +169,22 @@ gameover.draw = function() {
     graph.draw_waving_text(assets.bitmaps.font, 
         "GAME OVER!", tx, ty,
          -24, 0, true, gameover.letterWave, DUCK_AMPLITUDE, 6,  1.6);
+    
+
+    // Draw time & buttons
+    if(gameover.textPos <= DUCK_TARGET) {
+
+        // Draw time
+        ty = DUCK_TARGET + 112;
+        graph.set_color(1,1,1, gameover.textAlpha);
+        graph.draw_text(assets.bitmaps.font, "Your time: " + _status.get_time_string(), tx, ty,
+            -24, 0, true, 1.0);
+
+        // Draw buttons
+        gameover.buttonSubmit.draw(assets.bitmaps.font, gameover.textAlpha);
+        gameover.buttonPlayAgain.draw(assets.bitmaps.font, gameover.textAlpha);
+    }
+
     graph.set_color(1, 1, 1, 1);
 
 }
@@ -146,6 +199,10 @@ gameover.changed_to = function() {
     gameover.duckGrav = 0.0;
     gameover.letterWave = 0.0;
     gameover.textPos = GAME_OVER_TEXT_START;
+    gameover.textAlpha = 0.0;
+
+    // Re-initialize content
+    gameover.init();
 }
 
 
