@@ -84,7 +84,7 @@ objman.create_animal = function(type) {
     const SPEED_MOD = 3; 
     const MAX_SPEED = 8.0;
 
-    const MONSTER_MIN_SPEED = 3.0;
+    const MONSTER_MIN_SPEED = 4.0;
     const MONSTER_SPEED_VARY = 2.0;
 
     let i = this.next_obj(objman.creatures);

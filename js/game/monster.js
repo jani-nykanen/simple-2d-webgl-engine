@@ -3,10 +3,10 @@
 
 // Constants
 const MONSTER_DEATH_MAX = 30.0;
-const MONSTER_ACC = 0.25;
+const MONSTER_ACC = 0.125;
 const MONSTER_WAVE_SPEED = 0.05;
 const MONSTER_AMPLITUDE = 0.25;
-const MONSTER_WEIGHT = 0.75;
+const MONSTER_WEIGHT = 0.90;
 const MONSTER_ANGLE_PLUS = Math.PI / 9.0;
 const MONSTER_ANGLE_PLUS_SPEED = 0.10;
 const MONSTER_BASE_SCALE = 1.5;
@@ -155,6 +155,7 @@ Monster.prototype.update = function(tm) {
         this.wave += MONSTER_WAVE_SPEED * tm;
         this.scale = MONSTER_BASE_SCALE + Math.sin(this.wave) * MONSTER_AMPLITUDE;
         this.radius = 112 * this.scale;
+        this.mass = MONSTER_WEIGHT * (this.scale / MONSTER_BASE_SCALE);
 
         // Update angle mod
         if(this.angleMod > 0.0) {
