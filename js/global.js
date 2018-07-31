@@ -59,7 +59,7 @@ global.update_fading = function(tm) {
 
     if(this.fading) {
 
-        this.fadeTimer -= 1.0 * tm;
+        this.fadeTimer -= this.fadeSpeed * tm;
         if(this.fadeTimer <= 0.0) {
 
             if(this.fadeMode == FADE_IN) {

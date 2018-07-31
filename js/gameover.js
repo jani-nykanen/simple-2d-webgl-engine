@@ -79,7 +79,7 @@ gameover.init = function() {
         0.75, true, function() {
 
             // Move back to the game
-            global.fade(FADE_IN, 1.0, null, function() {
+            global.fade(FADE_IN, 2.0, null, function() {
 
                 core.change_scene("game");
             });
@@ -153,8 +153,18 @@ gameover.update = function(tm) {
 // Draw
 gameover.draw = function() {
 
+    const FADE_TR_SPEED_FACTOR = 0.2;
+
     tr.fit_view_height(GOVER_VIEW_HEIGHT);
     tr.identity();
+
+    // Translate, if fading
+    if(global.fading && global.fadeMode == FADE_IN) {
+
+        let t = GOVER_VIEW_HEIGHT / FADE_MAX * (FADE_MAX - global.fadeTimer);
+        tr.translate(0, -t * FADE_TR_SPEED_FACTOR);
+    }
+
     tr.use_transform();
 
     graph.clear(1, 1, 1);

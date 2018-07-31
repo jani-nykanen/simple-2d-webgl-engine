@@ -8,9 +8,6 @@ const AREA_HEIGHT = 1280*2;
 // Game object
 game = {};
 
-// Is the game paused
-game.paused = false;
-
 
 // Make the game over
 game.cause_game_over = function() {
@@ -57,12 +54,19 @@ game.update = function(tm) {
         return;
     }
 
-    // Pause
-    if(kconf.start.state == state.PRESSED) {
+    // Update pause
+    if(pause.active) {
 
-        game.paused = !game.paused;
+        pause.update(tm);
+        return;
     }
-    if(game.paused) return;
+    // Pause
+    if(!pause.active && 
+        kconf.start.state == state.PRESSED) {
+
+        pause.enable();
+        return;
+    }
 
     // Update objects
     objman.update(tm);
@@ -119,6 +123,23 @@ game.draw = function() {
 
     // Draw minimap
     miniMap.draw(tr.viewport.w-272,16,1,1);
+
+    // Draw pause
+    if(pause.active) {
+
+        pause.draw();
+    }
+
+    // If dead & fading, draw red
+    if(_status.gameOver && global.fading) {
+
+        let t = 1.0 - global.fadeTimer / FADE_MAX;
+        graph.set_color(1, 0, 0, t);
+        tr.set_view(1,1);
+        tr.use_transform();
+
+        graph.fill_rectangle(0,0,1,1);
+    }
 }
 
 
@@ -127,6 +148,9 @@ game.on_change = function() {
 
     // Reset game
     game.reset();
+
+    // Set fade speed to 1.0
+    global.fadeSpeed = 1.0;
 }
 
 
