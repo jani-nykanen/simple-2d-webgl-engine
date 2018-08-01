@@ -261,15 +261,19 @@ Monster.prototype.exp_collision = function(e) {
 // Handle monster-heart collision
 Monster.prototype.heart_collision = function(o) {
 
-    let DELTA = 8;
+    let DELTA = 96;
+    let dist = Math.hypot(this.pos.x-o.pos.x, 
+        this.pos.y-o.pos.y);
 
-    this.isLeeching = Math.hypot(this.pos.x-o.pos.x, 
-        this.pos.y-o.pos.y) < this.radius + o.radius + DELTA;
+    if(dist > this.radius + o.radius + DELTA) {
+
+        this.isLeeching = false;
+    }
 
     if(this.object_collision(o)) {
 
-        this.speed.x = 0.0;
-        this.speed.y = 0.0;
+        this.isLeeching = true;
+        
     }
 }
 
@@ -277,5 +281,8 @@ Monster.prototype.heart_collision = function(o) {
 // Player collision
 Monster.prototype.player_collision = function(o) {
 
-    this.object_collision(o);
+    if(this.object_collision(o)) {
+
+        this.isLeeching = false;
+    }
 }

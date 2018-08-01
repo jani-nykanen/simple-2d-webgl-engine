@@ -6,7 +6,7 @@ const HEART_BUMP_WAIT = 45.0;
 const HEART_BUMP_LENGTH = 16.0;
 const HEART_BASE_SCALE = 2.0;
 const HEART_SCALE_MOD = 0.5;
-const HEART_RADIUS = 172;
+const HEART_RADIUS = 144;
 const HEART_HURT_MAX = 60.0;
 const HEART_HURT_MOD = 1;
 
@@ -104,7 +104,7 @@ Heart.prototype.is_hurt = function() {
 // Heart-explosion collision
 Heart.prototype.exp_collision = function(e) {
 
-    const DMG_FACTOR = 0.075;
+    const DMG_FACTOR = 0.05;
 
     if(!e.exist || e.eindex == this.eindex) return;
 

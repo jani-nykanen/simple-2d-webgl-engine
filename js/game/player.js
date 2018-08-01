@@ -5,13 +5,14 @@
 const PL_ROTATE_SPEED = 0.0625;
 const PL_FORWARD_TARGET = 14.0;
 const PL_REVERSE_TARGET = 8.0;
-const PL_ACCELERATION = 0.40;
+const PL_ACCELERATION = 0.45;
 const PL_SIZE_SCALE = 0.85;
 const PL_GAS_WAIT = 8.0;
 const PL_RADIUS = 96;
 const PL_MASS = 1.25;
 const PL_BUTT_DIST = 24;
 const PL_GAS_DIST = 72;
+const PL_SLOW_MODIF = 0.75;
 
 
 // Constructor
@@ -121,9 +122,9 @@ Player.prototype.move_axis = function(o,target, speed, tm) {
 // Move
 Player.prototype.move = function(tm) {
 
-    const SLOW_MODIF = 0.80;
+    const PL_SLOW_MODIF = 0.80;
 
-    var accl = PL_ACCELERATION - (PL_ACCELERATION*SLOW_MODIF) *
+    var accl = PL_ACCELERATION - (PL_ACCELERATION*PL_SLOW_MODIF) *
         Math.min(1.0, Math.pow(this.totalSpeed / PL_FORWARD_TARGET, 2));
 
     var ox = {pos: this.pos.x, coord: this.speed.x};

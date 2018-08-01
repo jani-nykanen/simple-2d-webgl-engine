@@ -149,7 +149,7 @@ Animal.prototype.draw = function() {
 Animal.prototype.die = function(hurtHeart) {
 
     const MIN_DMG = 0.05;
-    const DMG_MOD = 0.02;
+    const DMG_MOD = 0.025;
 
     this.exist = false;
     this.dying = true;
@@ -215,7 +215,7 @@ Animal.prototype.heart_collision = function(o) {
         this.die(true);
         this.divide(angle, -1);
 
-         o.hurt();
+        o.hurt();
     }
 }
 

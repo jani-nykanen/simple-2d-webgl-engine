@@ -117,6 +117,8 @@ objman.create_animal = function(type) {
 
     const ANIMAL_MIN_SIZE = 1.0;
     const ANIMAL_SIZE_VARY_FACTOR = 0.25;
+    const ANIMAL_ANGLE_VARY = Math.PI / 6.0;
+
     const SPEED_MOD = 3; 
     const MAX_SPEED = 8.0;
 
@@ -131,9 +133,11 @@ objman.create_animal = function(type) {
                  MISSILE_BASE_SCALE]) [type];
 
     let radius = 128 * scale;
-    let totalSpeed = ([MAX_SPEED- scale * SPEED_MOD,
-        MONSTER_MIN_SPEED + Math.random()* MONSTER_SPEED_VARY,
-        2.0]) 
+    let totalSpeed = ([
+            MAX_SPEED- scale * SPEED_MOD,
+            MONSTER_MIN_SPEED + Math.random()* MONSTER_SPEED_VARY,
+            2.0
+        ]) 
         [type];
 
     let mode = Math.floor(Math.random()* 4);
@@ -149,35 +153,24 @@ objman.create_animal = function(type) {
     case 0:
         y = -radius - AREA_HEIGHT/2;
         x = (-AREA_WIDTH/2 + radius/2) + Math.random() * (AREA_WIDTH-radius);
-        angle = Math.PI + Math.PI / 4 + Math.random() * Math.PI/2.0;
-
         break;
 
     // Bottom
     case 1:
         y = radius + AREA_HEIGHT/2;
         x = (-AREA_WIDTH/2 + radius/2) + Math.random() * (AREA_WIDTH-radius);
-
-        angle = Math.PI / 4 + Math.random() * Math.PI/2.0;
-
         break;
 
     // Left
     case 2:
         x = -radius - AREA_WIDTH/2;
         y = (-AREA_HEIGHT/2 + radius/2) + Math.random() * (AREA_HEIGHT-radius);
-
-        angle = -Math.PI / 4 + Math.random() * Math.PI/2.0;
-
         break;
 
     // Right
     case 3:
         x = radius + AREA_WIDTH/2;
         y = (-AREA_HEIGHT/2 + radius/2) + Math.random() * (AREA_HEIGHT-radius);
-
-        angle = Math.PI - Math.PI / 4 + Math.random() * Math.PI/2.0;
-
         break;
 
     default:
@@ -185,9 +178,9 @@ objman.create_animal = function(type) {
     }
 
     // If monster or missile, move towards the core
+    angle = Math.atan2(y, x);
     if(type == ANIMAL_MONSTER) {
 
-        angle = Math.atan2(y, x);
         sx = -Math.cos(angle) * totalSpeed;
         sy = -Math.sin(angle) * totalSpeed;
 
@@ -195,7 +188,6 @@ objman.create_animal = function(type) {
     }
     else if(type == ANIMAL_MISSILE) {
 
-        angle = Math.atan2(y, x);
         sx = -Math.cos(angle) * totalSpeed;
         sy = -Math.sin(angle) * totalSpeed;
 
@@ -203,8 +195,10 @@ objman.create_animal = function(type) {
     }
     else {
 
-        sx = Math.cos(angle) * totalSpeed;
-        sy = -Math.sin(angle) * totalSpeed;
+        let div = (Math.random()-0.5)*2.0 * ANIMAL_ANGLE_VARY;
+
+        sx = -Math.cos(angle + div) * totalSpeed;
+        sy = -Math.sin(angle + div) * totalSpeed;
 
         objman.creatures[i] = new Animal();
     }
