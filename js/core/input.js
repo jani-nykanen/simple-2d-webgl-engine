@@ -190,3 +190,15 @@ input.key_state = function(k) {
 
     return input.keyStates[b];
 }
+
+
+/**
+ * Reset mouse button states
+ */
+input.flush_mouse = function() {
+
+    for(var i = 0; i < MOUSE_BUFFER_SIZE; ++ i) {
+
+        input.mouseStates[i] = state.UP;
+    }
+}

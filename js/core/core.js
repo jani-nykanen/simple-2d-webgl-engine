@@ -25,6 +25,9 @@ core.loadingFunc = null;
 // Time count
 core.timeCount = 0.0;
 
+// Is requesting for a full screen
+core.fscreenReq = false;
+
 
 /**
  * Key down event listener
@@ -55,6 +58,11 @@ core.mouse_down_listener = function(e) {
 
     var b = e.button;
     input.mouse_down(b);
+
+    if(core.fscreenReq) {
+
+        core.toggle_fullscreen();
+    }
 }
 
 
@@ -266,4 +274,41 @@ core.change_scene = function(name) {
 
         core.currentScene.on_change();
     }
+}
+
+
+/**
+ * Toggle full screen mode
+ */
+core.toggle_fullscreen = function() {
+
+    if(document.webkitIsFullScreen || document.mozFullScreen) {
+
+        if(document.webkitExitFullscreen)
+            document.webkitExitFullscreen();
+        
+        else if(document.mozCancelFullScreen)
+            document.mozCancelFullScreen();
+    }
+    else {
+
+        if(graph.canvas.webkitRequestFullscreen)
+            graph.canvas.webkitRequestFullscreen();
+
+        else if(graph.canvas.mozRequestFullScreen) 
+            graph.canvas.mozRequestFullScreen();
+        
+    }
+
+    input.flush_mouse();
+}
+
+
+/**
+ * Request full screen
+ * @param state State
+ */
+core.request_full_screen = function(state) {
+
+    core.fscreenReq = state;
 }

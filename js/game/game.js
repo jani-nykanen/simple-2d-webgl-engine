@@ -26,6 +26,8 @@ game.init = function() {
     objman.init();
     // Initialize minimap
     miniMap.init();
+    // Initialize pause
+    pause.init();
 }
 
 
@@ -36,6 +38,9 @@ game.reset = function() {
     objman.reset();
     _status.reset();
     cam.reset();
+
+    // Disable pause
+    pause.active = false;
 }
 
 

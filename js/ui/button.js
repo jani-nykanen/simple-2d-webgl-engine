@@ -115,11 +115,11 @@ Button.prototype.draw = function(font, alpha) {
 
     if(this.overlay) {
 
-        graph.set_color(1, 1, 0.5, alpha);
+        graph.set_color(1, 1, 0.75, alpha);
     }
     else {
 
-        graph.set_color(1, 1, 0, alpha);
+        graph.set_color(1, 0.90, 0, alpha);
     }
 
     graph.draw_text(font, this.text,

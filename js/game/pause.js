@@ -5,10 +5,34 @@
 const PAUSE_TIMER_MAX = 20.0;
 const PAUSE_IN = 0;
 const PAUSE_OUT = 1;
-const PAUSE_BOX_WIDTH = 240;
+const PAUSE_BOX_WIDTH = 432;
 const PAUSE_BOX_HEIGHT = 320;
 
 const PAUSE_BUTTON_COUNT = 5;
+const PAUSE_BUTTON_TEXT = [
+    "Resume",
+    "Restart",
+    "Audio: On",
+    "Full screen",
+    "Main menu"
+];
+
+const PAUSE_CALLBACKS = [
+
+    function() {
+        pause.fadeMode = PAUSE_OUT;
+        pause.timer = PAUSE_TIMER_MAX;
+    },
+    function() {
+        global.fade(FADE_IN, 2.0, null, function() {
+
+            core.change_scene("game");
+        });
+    },
+    function() { alert("Not yet implemented") ;},
+    function() { /* ... */ },
+    function() { alert("Not yet implemented") ;}
+]
 
 // Pause object
 pause = {};
@@ -28,11 +52,13 @@ pause.buttons = [];
 pause.init = function() {
 
     // Create buttons
-    tr.fit_view_height(CAMERA_HEIGHT);
-    tr.use_transform();
     for(var i = 0; i < PAUSE_BUTTON_COUNT; ++ i) {
 
-        // ...
+        pause.buttons[i] = new Button(
+            PAUSE_BUTTON_TEXT[i],
+            -32, -32, 1024,
+            0.75, true, PAUSE_CALLBACKS[i]
+        );
     }
 
 }
@@ -40,6 +66,9 @@ pause.init = function() {
 
 // Update pause screen
 pause.update = function(tm) {
+
+    const BUTTON_START = 32;
+    const BUTTON_OFF = 64;
 
     // Update timer
     if(pause.timer > 0.0) {
@@ -59,7 +88,25 @@ pause.update = function(tm) {
             pause.fadeMode = PAUSE_OUT;
             pause.timer = PAUSE_TIMER_MAX;
         }
+
+        // Update buttons
+        for(var i = 0; i < pause.buttons.length; ++ i) {
+
+            pause.buttons[i].update(tm);
+        }
+
+        core.request_full_screen (pause.buttons[3].overlay);
+
+        // Position buttons
+        tr.fit_view_height(CAMERA_HEIGHT);
+        let y = tr.viewport.h/2 - PAUSE_BOX_HEIGHT/2 + BUTTON_START;
+        let x = tr.viewport.w/2;
+        for(var i = 0; i < pause.buttons.length; ++ i) {
+
+            pause.buttons[i].update_pos(x, y + BUTTON_OFF * i);
+        }
     }
+
 }
 
 
@@ -122,6 +169,14 @@ pause.draw = function() {
     pause.draw_box();
 
     tr.pop();
+
+    if(pause.timer <= 0.0) {
+        // Draw buttons
+        for(var i = 0; i < pause.buttons.length; ++ i) {
+
+            pause.buttons[i].draw(assets.bitmaps.font, 1.0);
+        }
+    }
 }
 
 
