@@ -8,16 +8,31 @@ const ANIMAL_COUNT = 32;
 const EXP_COUNT = 8;
 const POW_COUNT = 32;
 
-const ANIMAL_TIME_WAIT_MIN = 60.0;
-const ANIMAL_TIME_WAIT_VARY = 180.0;
-const ANIMAL_WAIT_INITIAL = 60.0;
-const ANIMAL_MAX_CREATE = 3;
+const PHASE_TIME = 20.0; // In seconds
+const MAX_PHASE = 6;
 
-const MONSTER_COUNTER_MIN = 3;
+const ANIMAL_TIME_WAIT_MIN = [
+    80.0, 75.0, 70.0, 65.0, 60.0, 50.0, 50.0
+];
+const ANIMAL_TIME_WAIT_VARY = [
+    180.0, 180.0, 170.0, 170.0, 160.0, 150.0, 140.0
+];
+const ANIMAL_WAIT_INITIAL = 120.0;
+const ANIMAL_MAX_CREATE = [
+    2, 3, 3, 4, 4, 5, 5
+];
+
+const MONSTER_COUNTER_MIN = [
+    0, 6, 6, 5, 4, 3, 2,
+];
 const MONSTER_COUNTER_VARY = 3;
+const MONSTER_MIN_PHASE = 1;
 
-const MISSILE_COUNTER_MIN = 3;
+const MISSILE_COUNTER_MIN = [
+    0, 0, 0, 5, 4, 3, 2
+];
 const MISSILE_COUNTER_VARY = 3;
+const MISSILE_MIN_PHASE = 3;
 
 // TODO: Rename : ANIMAL -> CREATURE
 const ANIMAL_NORMAL = 0;
@@ -35,6 +50,11 @@ objman.animalWait = ANIMAL_WAIT_INITIAL;
 objman.monsterCounter = 0;
 // Missile counter
 objman.missileCounter = 0;
+
+// Phase
+objman.phase = 0;
+// Phase timer
+objman.phaseTimer = 0.0;
 
 
 // Get the next object in an array
@@ -72,6 +92,22 @@ objman.draw_obj = function(arr) {
     for(var i = 0; i < arr.length; ++ i) {
 
         arr[i].draw();
+    }
+}
+
+
+// Update phase
+objman.update_phase = function(tm) {
+
+    if(objman.phase >= MAX_PHASE) return;
+
+    let limit = PHASE_TIME * 60.0;
+
+    objman.phaseTimer += 1.0 * tm;
+    if(objman.phaseTimer >= limit) {
+
+        ++ objman.phase;
+        objman.phaseTimer -= limit;
     }
 }
 
@@ -186,7 +222,7 @@ objman.create_objects = function(tm) {
 
     if(objman.animalTimer >= objman.animalWait) {
 
-        var loop = 1 + Math.floor(Math.random() * ANIMAL_MAX_CREATE);
+        var loop = 1 + Math.floor(Math.random() * ANIMAL_MAX_CREATE[objman.phase]);
         
         -- objman.monsterCounter;
         -- objman.missileCounter
@@ -195,18 +231,18 @@ objman.create_objects = function(tm) {
 
             let type = ANIMAL_NORMAL;
             // First, check if we want to create a monster
-            if(objman.monsterCounter <= 0) {
+            if(objman.phase >= MONSTER_MIN_PHASE && objman.monsterCounter <= 0) {
 
                 objman.monsterCounter = Math.floor(Math.random() * MONSTER_COUNTER_VARY)
-                    + MONSTER_COUNTER_MIN;
+                    + MONSTER_COUNTER_MIN[objman.phase];
 
                 type = ANIMAL_MONSTER;
             }
             // If not, maybe a missile
-            else if(objman.missileCounter <= 0) {
+            else if(objman.phase >= MISSILE_MIN_PHASE && objman.missileCounter <= 0) {
                 
                 objman.missileCounter = Math.floor(Math.random() * MISSILE_COUNTER_VARY)
-                    + MISSILE_COUNTER_MIN;
+                    + MISSILE_COUNTER_MIN[objman.phase];
 
                 type = ANIMAL_MISSILE;
             }
@@ -215,7 +251,8 @@ objman.create_objects = function(tm) {
         }
 
         objman.animalTimer -= objman.animalWait;
-        objman.animalWait = ANIMAL_TIME_WAIT_MIN + Math.random()* ANIMAL_TIME_WAIT_VARY;
+        objman.animalWait = ANIMAL_TIME_WAIT_MIN[objman.phase] 
+            + Math.random()* ANIMAL_TIME_WAIT_VARY[objman.phase];
     }
 }
 
@@ -265,6 +302,10 @@ objman.reset = function() {
 
         objman.pows[i] = new Pow();
     }
+
+    // Reset values
+    objman.phase = 0;
+    objman.phaseTimer = 0.0;
 }
 objman.init = objman.reset;
 
@@ -334,6 +375,9 @@ objman.update = function(tm) {
         // Magnet interaction
         objman.creatures[i].magnet_interaction(objman.fetus, tm);
     }
+
+    // Update phase timer
+    objman.update_phase(tm);
 }
 
 

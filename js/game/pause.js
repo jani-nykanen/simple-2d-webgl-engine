@@ -124,14 +124,16 @@ pause.draw_box = function() {
     let w = PAUSE_BOX_WIDTH;
     let h = PAUSE_BOX_HEIGHT;
 
-    graph.set_color(0.75, 0.75, 0.75, 1);
+    graph.set_color(0.75, 0.75, 0.75, 0.75);
     graph.fill_rectangle(x - sum, y - sum, w + sum*2, h + sum*2);
 
     graph.set_color(0, 0, 0, 1);
     graph.fill_rectangle(x - INNER_W, y - INNER_W, w + INNER_W*2, h + INNER_W*2);
 
     graph.set_color(1, 1, 1, 1);
-    graph.fill_rectangle(x , y, w , h );
+    graph.draw_scaled_bitmap_region(
+        assets.bitmaps.bg,0,0,512,512,
+        x , y, w , h );
 }
 
 
