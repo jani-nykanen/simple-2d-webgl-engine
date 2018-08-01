@@ -54,6 +54,7 @@ Monster.prototype.create_self = function(x, y, sx, sy, scale) {
     this.arrowID = 1;
     this.isLeeching = false;
     this.angleMod = 0.0;
+    this.leechTimer = 0.0;
 }
 
 
@@ -141,11 +142,14 @@ Monster.prototype.update = function(tm) {
         // Additional rotation
         this.angleMod += MONSTER_ANGLE_PLUS_SPEED * tm;
 
+        this.leechTimer -= 1.0 * tm;
+
         // Hurt heart
-        if(!objman.heart.is_hurt()) {
+        if(this.leechTimer <= 0) {
 
             objman.heart.hurt();
             _status.reduce_health(0.025);
+            this.leechTimer += HEART_HURT_MAX;
         }
 
     }
