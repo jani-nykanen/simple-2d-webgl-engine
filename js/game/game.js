@@ -8,6 +8,9 @@ const AREA_HEIGHT = 1280*2;
 // Game object
 game = {};
 
+// Pause button
+game.pauseButton = null;
+
 
 // Make the game over
 game.cause_game_over = function() {
@@ -28,6 +31,12 @@ game.init = function() {
     miniMap.init();
     // Initialize pause
     pause.init();
+
+    // Create pause button
+    game.pauseButton = new Button("",16, 16, 128, 0.75, false, function() {
+
+        pause.enable();
+    }, true);
 }
 
 
@@ -57,6 +66,12 @@ game.update = function(tm) {
         miniMap.update(tm);
 
         return;
+    }
+    
+    if(!pause.active) {
+
+        // Update pause button
+        game.pauseButton.update(tm);
     }
 
     // Update pause
@@ -129,6 +144,9 @@ game.draw = function() {
     // Draw minimap
     miniMap.draw(tr.viewport.w-272,16,1,1);
 
+    // Draw pause button
+    game.pauseButton.draw_with_image(assets.bitmaps.pause, 0.75);
+
     // Draw pause
     if(pause.active) {
 
@@ -145,6 +163,7 @@ game.draw = function() {
 
         graph.fill_rectangle(0,0,1,1);
     }
+    
 }
 
 

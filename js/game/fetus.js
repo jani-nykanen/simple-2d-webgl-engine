@@ -5,7 +5,7 @@
 const MAGNET_DELTA = 0.01;
 const FETUS_MAGNET_DIST = 1024.0;
 const FETUS_MAGNET_POWER = 0.75;
-const FETUS_DEAD_MAX = 240.0;
+const FETUS_DEAD_MAX = 180.0;
 
 
 // Fetus constructor

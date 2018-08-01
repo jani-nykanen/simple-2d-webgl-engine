@@ -13,12 +13,12 @@ const BUTTON_SCALE_SPEED = 0.05;
   * @param text Button text
   * @param x X coordinate
   * @param y Y coordinate
-  * @param w Font width
+  * @param w Font width (or if image, image dimension)
   * @param scale Scale
   * @param center Is the button centered
   * @param cb Callback
   */
-var Button = function(text, x, y, w, scale, center, cb) {
+var Button = function(text, x, y, w, scale, center, cb, img) {
     
     this.cw = w / 16.0;
 
@@ -38,6 +38,12 @@ var Button = function(text, x, y, w, scale, center, cb) {
 
     this.down = false;
     this.overlay = false;
+
+    if(img) {
+
+        this.width = w;
+        this.height = w;
+    }
 }
 
 
@@ -103,6 +109,37 @@ Button.prototype.update = function(tm) {
         if(this.scalePlus < this.scaleTarget)
             this.scalePlus = this.scaleTarget;
     }
+}
+
+
+/**
+ * Draw button with an image
+ * @param bmp Image
+ */
+Button.prototype.draw_with_image = function(bmp,alpha) {
+
+    const BG_ALPHA = 0.75;
+
+    let alphaMul = 1.0;
+    let colorMul = 1.0;
+    if(!this.overlay) {
+
+        alphaMul = 0.75;
+    }
+    else {
+
+        colorMul = 1.5;
+    }
+
+    graph.set_color(1,1,1, BG_ALPHA * alpha * alphaMul);
+    graph.draw_scaled_bitmap_region(bmp, 0, 0, bmp.height, bmp.height,
+        this.x, this.y, this.width * this.scale, this.height * this.scale);
+
+    graph.set_color(colorMul,colorMul,colorMul, alpha * alphaMul);
+    graph.draw_scaled_bitmap_region(bmp, bmp.height, 0, bmp.height, bmp.height,
+        this.x, this.y, this.width * this.scale, this.height * this.scale);
+    graph.set_color(1,1,1,1);
+
 }
 
 

@@ -47,6 +47,7 @@ global.init = function() {
         healthBar: "healthbar.png",
         mapIcons: "map_icons.png",
         duck: "duck.png",
+        pause: "pause.png",
     }, "assets/bitmaps");
 
     // Fade!

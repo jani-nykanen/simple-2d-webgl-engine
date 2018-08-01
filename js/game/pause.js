@@ -16,6 +16,9 @@ const PAUSE_BUTTON_TEXT = [
     "Full screen",
     "Main menu"
 ];
+const PAUSE_AUDIO_BUTTONS = [
+    "Audio: On", "Audio: Off"
+];
 
 const PAUSE_CALLBACKS = [
 
@@ -29,9 +32,9 @@ const PAUSE_CALLBACKS = [
             core.change_scene("game");
         });
     },
-    function() { alert("Not yet implemented") ;},
+    function() { audio.toggle(!audio.enabled);  },
     function() { /* ... */ },
-    function() { alert("Not yet implemented") ;}
+    function() { alert("Not implemented") ;}
 ]
 
 // Pause object
@@ -105,6 +108,9 @@ pause.update = function(tm) {
 
             pause.buttons[i].update_pos(x, y + BUTTON_OFF * i);
         }
+
+        // Set audio button text
+        pause.buttons[2].text = PAUSE_AUDIO_BUTTONS[audio.enabled ? 0 : 1];
     }
 
 }
