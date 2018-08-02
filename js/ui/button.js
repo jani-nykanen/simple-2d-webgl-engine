@@ -48,6 +48,17 @@ var Button = function(text, x, y, w, scale, center, cb, img) {
 
 
 /**
+ * Reset scaling
+ */
+Button.prototype.reset_scale = function() {
+
+    this.scalePlus = 1.0;
+    this.scaleTarget = 1.0;
+    this.overlay = false;
+}
+
+
+/**
  * Update position
  * @param x New X coordinate
  * @param y New Y coordinate

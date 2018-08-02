@@ -8,6 +8,9 @@ const EXP_ANIM_SPEED = 0.2;
 const EXP_APPEAR_MAX = 10.0;
 const EXP_SCALE_UP_SPEED = 0.025;
 
+const EXP_MAGNET_DIST = 1024.0;
+const EXP_MAGNET_POWER = 1.5;
+
 // Global explosion index
 global_exp_index = 1;
 
@@ -23,11 +26,15 @@ var Explosion = function() {
     this.dying = false;
     this.deathTimer = 0.0;
     this.animTimer = 0.0;
+    this.magnetic = false;
+
+    this.magnetDist = EXP_MAGNET_DIST;
+    this.magnetPower = EXP_MAGNET_POWER;
 }
 
 
 // Create me
-Explosion.prototype.create_self = function(x, y, speed, scale) {
+Explosion.prototype.create_self = function(x, y, speed, scale, magnetic) {
 
     this.pos.x = x;
     this.pos.y = y;
@@ -44,6 +51,8 @@ Explosion.prototype.create_self = function(x, y, speed, scale) {
     this.radius = this.targetScale * 112;
 
     this.eindex = global_exp_index ++;
+
+    this.magnetic = magnetic;
 }
 
 

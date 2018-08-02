@@ -216,18 +216,14 @@ Missile.prototype.die = function() {
     this.deathTimer = MISSILE_DEATH_MAX;
 
     // Create an explosion
-    objman.add_explosion(this.pos.x, this.pos.y, 2.0, MISSILE_EXP_RADIUS);
+    objman.add_explosion(this.pos.x, this.pos.y, 2.0, MISSILE_EXP_RADIUS, false);
 }
 
 
 // Missile-explosion collision
-Missile.prototype.exp_collision = function(e) {
+Missile.prototype.exp_collision = function(e, tm) {
 
-    if(!e.exist || !this.exist || e.eindex == this.eindex) return;
-
-    let dist = Math.hypot(e.pos.x - this.pos.x, e.pos.y - this.pos.y);
-
-    if(dist < e.radius + this.radius) {
+    if(this.get_exp_collision(e, tm)) {
 
         // Die
         this.die();

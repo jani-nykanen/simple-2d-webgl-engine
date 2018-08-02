@@ -188,13 +188,9 @@ Animal.prototype.divide = function(angle, eindex) {
 
 
 // Animal-explosion collision
-Animal.prototype.exp_collision = function(e) {
+Animal.prototype.exp_collision = function(e, tm) {
 
-    if(!e.exist || !this.exist || e.eindex == this.eindex) return;
-
-    let dist = Math.hypot(e.pos.x - this.pos.x, e.pos.y - this.pos.y);
-
-    if(dist < e.radius + this.radius) {
+    if(this.get_exp_collision(e, tm)) {
 
         this.die();
         let angle = Math.atan2(e.pos.y - this.pos.y, 

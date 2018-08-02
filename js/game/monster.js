@@ -246,13 +246,9 @@ Monster.prototype.die = function(eindex, angle) {
 
 
 // Monster-explosion collision
-Monster.prototype.exp_collision = function(e) {
+Monster.prototype.exp_collision = function(e, tm) {
 
-    if(!e.exist || !this.exist || e.eindex == this.eindex) return;
-
-    let dist = Math.hypot(e.pos.x - this.pos.x, e.pos.y - this.pos.y);
-
-    if(dist < e.radius + this.radius) {
+    if(this.get_exp_collision(e, tm)) {
 
         // Die
         let angle = this.isLeeching ? Math.atan2(this.pos.y, this.pos.x) 

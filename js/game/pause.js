@@ -185,6 +185,10 @@ pause.draw = function() {
             pause.buttons[i].draw(assets.bitmaps.font, 1.0);
         }
     }
+
+    // Draw controls
+    t = Math.max(_status.guidePos, t);
+    _status.draw_guide(t, 0, 0, true);
 }
 
 
@@ -194,4 +198,10 @@ pause.enable = function() {
     pause.active = true;
     pause.timer = PAUSE_TIMER_MAX;
     pause.fadeMode = PAUSE_IN;
+
+    // Reset button scales
+    for(var i = 0; i < pause.buttons.length; ++ i) {
+
+        pause.buttons[i].reset_scale();
+    }
 }

@@ -323,9 +323,9 @@ objman.update = function(tm) {
     for(var i = 0; i < EXP_COUNT; ++ i) {
 
         // Player-explosion
-        objman.player.exp_collision(objman.explosions[i]);
+        objman.player.exp_collision(objman.explosions[i], tm);
         // Heart-explosion
-        objman.heart.exp_collision(objman.explosions[i]);
+        objman.heart.exp_collision(objman.explosions[i], tm);
     }
 
     // Update heart
@@ -360,7 +360,7 @@ objman.update = function(tm) {
                 // Collide with explosions
                 if(i2 < EXP_COUNT) {
 
-                    objman.creatures[i].exp_collision(objman.explosions[i2]);
+                    objman.creatures[i].exp_collision(objman.explosions[i2], tm);
                 }
             }
         }
@@ -448,10 +448,10 @@ objman.add_gas = function(x, y, speed, scale) {
 
 
 // Add an explosion
-objman.add_explosion = function(x, y, speed, scale) {
+objman.add_explosion = function(x, y, speed, scale, magnetic) {
 
     let e = objman.explosions[objman.next_obj(objman.explosions)];
-    e.create_self(x, y, speed, scale);
+    e.create_self(x, y, speed, scale, magnetic);
 }
 
 

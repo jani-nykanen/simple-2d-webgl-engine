@@ -48,6 +48,7 @@ global.init = function() {
         mapIcons: "map_icons.png",
         duck: "duck.png",
         pause: "pause.png",
+        guide: "guide.png",
     }, "assets/bitmaps");
 
     // Fade!

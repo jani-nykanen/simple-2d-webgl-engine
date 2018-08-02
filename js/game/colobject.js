@@ -110,6 +110,28 @@ CollisionObject.prototype.magnet_interaction = function(src, tm) {
 }
 
 
+// Object-explosion collision
+CollisionObject.prototype.get_exp_collision = function(e, tm) {
+
+    if(!e.exist || !this.exist || e.eindex == this.eindex) 
+        return false;
+
+    let dist = Math.hypot(e.pos.x - this.pos.x, e.pos.y - this.pos.y);
+
+    // Magnet collision
+    if(e.magnetic) {
+
+        this.magnet_interaction(e, tm)
+    }
+
+    if(dist < e.radius + this.radius) {
+
+        return true;
+    }
+    return false;
+}
+
+
 // Draw an arrow (if offscreen)
 CollisionObject.prototype.draw_arrow = function() {
 
