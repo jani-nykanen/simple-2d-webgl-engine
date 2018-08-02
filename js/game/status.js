@@ -34,10 +34,15 @@ _status.get_time_string = function() {
     let t = Math.floor(_status.time / 60.0);
     let sec = t % 60;
     let min = Math.floor(t / 60);
+    let rem = _status.time % 60;
+    rem = Math.floor(100.0/60.0 * rem);
+
 
     let out = String(min) + ":";
     if(sec < 10) out += "0";
-    out += String(sec);
+    out += String(sec) + ":";
+    if(rem < 10) out += "0";
+    out += String(rem);
 
     return out;
 }
