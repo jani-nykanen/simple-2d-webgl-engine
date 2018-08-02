@@ -30,6 +30,14 @@ cam.reset = function() {
 cam.reset();
 
 
+// Set scale
+cam.set_scale = function(sx, sy) {
+
+    cam.sx = sx;
+    cam.sy = sy;
+}
+
+
 // Use camera
 cam.use = function() {
 

@@ -49,6 +49,8 @@ global.init = function() {
         duck: "duck.png",
         pause: "pause.png",
         guide: "guide.png",
+        logo: "logo.png",
+        figures: "figures.png",
     }, "assets/bitmaps");
 
     // Fade!

@@ -34,7 +34,10 @@ const PAUSE_CALLBACKS = [
     },
     function() { audio.toggle(!audio.enabled);  },
     function() { /* ... */ },
-    function() { alert("Not implemented") ;}
+    function() { global.fade(FADE_IN, 2.0, null, function() {
+
+        core.change_scene("title");
+    });}
 ]
 
 // Pause object
