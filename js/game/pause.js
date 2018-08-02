@@ -188,7 +188,9 @@ pause.draw = function() {
 
     // Draw controls
     t = Math.max(_status.guidePos, t);
+    graph.set_color(1,1,1, t);
     _status.draw_guide(t, 0, 0, true);
+    graph.set_color(1,1,1, 1);
 }
 
 

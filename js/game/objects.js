@@ -12,14 +12,14 @@ const PHASE_TIME = 20.0; // In seconds
 const MAX_PHASE = 6;
 
 const ANIMAL_TIME_WAIT_MIN = [
-    80.0, 75.0, 70.0, 65.0, 60.0, 50.0, 50.0
+    80.0, 80.0, 80.0, 75.0, 70.0, 70.0, 60.0
 ];
 const ANIMAL_TIME_WAIT_VARY = [
     180.0, 180.0, 170.0, 170.0, 160.0, 150.0, 140.0
 ];
 const ANIMAL_WAIT_INITIAL = 120.0;
 const ANIMAL_MAX_CREATE = [
-    2, 3, 3, 4, 4, 5, 5
+    2, 2, 3, 3, 4, 4, 5
 ];
 
 const MONSTER_COUNTER_MIN = [

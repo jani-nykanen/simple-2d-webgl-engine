@@ -3,26 +3,15 @@
  * @author Jani Nykänen
  */
 
-// Constants
-const SCORE_PATH = "scores";
-const SCORE_MAX = 10;
-const PORT = 8081;
-
 // Import libraries
 var http = require("http");
 var url = require("url");
 var fs = require("fs");
 
-// Content
-globalContent = "";
-
-
-// Add content
-function add_content(str) {
-
-    globalContent += str;
-}
-
+// Constants
+const SCORE_PATH = "scores";
+const SCORE_MAX = 10;
+const PORT = process.env.PORT || 80;
 
 
 // Score entry type
@@ -50,20 +39,24 @@ Entry.prototype.clone = function() {
 var entries = [];
 for(var i = 0; i < SCORE_MAX; ++ i) {
 
-    entries[i] = new Entry("Nobody", 0);
+    entries[i] = new Entry("Default", 0);
 }
 
 
 // Print entries
 function print_entries() {
 
+    let out = "";
+
     // Print entries
     for(var i = 0; i < SCORE_MAX; ++ i) {
 
-        add_content(entries[i].get_string());
+        out += entries[i].get_string();
         if(i < SCORE_MAX-1)
-            add_content("|");
+            out += "|";
     }
+
+    return out;
 }
 
 
@@ -118,7 +111,7 @@ function add_entry(name, score) {
 
 
 // Parse params
-function parse_params(q, str) {
+function parse_params(q) {
 
     // Get scores
     if(q.get && q.get == "true") {
@@ -127,7 +120,7 @@ function parse_params(q, str) {
         read_scores(SCORE_PATH);
 
         // Print entries
-        print_entries();
+        return print_entries();
 
     } 
     // Add score
@@ -144,10 +137,8 @@ function parse_params(q, str) {
         write_scores(SCORE_PATH);
 
         // Print entries
-        print_entries();
+        return print_entries();
     }
-
-    return str;
 }
 
 
@@ -155,8 +146,16 @@ function parse_params(q, str) {
 function read_scores(path) {
 
     // Read file & get content
-    var data = fs.readFileSync(path);
-    var content = String(data).split('\n');
+    try {
+        var data = fs.readFileSync(path);
+        var content = String(data).split('\n');
+    }
+    catch(e) {
+
+        console.log("Error reading a file: " + e.message);
+        console.log("Using defaults...");
+        return;
+    }
     
     // Add entries
     for(var i = 0; i < content.length; i += 2) {
@@ -188,24 +187,25 @@ function write_scores(path) {
 // Request handler
 var req_handler = function(req, res) {
 
-    globalContent = "";
-
+    // Parse params
     var q = url.parse(req.url, true).query;
 
     // Read scores
     read_scores(SCORE_PATH);
 
     // Parse params
-    parse_params(q);
+    let content = parse_params(q);
 
     // Put data to the html document
     res.writeHead(200, {
         'Content-Type': 'text/plain',
     });
 
-    res.end(globalContent);
+    // Pass content
+    res.end(content);
 
 };
+
 
 // Create a server
 const server = http.createServer(req_handler);
