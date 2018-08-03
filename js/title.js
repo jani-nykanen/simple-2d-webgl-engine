@@ -22,7 +22,7 @@ const TITLE_BUTTON_CB = [
     function() { 
         global.fade(FADE_IN, 2.0, null, function() {
 
-        core.change_scene("game");
+            core.change_scene(global.spcTextShown ? "game" : "empty");
         });
     },
     function() { /* .. */ },
@@ -78,7 +78,7 @@ title.update = function(tm) {
             // Start music (TEMPORARY!)
             if(title.logoPhase == 0) {
 
-                audio.fade_in_music(assets.audio.theme, 0.25, 1000);
+                audio.fade_in_music(assets.audio.theme, 0.125, 1000);
             }
 
             title.phaseTimer -= LOGO_PHASE_TIME[title.logoPhase];

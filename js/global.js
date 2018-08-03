@@ -8,6 +8,8 @@ const FADE_IN = 0;
 const FADE_OUT = 1;
 const FADE_MAX = 60.0;
 
+const SPC_TEXT = "Protect your heart!";
+
 // Global object
 global = {};
 
@@ -24,6 +26,10 @@ global.fadeColor = {r: 0, g: 0, b: 0};
 global.fadeCb = null;
 // Is fading
 global.fading = false;
+// Draw special text
+global.drawSpcText = false;
+// Special text shown
+global.spcTextShown = false;
 
 
 // Initialize
@@ -65,23 +71,26 @@ global.init = function() {
 // Update fading
 global.update_fading = function(tm) {
 
-    if(this.fading) {
+    if(global.fading) {
 
-        this.fadeTimer -= this.fadeSpeed * tm;
-        if(this.fadeTimer <= 0.0) {
+        global.fadeTimer -= global.fadeSpeed * tm;
+        if(global.fadeTimer <= 0.0) {
 
-            if(this.fadeMode == FADE_IN) {
-                this.fadeTimer = FADE_MAX;
-                this.fadeMode = this
+            if(global.fadeMode == FADE_IN) {
+                global.fadeTimer = FADE_MAX;
+                global.fadeMode = global
 
-                if(this.fadeCb != null) {
+                if(global.fadeCb != null) {
 
-                    this.fadeCb();
+                    global.fadeCb();
                 }
             }
             else {
 
-                this.fading = false;
+                global.fading = false;
+                if(global.spcTextShown)
+                    global.drawSpcText = false;
+                
             }
         }
     }
@@ -91,11 +100,11 @@ global.update_fading = function(tm) {
 // Draw fading
 global.draw_fading = function() {
 
-    if(!this.fading) return;
+    if(!global.fading) return;
 
-    let t = this.fadeTimer / FADE_MAX;
+    let t = global.fadeTimer / FADE_MAX;
 
-    if(this.fadeMode == FADE_IN) {
+    if(global.fadeMode == FADE_IN) {
 
         t = 1.0 - t;
     }
@@ -104,7 +113,7 @@ global.draw_fading = function() {
     tr.identity();
     tr.use_transform();
     
-    graph.set_color(this.fadeColor.r, this.fadeColor.g, this.fadeColor.b, t);
+    graph.set_color(global.fadeColor.r, global.fadeColor.g, global.fadeColor.b, t);
     graph.fill_rectangle(0,0,1,1);
     graph.set_color(1, 1, 1, 1);
 }
@@ -126,6 +135,22 @@ global.draw = function() {
 
     // Draw fading
     global.draw_fading();
+
+    // Draw special text
+    if(global.drawSpcText) {
+
+        tr.fit_view_height(CAMERA_HEIGHT);
+        tr.identity();
+        tr.use_transform();
+
+        let alpha = global.fadeTimer / FADE_MAX;
+        graph.set_color(1,1,1, alpha);
+
+        graph.draw_text(assets.bitmaps.font, SPC_TEXT,
+            tr.viewport.w/2,tr.viewport.h/2-32,-24,0, true, 2.0-alpha);
+
+        graph.set_color(1,1,1, 1);
+    }
 }
 
 
@@ -138,16 +163,16 @@ global.on_change = function() {
 // Fade
 global.fade = function(mode, speed, color, cb) {
 
-    this.fadeMode = mode;
-    this.fadeSpeed = speed;
+    global.fadeMode = mode;
+    global.fadeSpeed = speed;
     if(color != null) {
-        this.fadeColor.r = color.r;
-        this.fadeColor.b = color.b;
-        this.fadeColor.g = color.g;
+        global.fadeColor.r = color.r;
+        global.fadeColor.b = color.b;
+        global.fadeColor.g = color.g;
     }
-    this.fadeCb = cb;
-    this.fading = true;
-    this.fadeTimer = FADE_MAX;
+    global.fadeCb = cb;
+    global.fading = true;
+    global.fadeTimer = FADE_MAX;
 }
 
 
