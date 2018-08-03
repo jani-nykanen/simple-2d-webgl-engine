@@ -101,6 +101,7 @@ pause.update = function(tm) {
             pause.buttons[i].update(tm);
         }
 
+        // Set full screen button
         core.request_full_screen (pause.buttons[3].overlay);
 
         // Position buttons
