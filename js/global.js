@@ -51,7 +51,11 @@ global.init = function() {
         guide: "guide.png",
         logo: "logo.png",
         figures: "figures.png",
-    }, "assets/bitmaps");
+    }, "assets/bitmaps",
+
+    {
+        theme: "theme.ogg"
+    }, "assets/audio");
 
     // Fade!
     global.fade(FADE_OUT, 1.0, {r:1,g:1,b:1}, null);

@@ -110,7 +110,7 @@ Fetus.prototype.update = function(tm) {
     // Explosion
     if(!this.dead && kconf.fire2.state == state.PRESSED) {
 
-        objman.add_explosion(this.pos.x, this.pos.y, 2.0, EXP_RADIUS, true);
+        objman.add_explosion(this.pos.x, this.pos.y, 2.0, EXP_RADIUS, this.magnetic);
         this.dead = true;
         this.deadTimer = FETUS_DEAD_MAX;
     }
