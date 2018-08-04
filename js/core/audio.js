@@ -14,6 +14,10 @@ audio.enabled = true;
 audio.musicID = null;
 // Music sound
 audio.musicSound = null;
+// Music base volume
+audio.musicBaseVol = 0.0;
+// Reduce music colume
+audio.reducedVol = 0.0;
 
 
 /**
@@ -48,7 +52,8 @@ audio.fade_in_music = function(sound, vol, time) {
         audio.musicSound = sound;
     }
 
-    sound.volume(sound);
+    audio.musicBaseVol= vol;
+    sound.volume(vol, sound);
     sound.loop(true, audio.musicID);
     sound.fade(0.0, vol, time, audio.musicID);
 }
@@ -69,4 +74,30 @@ audio.stop_music = function() {
 audio.resume_music = function() {
 
     audio.musicSound.play(audio.musicID);
+}
+
+
+/**
+ * Reduce music volume to certain percentage
+ * @param p Percentage
+ * @param time Time
+ */
+audio.reduce_music = function(p, time) {
+
+    if(!audio.enabled || audio.musicID == null) return;
+
+    audio.reducedVol = audio.musicBaseVol * p;
+    audio.musicSound.fade(audio.musicBaseVol, audio.reducedVol , time, audio.musicID);
+}
+
+
+/**
+ * Reset music volume
+ * @param time Timue
+ */
+audio.reset_music_volume = function(time) {
+
+    if(!audio.enabled || audio.musicID == null) return;
+
+    audio.musicSound.fade(audio.reducedVol, audio.musicBaseVol , time, audio.musicID);
 }

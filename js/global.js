@@ -57,6 +57,7 @@ global.init = function() {
         guide: "guide.png",
         logo: "logo.png",
         figures: "figures.png",
+        intro: "intro.png",
     }, "assets/bitmaps",
 
     {

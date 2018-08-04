@@ -15,6 +15,8 @@ game.pauseButton = null;
 // Make the game over
 game.cause_game_over = function() {
 
+    audio.reduce_music(0.50,1000);
+
     global.fade(FADE_IN, 1.0, null, function() {
 
         core.change_scene("gameover");

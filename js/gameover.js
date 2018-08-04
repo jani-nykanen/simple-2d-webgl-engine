@@ -78,6 +78,8 @@ gameover.init = function() {
         tr.viewport.w / 3.0 * 2.0, tr.viewport.h-GOVER_BUTTONS_YOFF, 1024,
         0.75, true, function() {
 
+            audio.reset_music_volume(1000);
+
             // Move back to the game
             global.fade(FADE_IN, 2.0, null, function() {
 
