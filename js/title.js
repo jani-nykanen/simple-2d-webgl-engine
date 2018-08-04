@@ -75,12 +75,6 @@ title.update = function(tm) {
         title.phaseTimer += speed * tm;
         if(title.phaseTimer >= LOGO_PHASE_TIME[title.logoPhase]) {
 
-            // Start music (TEMPORARY!)
-            if(title.logoPhase == 0) {
-
-                audio.fade_in_music(assets.audio.theme, 0.125, 1000);
-            }
-
             title.phaseTimer -= LOGO_PHASE_TIME[title.logoPhase];
             ++ title.logoPhase;
         }

@@ -10,6 +10,8 @@ const FADE_MAX = 60.0;
 
 const SPC_TEXT = "Protect your heart!";
 
+const MUSIC_VOLUME = 0.15;
+
 // Global object
 global = {};
 
