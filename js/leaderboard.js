@@ -2,7 +2,7 @@
 // (c) 2018 Jani Nykänen
 
 // Constants
-const URL = "http://localhost:8081";
+const URL = "http://wth-leaderboads.us.openode.io";
 const MAX_SCORES = 15;
 
 const LB_BOX_WIDTH = 640;
