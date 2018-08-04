@@ -189,7 +189,7 @@ gameover.draw = function() {
         // Draw time
         ty = DUCK_TARGET + 112;
         graph.set_color(1,1,1, gameover.textAlpha);
-        graph.draw_text(assets.bitmaps.font, "Your time: " + _status.get_time_string(), tx, ty,
+        graph.draw_text(assets.bitmaps.font, "Your time: " +  util.get_time_string(_status.time), tx, ty,
             -24, 0, true, 1.0);
 
         // Draw buttons

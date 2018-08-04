@@ -25,9 +25,11 @@ const TITLE_BUTTON_CB = [
             core.change_scene(global.spcTextShown ? "game" : "empty");
         });
     },
-    function() { /* .. */ },
-    function() {audio.toggle(!audio.enabled); },
-    function() { /* .. */ },
+    function() { 
+        lb.activate(); 
+    },
+    function() { audio.toggle(!audio.enabled); },
+    function() { /**/ },
 ]
 
 // Title object
@@ -57,6 +59,9 @@ title.init = function() {
             0.75, true, TITLE_BUTTON_CB[i], false
         );
     }
+
+    // Initialize leaderboard
+    lb.init();
 }
 
 
@@ -64,6 +69,13 @@ title.init = function() {
 title.update = function(tm) {
 
     if(global.fading) return;
+
+    // Update leaderboard, if active
+    if(lb.active) {
+
+        lb.update(tm);
+        return;
+    }
 
     // Update phase timer
     if(title.logoPhase < LOGO_PHASE_MAX) {
@@ -262,6 +274,12 @@ title.draw = function() {
         graph.draw_text(assets.bitmaps.font,"(c)2018 Jani Nyk~nen",
             tr.viewport.w/2, tr.viewport.h-64, -24,0, true, 0.75);
         graph.set_color(1,1,1,1);
+    }
+
+    // Draw leaderboard
+    if(lb.active) {
+
+        lb.draw();
     }
 }
 

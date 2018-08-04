@@ -50,6 +50,13 @@ intro.update = function(tm) {
         }
     }
     
+    // Skip
+    if(kconf.start.state == state.PRESSED) {
+        
+        core.change_scene("title");
+        audio.fade_in_music(assets.audio.theme,MUSIC_VOLUME, MUSIC_FADE_TIME);
+        title.logoPhase = LOGO_PHASE_MAX;
+    }
 }
 
 

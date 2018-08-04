@@ -37,25 +37,6 @@ _status.reset = function() {
 }
 
 
-// Get time string
-_status.get_time_string = function() {
-
-    let t = Math.floor(_status.time / 60.0);
-    let sec = t % 60;
-    let min = Math.floor(t / 60);
-    let rem = _status.time % 60;
-    rem = Math.floor(100.0/60.0 * rem);
-
-    let out = String(min) + ":";
-    if(sec < 10) out += "0";
-    out += String(sec) + ":";
-    if(rem < 10) out += "0";
-    out += String(rem);
-
-    return out;
-}
-
-
 // Update status
 _status.update = function(tm) {
 
@@ -79,15 +60,15 @@ _status.update = function(tm) {
 
         // Update guid pos
         let t = 1.0;
-        if(this.guideTimer <= GUIDE_DISAPPEAR) {
+        if(_status.guideTimer <= GUIDE_DISAPPEAR) {
 
-            t = this.guideTimer / GUIDE_DISAPPEAR;
+            t = _status.guideTimer / GUIDE_DISAPPEAR;
         }
-        else if(this.guideTimer >= GUIDE_MAX - GUIDE_APPEAR) {
+        else if(_status.guideTimer >= GUIDE_MAX - GUIDE_APPEAR) {
 
-            t = (GUIDE_MAX-this.guideTimer) / GUIDE_APPEAR;
+            t = (GUIDE_MAX-_status.guideTimer) / GUIDE_APPEAR;
         }
-        this.guidePos = t;
+        _status.guidePos = t;
     }
 }
 
@@ -210,14 +191,14 @@ _status.draw = function() {
     // Draw time
     let x = tr.viewport.w / 2;
     graph.draw_text(assets.bitmaps.font, "TIME:",x,4,-24,0, true, 0.625);
-    graph.draw_text(assets.bitmaps.font, this.get_time_string(),x,8 + 32,-24,0, true, 1.0);
+    graph.draw_text(assets.bitmaps.font, util.get_time_string(_status.time),x,8 + 32,-24,0, true, 1.0);
 
     // Draw guide
 
     graph.set_color(0,0,0, 0.25);
-    _status.draw_guide(this.guidePos, 8, 8, false);
+    _status.draw_guide(_status.guidePos, 8, 8, false);
     graph.set_color(1,1,1, 0.80);
-    _status.draw_guide(this.guidePos, 0, 0, true);
+    _status.draw_guide(_status.guidePos, 0, 0, true);
 
     graph.set_color(1,1,1,1);
 }
@@ -228,11 +209,11 @@ _status.reduce_health = function(amount) {
 
     if(_status.gameOver) return;
 
-    this.health -= amount;
-    if(this.health <= 0.0) {
+    _status.health -= amount;
+    if(_status.health <= 0.0) {
 
         _status.gameOver = true;
-        this.health = 0.0;
+        _status.health = 0.0;
 
         // Game over!
         game.cause_game_over();
