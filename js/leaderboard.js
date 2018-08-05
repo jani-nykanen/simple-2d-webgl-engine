@@ -2,7 +2,7 @@
 // (c) 2018 Jani Nykänen
 
 // Constants
-const URL = "http://wth-leaderboads.us.openode.io";
+const URL = "https://game-leaderboards.000webhostapp.com";
 const MAX_SCORES = 15;
 
 const LB_BOX_WIDTH = 640;
@@ -186,7 +186,7 @@ lb.send_request = function(params, cb) {
 // Fetch scores
 lb.fetch_scores = function() {
 
-    lb.send_request("get=true", function(s) {
+    lb.send_request("mode=get", function(s) {
 
         console.log(s);
     });

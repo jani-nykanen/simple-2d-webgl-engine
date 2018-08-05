@@ -10,8 +10,8 @@ var fs = require("fs");
 
 // Constants
 const SCORE_PATH = "scores";
-const SCORE_MAX = 10;
-const PORT = process.env.PORT || 8081;
+const SCORE_MAX = 15;
+const PORT = process.env.PORT ||  80;
 
 
 // Score entry type
