@@ -2,6 +2,7 @@
 // (c) 2018 Jani Nykänen
 
 // Constants
+//TODO: CHANGE
 const URL = "https://game-leaderboards.000webhostapp.com";
 const MAX_SCORES = 15;
 
@@ -191,4 +192,3 @@ lb.fetch_scores = function() {
         console.log(s);
     });
 }
-lb.fetch_scores();

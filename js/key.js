@@ -1,0 +1,1 @@
+const GLOBAL_KEY = 123456;
