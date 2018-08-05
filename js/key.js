@@ -1,1 +1,1 @@
-const GLOBAL_KEY = 123456;
+const GLOBAL_KEY = "dirtygoofy";
