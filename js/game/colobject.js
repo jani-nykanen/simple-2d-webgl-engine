@@ -15,6 +15,7 @@ var CollisionObject = function() {
     this.mass = 1.0;
     this.totalSpeed = 0.0;
     this.eindex = -1;
+    this.offscreen = false;
 }
 
 
@@ -32,6 +33,7 @@ CollisionObject.prototype.object_collision = function(o) {
     const POW_LIMIT = 2.0;
     const POW_MIN = 1.5;
     const POW_MOD = 8;
+    const HIT_VOL = 0.70;
 
     if(o.exist == false || this.exist == false 
       || (o.static && this.static) ) return;
@@ -70,6 +72,9 @@ CollisionObject.prototype.object_collision = function(o) {
 
         // Create pow
         if( (this.isAnimal && o.isHeart) || speedAverage >= POW_LIMIT) {
+
+            if(!this.offscreen && (!o.isHeart || this.isPlayer))
+                audio.play_sample(assets.audio.hit, HIT_VOL);
 
             let size = POW_MIN + (speedAverage-POW_LIMIT) / POW_MOD;
             if(this.isAnimal && o.isHeart)  {

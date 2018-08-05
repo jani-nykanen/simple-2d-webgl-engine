@@ -10,7 +10,8 @@ const FADE_MAX = 60.0;
 
 const SPC_TEXT = "Protect your heart!";
 
-const MUSIC_VOLUME = 0.15;
+const MUSIC_VOLUME = 0.75;
+const SAMPLE_VOLUME = 1.0;
 
 // Global object
 global = {};
@@ -32,6 +33,9 @@ global.fading = false;
 global.drawSpcText = false;
 // Special text shown
 global.spcTextShown = false;
+
+// On load triggered
+global.onLoadTriggered = false;
 
 
 // Initialize
@@ -63,11 +67,33 @@ global.init = function() {
     }, "assets/bitmaps",
 
     {
-        theme: "theme.ogg"
+        theme: "theme.ogg",
+        magnet: "magnet.wav",
+        explosion: "explosion.wav",
+        hit: "hit.wav",
+        hurt: "hurt.wav",
+        select: "select.wav",
+        pause: "pause.wav",
+        choose: "choose.wav",
+        gas: "gas.wav",
     }, "assets/audio");
 
     // Fade!
     global.fade(FADE_OUT, 1.0, {r:1,g:1,b:1}, null);
+
+    // Set sample volume
+    audio.set_sample_volume(SAMPLE_VOLUME);
+}
+
+
+// Data loaded
+global.on_load = function() {
+
+    const BUTTON_VOL = 0.75;
+    const BUTTON_OVERLAY_VOL = 0.80;
+
+    set_global_button_audio(assets.audio.select, BUTTON_VOL, 
+        assets.audio.choose, BUTTON_OVERLAY_VOL);
 }
 
 
@@ -124,6 +150,13 @@ global.draw_fading = function() {
 
 // Update
 global.update = function(tm) {
+
+    // Called when everything is loaded
+    if(!global.onLoadTriggered ) {
+
+        global.on_load();
+        global.onLoadTriggered = true;
+    }
 
     // Update key config
     kconf.update();

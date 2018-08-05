@@ -148,7 +148,7 @@ Monster.prototype.update = function(tm) {
         // Hurt heart
         if(this.leechTimer <= 0) {
 
-            objman.heart.hurt();
+            objman.heart.hurt(true);
             _status.reduce_health(MONSTER_LEECH);
             this.leechTimer += HEART_HURT_MAX;
         }

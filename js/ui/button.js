@@ -7,6 +7,14 @@
 const BUTTON_XOFF = -24;
 const BUTTON_SCALE_SPEED = 0.05;
 
+// Global button audio
+globalButtonAudio = null;
+globalButtonVol = 1.0;
+
+// Another global audio
+globalButtonSelectAudio = null;
+globalButtonSelectVol = 1.0;
+
 
  /**
   * Constructor
@@ -75,9 +83,20 @@ Button.prototype.update_pos = function(x, y) {
  */
 Button.prototype.get_input = function() {
 
+    let oldOverlay = this.overlay;
+
     var p = input.cursor_pos();
     this.overlay = p.x >= this.x && p.x <= this.x + this.width
         && p.y >= this.y && p.y <= this.y + this.height;
+
+    // Play overlay sound
+    if(this.overlay && !oldOverlay) {
+
+        if(globalButtonSelectAudio != null) {
+
+            audio.play_sample(globalButtonSelectAudio, globalButtonSelectVol);
+        }
+    }
 
     this.scaleTarget = this.overlay ? 1.25 : 1.0;
 
@@ -93,6 +112,10 @@ Button.prototype.get_input = function() {
         if(this.cb != null) {
 
             this.cb();
+            if(globalButtonAudio != null) {
+
+                audio.play_sample(globalButtonAudio, globalButtonVol);
+            }
         }
     }
 }
@@ -175,4 +198,21 @@ Button.prototype.draw = function(font, alpha) {
         BUTTON_XOFF, 0, true, this.scale * this.scalePlus);
 
     graph.set_color(1,1,1,1);
+}
+
+
+/**
+ * Set the sound that is played when a button is pressed
+ * @param sound1 Sound 1 (click)
+ * @param vol1 Volume 1
+ * @param sound2 Sound 2 (hover)
+ * @param vol2 Volume 2
+ */
+function set_global_button_audio(sound1, vol1, sound2, vol2) {
+
+    globalButtonAudio = sound1;
+    globalButtonVol = vol1;
+
+    globalButtonSelectAudio= sound2;
+    globalButtonSelectVol = vol2;
 }

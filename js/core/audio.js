@@ -18,6 +18,8 @@ audio.musicSound = null;
 audio.musicBaseVol = 0.0;
 // Reduce music colume
 audio.reducedVol = 0.0;
+// Sample volume
+audio.sampleVol = 1.0;
 
 
 /**
@@ -110,6 +112,10 @@ audio.reset_music_volume = function(time) {
  */
 audio.play_sample = function(sound, vol) {
 
+    if(!audio.enabled) return;
+
+    vol *= audio.sampleVol;
+
     if(!sound.playID) {
 
         sound.playID = sound.play();
@@ -124,4 +130,14 @@ audio.play_sample = function(sound, vol) {
         sound.loop(false, sound.playID );
         sound.play(sound.playID);
     }
+}
+
+
+/**
+ * Set global sample volume
+ * @param vol Volume
+ */
+audio.set_sample_volume = function(vol) {
+
+    audio.sampleVol = vol;
 }

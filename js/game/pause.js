@@ -174,6 +174,8 @@ pause.draw = function() {
 // Enable pause
 pause.enable = function() {
 
+    const PAUSE_VOL = 0.75;
+
     pause.active = true;
     pause.timer = PAUSE_TIMER_MAX;
     pause.fadeMode = PAUSE_IN;
@@ -183,4 +185,7 @@ pause.enable = function() {
 
         pause.buttons[i].reset_scale();
     }
+
+    // Play sound
+    audio.play_sample(assets.audio.pause, PAUSE_VOL);
 }

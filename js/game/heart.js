@@ -88,9 +88,13 @@ Heart.prototype.draw = function() {
 
 
 // Hurt the heart
-Heart.prototype.hurt = function() {
+Heart.prototype.hurt = function(leeching) {
+
+    const HURT_VOL = 0.60;
 
     this.hurtTimer = HEART_HURT_MAX;
+
+    audio.play_sample(assets.audio.hurt, HURT_VOL);
 }
 
 

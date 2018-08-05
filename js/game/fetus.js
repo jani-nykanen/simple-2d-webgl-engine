@@ -44,6 +44,13 @@ Fetus.prototype = Object.create(CollisionObject.prototype);
 Fetus.prototype.update_magnet = function(tm) {
 
     const MAGNET_SPEED = 0.1;
+    const MAGNET_VOL = 0.75;
+
+    if(!this.dead && this.magnetTimer < MAGNET_DELTA 
+        && kconf.fire1.state == state.PRESSED) {
+
+        audio.play_sample(assets.audio.magnet, MAGNET_VOL);
+    }
 
     this.magnetic = kconf.fire1.state == state.DOWN && !this.dead;
     if(!this.magnetic) {
@@ -54,14 +61,18 @@ Fetus.prototype.update_magnet = function(tm) {
         }
     }
 
+    // Update magnet timer
     this.magnetTimer += MAGNET_SPEED * tm;
     if(this.magnetTimer >= Math.PI) {
 
         if(!this.magnetic)
             this.magnetTimer = 0.0;
 
-        else
+        else {
+
+            audio.play_sample(assets.audio.magnet, MAGNET_VOL);
             this.magnetTimer -= Math.PI;
+        }
     }
 }
 

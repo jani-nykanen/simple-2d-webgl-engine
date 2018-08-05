@@ -39,6 +39,8 @@ var Player = function(x, y) {
     this.butt = {
         pos: {x: 0, y: 0}
     };
+
+    this.isPlayer = true;
 }
 Player.prototype = Object.create(CollisionObject.prototype);
 

@@ -67,6 +67,8 @@ core.mouse_down_listener = function(e) {
     if(core.fscreenReq) {
 
         core.toggle_fullscreen();
+        if(globalButtonAudio != null)
+            audio.play_sample(globalButtonAudio, globalButtonVol);
     }
 }
 

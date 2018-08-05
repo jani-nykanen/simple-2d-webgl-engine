@@ -36,6 +36,9 @@ var Explosion = function() {
 // Create me
 Explosion.prototype.create_self = function(x, y, speed, scale, magnetic) {
 
+    const EXP_VOL = 0.55;
+    audio.play_sample(assets.audio.explosion, EXP_VOL);
+
     this.pos.x = x;
     this.pos.y = y;
     this.speed = speed;
