@@ -88,13 +88,27 @@ Heart.prototype.draw = function() {
 
 
 // Hurt the heart
-Heart.prototype.hurt = function(leeching) {
+Heart.prototype.hurt = function(leeching, exp) {
 
-    const HURT_VOL = 0.60;
+    const HURT_VOL = 0.40;
+    const LEECH_VOL = 0.75;
+    const DIE_VOL = 0.80;
 
     this.hurtTimer = HEART_HURT_MAX;
 
-    audio.play_sample(assets.audio.hurt, HURT_VOL);
+
+    if(_status.gameOver)
+        audio.play_sample(assets.audio.die, DIE_VOL);
+    else {
+
+        const EXP_MOD = 0.5;
+
+        let vol = leeching ? LEECH_VOL : HURT_VOL;
+        if(exp)
+            vol *= EXP_MOD;
+
+        audio.play_sample(leeching ? assets.audio.leech : assets.audio.hurt, vol);
+    }
 }
 
 
@@ -117,9 +131,10 @@ Heart.prototype.exp_collision = function(e) {
     if(dist < e.radius + this.radius) {
 
         this.eindex = e.eindex;
-        this.hurt();
-
+        
         let dmg = e.targetScale * DMG_FACTOR;
         _status.reduce_health(dmg);
+
+        this.hurt(false, true);
     }
 }

@@ -10,7 +10,7 @@ const FADE_MAX = 60.0;
 
 const SPC_TEXT = "Protect your heart!";
 
-const MUSIC_VOLUME = 0.75;
+const MUSIC_VOLUME = 0.625;
 const SAMPLE_VOLUME = 1.0;
 
 // Global object
@@ -76,6 +76,8 @@ global.init = function() {
         pause: "pause.wav",
         choose: "choose.wav",
         gas: "gas.wav",
+        leech: "leech.wav",
+        die: "die.wav",
     }, "assets/audio");
 
     // Fade!
@@ -89,8 +91,8 @@ global.init = function() {
 // Data loaded
 global.on_load = function() {
 
-    const BUTTON_VOL = 0.75;
-    const BUTTON_OVERLAY_VOL = 0.80;
+    const BUTTON_VOL = 0.60;
+    const BUTTON_OVERLAY_VOL = 0.60;
 
     set_global_button_audio(assets.audio.select, BUTTON_VOL, 
         assets.audio.choose, BUTTON_OVERLAY_VOL);

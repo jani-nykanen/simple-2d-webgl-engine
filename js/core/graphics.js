@@ -282,7 +282,7 @@ graph.fill_rectangle = function(x, y, w, h) {
     var gl = graph.glctx;
 
     var bmp = this.texWhite;
-    if(this.prevBitmap != bmp) {
+    if(!assets.has_loaded() || this.prevBitmap != bmp) {
 
         this.prevBitmap = bmp;
         gl.bindTexture(gl.TEXTURE_2D, bmp);

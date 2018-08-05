@@ -7,7 +7,7 @@ const PL_FORWARD_TARGET = 14.0;
 const PL_REVERSE_TARGET = 8.0;
 const PL_ACCELERATION = 0.45;
 const PL_SIZE_SCALE = 0.85;
-const PL_GAS_WAIT = 8.0;
+const PL_GAS_WAIT = 9.0;
 const PL_RADIUS = 96;
 const PL_MASS = 1.25;
 const PL_BUTT_DIST = 24;
@@ -48,7 +48,9 @@ Player.prototype = Object.create(CollisionObject.prototype);
 // Handle gas creation
 Player.prototype.create_gas = function(tm) {
 
+    const GAS_VOL = 0.50;
     const DELTA = 0.1;
+
     if(this.totalTarget < DELTA)
         return;
 
@@ -62,6 +64,9 @@ Player.prototype.create_gas = function(tm) {
         objman.add_gas(x, y, 1.5, 1.0);
 
         this.gasTimer -= PL_GAS_WAIT;
+
+        // Play gas effect
+        audio.play_sample(assets.audio.gas, GAS_VOL);
     }
 }
 
