@@ -22,6 +22,10 @@ lb.continueCb = null;
 lb.timer = 0.0;
 // Appearance mode
 lb.mode = LB_IN;
+// Is fetching
+lb.fetching = false;
+// Is skipping (in other words, is game over scene...)
+lb.skip = false;
 
 // Data
 lb.data = {
@@ -36,6 +40,9 @@ lb.buttonContinue = null;
 // Initialize
 lb.init = function() {
 
+    // Initialize submit box
+    submit.init();
+
     // Set default names & scores
     for(var i = 0; i < MAX_SCORES; ++ i) {
 
@@ -49,6 +56,18 @@ lb.init = function() {
         function() { 
             lb.timer = LB_TIMER_MAX;
             lb.mode = LB_OUT;
+
+            if(lb.skip) {
+
+                // Reset music volume back to normal
+                audio.reset_music_volume(1000);
+
+                // Move back to the game
+                global.fade(FADE_IN, 2.0, null, function() {
+
+                    core.change_scene("game");
+                });
+            }
         }, false);
 }
 
@@ -87,7 +106,7 @@ lb.draw = function() {
     const ALPHA = 0.5;
     const SCORE_YOFF = 33;
     const SCORE_Y_START = 64;
-    const TIME_X = 64;
+    const TIME_X = 80;
 
     let t = lb.timer / LB_TIMER_MAX;
     if(lb.mode == LB_IN) {
@@ -121,21 +140,31 @@ lb.draw = function() {
             0, -LB_BOX_HEIGHT/2 + 16, -24,0, true, 0.625  
         );
 
-        // Draw scores
-        let y = -LB_BOX_HEIGHT/2 + SCORE_Y_START;
-        for(var i = 0; i < MAX_SCORES; ++ i) {
+        if(lb.fetching) {
 
-            // Draw names
+            // Draw "Fetching..." text
             graph.draw_text(assets.bitmaps.font, 
-                (i < 9 ? "0" : "") + String(i+1) + "." + lb.data.names[i],
-                -LB_BOX_WIDTH/2 + 16, y + i*SCORE_YOFF, -24,0, false, 0.625);
+                "Fetching...",
+                0,-24, -24,0, true, 0.75);
+        }
+        else {
 
             // Draw scores
-            graph.draw_text(assets.bitmaps.font, 
-                util.get_time_string(lb.data.scores[i]),
-                TIME_X, y + i*SCORE_YOFF, -24,0, false, 0.625);
-        }
+            let y = -LB_BOX_HEIGHT/2 + SCORE_Y_START;
+            for(var i = 0; i < MAX_SCORES; ++ i) {
 
+                // Draw names
+                graph.draw_text(assets.bitmaps.font, 
+                    (i < 9 ? "0" : "") + String(i+1) + "." + lb.data.names[i],
+                    -LB_BOX_WIDTH/2 + 16, y + i*SCORE_YOFF, -24,0, false, 0.625);
+
+                // Draw scores
+                graph.draw_text(assets.bitmaps.font, 
+                    util.get_time_string(lb.data.scores[i]),
+                    TIME_X, y + i*SCORE_YOFF, -24,0, false, 0.625);
+            }
+
+        }
     }
 
     tr.pop();
@@ -153,25 +182,21 @@ lb.draw = function() {
 
 
 // Activate
-lb.activate = function(mode) {
+lb.activate = function(skip) {
 
     lb.active = true;
-    lb.timer = LB_TIMER_MAX;
+    lb.skip = skip;
+    lb.timer = skip ? 0 : LB_TIMER_MAX;
     lb.mode = LB_IN;
 
     // Reset buttons
     lb.buttonContinue.overlay = false;
     lb.buttonContinue.scalePlus = 1.0;
 
-    if(!mode) {
+    if(!skip) {
+
         // Get scores
         lb.fetch_scores();
-
-    }
-    // Get scores & submit
-    else {
-
-        // ...
     }
 }
 
@@ -192,6 +217,8 @@ lb.send_request = function(params, cb) {
 
     let url = URL + "?" + params;
 
+    lb.fetching = true;
+
     let xmlHttp = new XMLHttpRequest();
     xmlHttp.onreadystatechange = function() { 
 
@@ -202,6 +229,8 @@ lb.send_request = function(params, cb) {
             let success = s[0] == "true";
 
             cb(success, s.slice(1, s.length));
+
+            lb.fetching = false;
         }
     }
     xmlHttp.open("GET", url, true);

@@ -72,7 +72,7 @@ gameover.init = function() {
         tr.viewport.w / 3.0, tr.viewport.h-GOVER_BUTTONS_YOFF, 1024,
         0.75, true, function() {
 
-            window.alert("Not ready yet");
+            submit.activate();
         });
     gameover.buttonPlayAgain = new Button("Play again",
         tr.viewport.w / 3.0 * 2.0, tr.viewport.h-GOVER_BUTTONS_YOFF, 1024,
@@ -91,6 +91,19 @@ gameover.init = function() {
 
 // Update
 gameover.update = function(tm) {
+
+    // Update submit box, if active
+    if(submit.active) {
+
+        submit.update(tm);
+        return;
+    }
+    // Update leaderboard, if active
+    else if(lb.active) {
+
+        lb.update(tm);
+        return;
+    }
 
     // Update gravity
     gameover.duckGrav += DUCK_GRAV_DELTA * tm;
@@ -199,6 +212,17 @@ gameover.draw = function() {
 
     graph.set_color(1, 1, 1, 1);
 
+    // Draw submit button
+    if(submit.active) {
+
+        submit.draw();
+    }
+    // Draw leaderboard
+    else if(lb.active) {
+
+        lb.draw();
+    }
+    
 }
 
 

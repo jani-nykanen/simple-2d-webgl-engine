@@ -35,7 +35,11 @@ core.fscreenReq = false;
  */
 core.key_down_listener = function(e) {
 
+    
     var key = e.keyCode ? e.keyCode : e.which;
+    if(e.keyCode == KEY_BACKSPACE)
+        e.preventDefault();
+
     input.key_down(key);
 }
 
@@ -53,6 +57,7 @@ core.key_up_listener = function(e) {
 
 /**
  * Mouse button down event listener
+ * @param e Event
  */
 core.mouse_down_listener = function(e) {
 
@@ -68,6 +73,7 @@ core.mouse_down_listener = function(e) {
 
 /**
  * Mouse button up event listener
+ * @param e Event
  */
 core.mouse_up_listener = function(e) {
 
@@ -78,6 +84,7 @@ core.mouse_up_listener = function(e) {
 
 /**
  * Mouse move event listener
+ * @param e Event
  */
 core.mouse_move_listener = function(e) {
 
@@ -92,10 +99,21 @@ core.mouse_move_listener = function(e) {
 
 /**
  * Resize event listener
+ * @param e Event
  */
 core.resize_listener = function(e) {
 
     graph.resize(window.innerWidth, window.innerHeight);
+}
+
+
+/**
+ * Character listener
+ * @param e Event
+ */
+core.char_listener = function(e) {
+
+    input.char_input(e.char || e.charCode);
 }
 
 
@@ -128,6 +146,7 @@ core.loop = function(ts) {
         while(core.timeCount >= 1.0 / FRAME_RATE) {
 
             // Update frame 
+            core.fscreenReq = false;
             core.update(60.0 / FRAME_RATE);
 
             core.timeCount -= 1.0 / FRAME_RATE;
@@ -157,7 +176,7 @@ core.loop = function(ts) {
     }
 
     // Next frame
-    window.requestAnimationFrame(core.loop);
+    window.requestAnimationFrame(core.loop); 
 }
 
 
@@ -218,6 +237,7 @@ core.init = function() {
     // Add listeners
     window.addEventListener("keydown", core.key_down_listener);
     window.addEventListener("keyup", core.key_up_listener);
+    window.addEventListener("keypress", core.char_listener);
     window.addEventListener("mousedown", core.mouse_down_listener);
     window.addEventListener("mouseup", core.mouse_up_listener);
     window.addEventListener("mousemove", core.mouse_move_listener);

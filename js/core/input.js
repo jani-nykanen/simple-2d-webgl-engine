@@ -24,6 +24,9 @@ input.mouseStates = new Array(MOUSE_BUFFER_SIZE);
 // Cursor position
 input.cursorPos = {x: 0, y: 0};
 
+// Character buffer
+input.charBuffer = 0;
+
 
 /**
  * Update a state array
@@ -143,6 +146,9 @@ input.update = function() {
     // Update state arrays
     input.update_state_array(input.keyStates);
     input.update_state_array(input.mouseStates);
+
+    // Clear character
+    input.charBuffer = "";
 }
 
 
@@ -188,7 +194,7 @@ input.key_state = function(k) {
     if(k < 0 || k >= KEY_BUFFER_SIZE)
         return state.UP;
 
-    return input.keyStates[b];
+    return input.keyStates[k];
 }
 
 
@@ -200,5 +206,39 @@ input.flush_mouse = function() {
     for(var i = 0; i < MOUSE_BUFFER_SIZE; ++ i) {
 
         input.mouseStates[i] = state.UP;
+    }
+}
+
+
+// Utility function
+input._good_char = function(c) {
+
+    return ( (c >= 65 && c <= 122) || (c >= 48 && c <= 57)  ) ;
+}
+
+
+/**
+ * Handle character input
+ * @param c Character
+ */
+input.char_input = function(c) {
+
+    if(typeof(c) == "string") {
+
+        // If bad characters, skip
+        for(var i = 0; i < c.length; ++ i) {
+
+            if(!input._good_char(c.charCodeAt(i)))
+                return;
+        }
+    
+        input.charBuffer = c;
+    }
+    else {
+
+        if(input._good_char(c)) {
+
+            input.charBuffer = String.fromCharCode(c);
+        }
     }
 }
