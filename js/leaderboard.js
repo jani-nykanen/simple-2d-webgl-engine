@@ -153,7 +153,7 @@ lb.draw = function() {
 
 
 // Activate
-lb.activate = function() {
+lb.activate = function(mode) {
 
     lb.active = true;
     lb.timer = LB_TIMER_MAX;
@@ -162,6 +162,28 @@ lb.activate = function() {
     // Reset buttons
     lb.buttonContinue.overlay = false;
     lb.buttonContinue.scalePlus = 1.0;
+
+    if(!mode) {
+        // Get scores
+        lb.fetch_scores();
+
+    }
+    // Get scores & submit
+    else {
+
+        // ...
+    }
+}
+
+
+// Get scores from an array
+lb.get_scores = function(arr) {
+
+    for(var i = 0; i < arr.length; i += 2) {
+
+        lb.data.names[i/2] = arr[i];
+        lb.data.scores[i/2] = parseInt(arr[i+1]);
+    }
 }
 
 
@@ -175,7 +197,11 @@ lb.send_request = function(params, cb) {
 
         if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
 
-            cb(xmlHttp.responseText);
+            // Parse response
+            let s = xmlHttp.responseText.split('|');
+            let success = s[0] == "true";
+
+            cb(success, s.slice(1, s.length));
         }
     }
     xmlHttp.open("GET", url, true);
@@ -186,10 +212,35 @@ lb.send_request = function(params, cb) {
 // Fetch scores
 lb.fetch_scores = function() {
 
-    lb.send_request("mode=get", function(s) {
+    lb.send_request("mode=get", function(success, data) {
 
-        console.log(s);
+        if(!success) {
+
+            console.log("ERROR: " + data[0]);
+        }
+        else {
+
+            lb.get_scores(data);
+        }
     });
 }
-console.log("SCORES (temp):");
-lb.fetch_scores();
+
+
+// Add score
+lb.add_score = function(name, score) {
+
+    let check = md5(GLOBAL_KEY + String(score));
+    
+    lb.send_request("mode=set&name=" + name + "&score=" + String(score) + "&check=" + check, 
+        function(success, data) {
+
+        if(!success) {
+
+            console.log("ERROR: " + data[0]);
+        }
+        else {
+
+            lb.get_scores(data);
+        }
+    });
+}
