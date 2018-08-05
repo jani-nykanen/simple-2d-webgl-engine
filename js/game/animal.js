@@ -148,8 +148,8 @@ Animal.prototype.draw = function() {
 // Death comes
 Animal.prototype.die = function(hurtHeart) {
 
-    const MIN_DMG = 0.05;
-    const DMG_MOD = 0.025;
+    const MIN_DMG = 0.08;
+    const DMG_MOD = 0.020;
 
     this.exist = false;
     this.dying = true;

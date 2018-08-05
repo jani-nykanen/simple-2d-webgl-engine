@@ -10,6 +10,7 @@ const MONSTER_WEIGHT = 0.90;
 const MONSTER_ANGLE_PLUS = Math.PI / 9.0;
 const MONSTER_ANGLE_PLUS_SPEED = 0.10;
 const MONSTER_BASE_SCALE = 1.5;
+const MONSTER_LEECH = 0.05;
 
 
 // Monster constructor
@@ -148,7 +149,7 @@ Monster.prototype.update = function(tm) {
         if(this.leechTimer <= 0) {
 
             objman.heart.hurt();
-            _status.reduce_health(0.025);
+            _status.reduce_health(MONSTER_LEECH);
             this.leechTimer += HEART_HURT_MAX;
         }
 

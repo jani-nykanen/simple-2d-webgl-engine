@@ -106,7 +106,7 @@ lb.draw = function() {
     const ALPHA = 0.5;
     const SCORE_YOFF = 33;
     const SCORE_Y_START = 64;
-    const TIME_X = 80;
+    const TIME_X = 96;
 
     let t = lb.timer / LB_TIMER_MAX;
     if(lb.mode == LB_IN) {

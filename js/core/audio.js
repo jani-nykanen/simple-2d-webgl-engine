@@ -101,3 +101,27 @@ audio.reset_music_volume = function(time) {
 
     audio.musicSound.fade(audio.reducedVol, audio.musicBaseVol , time, audio.musicID);
 }
+
+
+/**
+ * Play a smaple
+ * @param sound Sound (read: sample)
+ * @param vol Voulme
+ */
+audio.play_sample = function(sound, vol) {
+
+    if(!sound.playID) {
+
+        sound.playID = sound.play();
+
+        sound.volume(vol, sound.playID );
+        sound.loop(false, sound.playID );
+    }
+    else {
+
+        sound.stop(sound.playID);
+        sound.volume(vol, sound.playID );
+        sound.loop(false, sound.playID );
+        sound.play(sound.playID);
+    }
+}
