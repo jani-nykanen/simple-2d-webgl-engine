@@ -47,10 +47,12 @@ var Button = function(text, x, y, w, scale, center, cb, img) {
     this.down = false;
     this.overlay = false;
 
+    this.img = img;
+
     if(img) {
 
-        this.width = w;
-        this.height = w;
+        this.width = w * scale;
+        this.height = w * scale;
     }
 }
 
@@ -112,7 +114,7 @@ Button.prototype.get_input = function() {
         if(this.cb != null) {
 
             this.cb();
-            if(globalButtonAudio != null) {
+            if(!this.img && globalButtonAudio != null) {
 
                 audio.play_sample(globalButtonAudio, globalButtonVol);
             }
@@ -167,11 +169,11 @@ Button.prototype.draw_with_image = function(bmp,alpha) {
 
     graph.set_color(1,1,1, BG_ALPHA * alpha * alphaMul);
     graph.draw_scaled_bitmap_region(bmp, 0, 0, bmp.height, bmp.height,
-        this.x, this.y, this.width * this.scale, this.height * this.scale);
+        this.x, this.y, this.width, this.height);
 
     graph.set_color(colorMul,colorMul,colorMul, alpha * alphaMul);
     graph.draw_scaled_bitmap_region(bmp, bmp.height, 0, bmp.height, bmp.height,
-        this.x, this.y, this.width * this.scale, this.height * this.scale);
+        this.x, this.y, this.width, this.height);
     graph.set_color(1,1,1,1);
 
 }

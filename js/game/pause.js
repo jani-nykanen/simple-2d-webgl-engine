@@ -7,6 +7,7 @@ const PAUSE_IN = 0;
 const PAUSE_OUT = 1;
 const PAUSE_BOX_WIDTH = 432;
 const PAUSE_BOX_HEIGHT = 320;
+const PAUSE_VOL = 0.75;
 
 const PAUSE_BUTTON_COUNT = 5;
 const PAUSE_BUTTON_TEXT = [
@@ -93,6 +94,11 @@ pause.update = function(tm) {
 
             pause.fadeMode = PAUSE_OUT;
             pause.timer = PAUSE_TIMER_MAX;
+
+            // Play sound
+            audio.play_sample(assets.audio.pause, PAUSE_VOL);
+
+            return;
         }
 
         // Update buttons
@@ -173,8 +179,6 @@ pause.draw = function() {
 
 // Enable pause
 pause.enable = function() {
-
-    const PAUSE_VOL = 0.75;
 
     pause.active = true;
     pause.timer = PAUSE_TIMER_MAX;
