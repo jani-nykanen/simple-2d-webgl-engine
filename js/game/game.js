@@ -106,10 +106,12 @@ game.update = function(tm) {
     miniMap.update(tm);
 
     // DEBUG
+    /*
     if(input.keyStates[KEY_P] == state.PRESSED) {
 
         _status.reduce_health(1.0);
     }
+    */
 }
 
 
